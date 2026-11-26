@@ -36,7 +36,8 @@ function formatTerminalReport(result) {
     lines.push(`Findings (${result.findings.length} total, ${result.failingFindings.length} failing >= ${result.failOn}):`);
     for (const f of result.findings.slice(0, 25)) {
       const tag = f.reachability === 'unverified' ? 'UNVERIFIED' : f.severity.toUpperCase();
-      lines.push(`  - [${tag}] ${f.title} (${f.location})${f.cwe ? ` [${f.cwe}]` : ''}`);
+      const idTag = f.ruleId && f.cwe ? ` [${f.ruleId} · ${f.cwe}]` : (f.ruleId || f.cwe ? ` [${f.ruleId || f.cwe}]` : '');
+      lines.push(`  - [${tag}] ${f.title} (${f.location})${idTag}`);
       if (f.evidence) lines.push(`    Evidence: ${f.evidence}`);
     }
     lines.push('');
@@ -86,8 +87,9 @@ function formatMarkdownSummary(result) {
       `| :--- | :--- | :--- | :--- | :--- |`
     );
     for (const f of result.findings.slice(0, 40)) {
+      const idCell = f.ruleId && f.cwe ? `${f.ruleId} (${f.cwe})` : (f.ruleId || f.cwe || '—');
       lines.push(
-        `| **${f.severity.toUpperCase()}** | \`${f.reachability || 'reachable'}\` | ${escapeMd(f.title)} | \`${escapeMd(f.location)}\` | ${f.cwe || '—'} |`
+        `| **${f.severity.toUpperCase()}** | \`${f.reachability || 'reachable'}\` | ${escapeMd(f.title)} | \`${escapeMd(f.location)}\` | ${escapeMd(idCell)} |`
       );
     }
     lines.push('');

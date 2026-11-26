@@ -36,6 +36,7 @@ function normalizeFinding(input, context = {}) {
   const cwe = cweRaw && !/^CWE-\d{1,5}$/.test(cweRaw) ? (/^\d{1,5}$/.test(cweRaw) ? `CWE-${cweRaw}` : '') : cweRaw;
   const mitreRaw = cleanField(input.mitre, 32).toUpperCase();
   const mitre = mitreRaw && /^T\d{4}(?:\.\d{3})?$/.test(mitreRaw) ? mitreRaw : '';
+  const ruleId = cleanField(input.ruleId, 64).toUpperCase();
   let cvss = null;
   if (input.cvss !== undefined && input.cvss !== null && input.cvss !== '') {
     const parsed = Number(input.cvss);
@@ -51,6 +52,7 @@ function normalizeFinding(input, context = {}) {
     severity,
     status,
     category,
+    ruleId,
     cwe,
     mitre,
     cvss,
@@ -212,7 +214,7 @@ function toSarifReport({ workspace, findings = [], appVersion = DEFAULT_APP_VERS
   const active = findings.filter(f => f.status !== 'false-positive' && f.status !== 'mitigated');
   const rulesMap = new Map();
   const results = active.map(f => {
-    const ruleId = f.cwe || `MARLOWE-${f.category.toUpperCase()}-${createHash('sha1').update(f.title).digest('hex').slice(0, 6).toUpperCase()}`;
+    const ruleId = f.ruleId || f.cwe || `MARLOWE-${f.category.toUpperCase()}-${createHash('sha256').update(f.title).digest('hex').slice(0, 6).toUpperCase()}`;
     if (!rulesMap.has(ruleId)) {
       rulesMap.set(ruleId, {
         id: ruleId,

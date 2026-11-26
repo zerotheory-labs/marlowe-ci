@@ -3,7 +3,13 @@ const net = require('node:net');
 const { isPrivateOrReservedIp, parseTargetEndpoint, checkTargetScopeSync } = require('../core/cyber-scope.cjs');
 const { isProtectedSegment, resolveWithinRoot, readRegularTextFile, loadScopeConfig } = require('../core/fs-safe.cjs');
 const { shannonEntropy } = require('../core/cyber-analyzers.cjs');
-const { isBeefilePath, isBpfSourcePath, auditBeefile, auditBpfUpatchSource } = require('../core/shirudo.cjs');
+const {
+  isBeefilePath,
+  isBpfSourcePath,
+  auditBeefile,
+  auditBpfUpatchSource,
+  auditShirudoCommands
+} = require('../core/shirudo.cjs');
 const { hasHiddenUnicodeControls, scanAgentGuard } = require('../core/agent-guard.cjs');
 const { scanTextLines, runAudit } = require('../engine/verdict.cjs');
 
@@ -121,6 +127,21 @@ async function handlePreToolUse(payload) {
       } catch (err) {
         return preToolDecision('deny', err.message);
       }
+      if (isBeefilePath(targetPath)) {
+        const incoming = typeof input.content === 'string'
+          ? input.content
+          : (typeof input.new_string === 'string' ? input.new_string : '');
+        if (incoming) {
+          const probe = /\[\[upatches\.rodata\]\]/i.test(incoming)
+            ? incoming
+            : `[package]\nname = "draft"\n[[upatches.rodata]]\n${incoming}`;
+          const bfPre = await auditBeefile(targetPath, probe, {});
+          const beeExec = bfPre.findings.find(f => f.ruleId === 'SHIRUDO-BEE-002');
+          if (beeExec) {
+            return preToolDecision('deny', `[${beeExec.ruleId}] ${beeExec.title}: ${beeExec.evidence}`);
+          }
+        }
+      }
     }
     return null;
   }
@@ -156,6 +177,12 @@ async function handlePreToolUse(payload) {
     }
     if (SENSITIVE_PATH_IN_CMD_RE.test(cmd) && NETWORK_EGRESS_IN_CMD_RE.test(cmd)) {
       return preToolDecision('deny', 'Potential credential exfiltration: command combines sensitive credential files with network egress.');
+    }
+
+    const shirudoCmdAudit = auditShirudoCommands('bash', cmd, { isShellCommand: true });
+    const tpmFail = shirudoCmdAudit.findings.find(f => f.ruleId === 'SHIRUDO-TPM-001' || f.ruleId === 'SHIRUDO-TPM-003');
+    if (tpmFail) {
+      return preToolDecision('deny', `[${tpmFail.ruleId}] ${tpmFail.title}`);
     }
 
     for (const rule of HIGH_IMPACT_ASK_PATTERNS) {
@@ -230,6 +257,14 @@ async function handlePostToolUse(payload) {
       warnings.push(`• [SHIRUDO ${f.cwe} ${f.severity.toUpperCase()}] ${f.title} at ${f.location}: ${f.evidence}`);
     }
     for (const ct of bpfRes.cantTellReasons.slice(0, 3)) {
+      warnings.push(`• [SHIRUDO CAN'T TELL · ${ct.code}] ${ct.message}`);
+    }
+  } else if (/\.(?:sh|bash|zsh|ya?ml)$/i.test(resolved.relPath)) {
+    const cmdPost = auditShirudoCommands(resolved.relPath, text);
+    for (const f of cmdPost.findings.slice(0, 5)) {
+      warnings.push(`• [SHIRUDO ${f.ruleId || f.cwe} ${f.severity.toUpperCase()}] ${f.title} at ${f.location}: ${f.evidence}`);
+    }
+    for (const ct of cmdPost.cantTellReasons.slice(0, 3)) {
       warnings.push(`• [SHIRUDO CAN'T TELL · ${ct.code}] ${ct.message}`);
     }
   }

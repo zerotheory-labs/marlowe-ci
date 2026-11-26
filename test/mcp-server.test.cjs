@@ -40,7 +40,7 @@ test('MCP stdio server handles initialize, tools/list, and tools/call over newli
       'type = "bpf"',
       '',
       '[upatches.tree]',
-      'id = "demo-shield"',
+      'id = "guard"',
       '',
       '[upatches.tree.selector.labels]',
       'role = ["edge"]'

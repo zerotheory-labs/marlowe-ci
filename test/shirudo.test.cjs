@@ -140,7 +140,7 @@ test('runAudit evaluates Shirudo Beefile + .bpf.c verdicts as HOLDS UP, CAN\'T T
       'type = "bpf"',
       '',
       '[upatches.tree]',
-      'id = "java4shell-guard"',
+      'id = "guard"',
       '',
       '[upatches.tree.selector.labels]',
       'service = ["elasticsearch"]'
@@ -186,7 +186,7 @@ test('runAudit evaluates Shirudo Beefile + .bpf.c verdicts as HOLDS UP, CAN\'T T
   );
   const wildcard = await runAudit({ root: repo, mode: 'diff', queryOsv: false });
   assert.equal(wildcard.verdict, 'cant-tell');
-  assert.ok(wildcard.cantTellReasons.some(r => r.code === 'shirudo-upatch-wildcard-selector'));
+  assert.ok(wildcard.cantTellReasons.some(r => r.code === 'SHIRUDO-BEE-001'));
 
   // 3. Embedded PEM private key + http:// registry + bpf_probe_write_user -> FAILS
   const fakePemBegin = '-----BEGIN ' + 'PRIVATE KEY-----';

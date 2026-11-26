@@ -1,26 +1,26 @@
 {
-  "version": "0.5.0",
-  "generatedAt": "2026-11-25T18:05:07.255Z",
+  "version": "0.6.0",
+  "generatedAt": "2026-11-26T23:53:36.189Z",
   "nodeVersion": "v26.12.0",
   "platform": "darwin-arm64",
   "workspace": "ephemeral-temp-repos",
   "summary": {
-    "totalScenarios": 24,
-    "exactMatches": 24,
+    "totalScenarios": 33,
+    "exactMatches": 33,
     "exactAccuracyPct": 100,
     "failsPrecisionPct": 100,
     "failsRecallPct": 100,
     "failsF1Pct": 100,
     "falsePositives": 0,
     "falseNegatives": 0,
-    "cleanScenarios": 8,
+    "cleanScenarios": 9,
     "cleanFalsePositives": 0,
     "cleanFalsePositiveRatePct": 0,
-    "cantTellExact": 4,
-    "cantTellTotal": 4,
-    "p50Ms": 18,
-    "p95Ms": 22.45,
-    "meanMs": 18.95
+    "cantTellExact": 7,
+    "cantTellTotal": 7,
+    "p50Ms": 18.8,
+    "p95Ms": 20.55,
+    "meanMs": 18.88
   },
   "domains": [
     {
@@ -28,48 +28,48 @@
       "total": 6,
       "passed": 6,
       "accuracyPct": 100,
-      "p50Ms": 18.35,
-      "p95Ms": 30.32
+      "p50Ms": 17.45,
+      "p95Ms": 30.41
     },
     {
       "domain": "Secrets & Masking",
       "total": 3,
       "passed": 3,
       "accuracyPct": 100,
-      "p50Ms": 17.76,
-      "p95Ms": 17.97
+      "p50Ms": 16.94,
+      "p95Ms": 17.46
     },
     {
       "domain": "Regressions & Precision",
       "total": 5,
       "passed": 5,
       "accuracyPct": 100,
-      "p50Ms": 18.69,
-      "p95Ms": 22.45
+      "p50Ms": 16.86,
+      "p95Ms": 17.04
     },
     {
       "domain": "Agent Guard",
       "total": 5,
       "passed": 5,
       "accuracyPct": 100,
-      "p50Ms": 18.45,
-      "p95Ms": 19.17
+      "p50Ms": 19.44,
+      "p95Ms": 20.48
     },
     {
       "domain": "Shirudo eBPF & Attest",
-      "total": 3,
-      "passed": 3,
+      "total": 12,
+      "passed": 12,
       "accuracyPct": 100,
-      "p50Ms": 18.45,
-      "p95Ms": 18.86
+      "p50Ms": 19.37,
+      "p95Ms": 20.55
     },
     {
       "domain": "Binaries & Refactors",
       "total": 2,
       "passed": 2,
       "accuracyPct": 100,
-      "p50Ms": 17.3,
-      "p95Ms": 17.86
+      "p50Ms": 18.73,
+      "p95Ms": 19.24
     }
   ],
   "scenarios": [
@@ -79,7 +79,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 30.32,
+      "durationMs": 30.41,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -89,7 +89,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.63,
+      "durationMs": 19.49,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -99,7 +99,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 17.89,
+      "durationMs": 17.31,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -109,7 +109,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 18.48,
+      "durationMs": 17.92,
       "findingsCount": 1,
       "cantTellCount": 1
     },
@@ -119,7 +119,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 18.35,
+      "durationMs": 17.45,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -129,7 +129,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 17.48,
+      "durationMs": 16.85,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -139,7 +139,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 17.97,
+      "durationMs": 17.46,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -149,7 +149,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 17.39,
+      "durationMs": 16.94,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -159,7 +159,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 17.76,
+      "durationMs": 16.91,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -169,7 +169,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 17.49,
+      "durationMs": 17.04,
       "findingsCount": 2,
       "cantTellCount": 0
     },
@@ -179,7 +179,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 20.35,
+      "durationMs": 16.47,
       "findingsCount": 0,
       "cantTellCount": 2
     },
@@ -189,7 +189,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 22.45,
+      "durationMs": 16.86,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -199,7 +199,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 18.69,
+      "durationMs": 17.02,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -209,7 +209,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 17.7,
+      "durationMs": 16.51,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -219,7 +219,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.17,
+      "durationMs": 18.04,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -229,7 +229,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 18.45,
+      "durationMs": 19.53,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -239,7 +239,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 18.84,
+      "durationMs": 19.33,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -249,7 +249,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 17.9,
+      "durationMs": 20.48,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -259,7 +259,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 17.96,
+      "durationMs": 19.44,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -269,7 +269,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 18,
+      "durationMs": 19.59,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -279,7 +279,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 18.86,
+      "durationMs": 18.99,
       "findingsCount": 1,
       "cantTellCount": 1
     },
@@ -289,7 +289,97 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 18.45,
+      "durationMs": 18.92,
+      "findingsCount": 0,
+      "cantTellCount": 0
+    },
+    {
+      "id": "shirudo-s04-fmodret-internal-unverified",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "cant-tell",
+      "actual": "cant-tell",
+      "exact": true,
+      "durationMs": 19.37,
+      "findingsCount": 0,
+      "cantTellCount": 1
+    },
+    {
+      "id": "shirudo-s05-fmodret-sleepable-and-eagain",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 18.79,
+      "findingsCount": 3,
+      "cantTellCount": 0
+    },
+    {
+      "id": "shirudo-s06-fmodret-prefer-lsm",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "cant-tell",
+      "actual": "cant-tell",
+      "exact": true,
+      "durationMs": 19.74,
+      "findingsCount": 0,
+      "cantTellCount": 1
+    },
+    {
+      "id": "shirudo-s07-policy-map-mutation",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 19.82,
+      "findingsCount": 1,
+      "cantTellCount": 0
+    },
+    {
+      "id": "shirudo-s08-beefile-omitted-selector",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "cant-tell",
+      "actual": "cant-tell",
+      "exact": true,
+      "durationMs": 20.24,
+      "findingsCount": 0,
+      "cantTellCount": 1
+    },
+    {
+      "id": "shirudo-s09-rodata-shell-generator",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 20.55,
+      "findingsCount": 1,
+      "cantTellCount": 0
+    },
+    {
+      "id": "shirudo-s10-beefile-structural-invariants",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 20.13,
+      "findingsCount": 3,
+      "cantTellCount": 0
+    },
+    {
+      "id": "shirudo-s11-tpm-workflow-bypasses",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 18.56,
+      "findingsCount": 3,
+      "cantTellCount": 1
+    },
+    {
+      "id": "shirudo-s12-clean-control",
+      "domain": "Shirudo eBPF & Attest",
+      "expected": "holds",
+      "actual": "holds",
+      "exact": true,
+      "durationMs": 18.8,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -299,7 +389,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 17.3,
+      "durationMs": 19.24,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -309,7 +399,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 17.86,
+      "durationMs": 18.73,
       "findingsCount": 0,
       "cantTellCount": 0
     }

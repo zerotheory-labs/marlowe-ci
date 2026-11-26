@@ -28,7 +28,7 @@ source = "smoke.bpf.c"
 type = "bpf"
 
 [upatches.tree]
-id = "linux-smoke-shield"
+id = "smoke"
 
 [upatches.tree.selector.labels]
 env = ["smoke"]
@@ -38,7 +38,8 @@ cat > "$TMP_DIR/smoke.bpf.c" <<'EOF'
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
 SEC("lsm/file_open")
 int smoke_check(void *ctx) {
-  return 0;
+  unsigned int pid = bpf_get_current_pid_tgid() >> 32;
+  return pid ? 0 : 0;
 }
 EOF
 

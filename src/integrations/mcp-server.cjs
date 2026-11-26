@@ -177,7 +177,9 @@ const MCP_TOOLS = [
       properties: {
         evidence_path: { type: 'string', description: 'Workspace-relative path to the Shirudo TPM 2.0 attestation evidence JSON file.' },
         nonce: { type: 'string', description: 'Optional expected hex nonce (8-128 hex chars).' },
-        ak_name: { type: 'string', description: 'Optional expected attestation key (AK) name.' }
+        ak_name: { type: 'string', description: 'Optional expected attestation key (AK) name.' },
+        expected_pcr11: { type: 'string', description: 'Optional expected SHA-256 PCR 11 digest for UKI/initrd boot verification.' },
+        expected_config_root: { type: 'string', description: 'Optional expected active Shirudo configuration image root hash.' }
       },
       required: ['evidence_path'],
       additionalProperties: false
@@ -322,6 +324,8 @@ async function executeMcpTool(name, args = {}, { root = process.cwd() } = {}) {
         evidencePath: args.evidence_path.trim(),
         nonce: typeof args.nonce === 'string' ? args.nonce : '',
         akName: typeof args.ak_name === 'string' ? args.ak_name : '',
+        expectedPcr11: typeof args.expected_pcr11 === 'string' ? args.expected_pcr11 : '',
+        expectedConfigRoot: typeof args.expected_config_root === 'string' ? args.expected_config_root : '',
         commandPath
       });
     }

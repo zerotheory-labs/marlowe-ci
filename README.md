@@ -9,7 +9,7 @@
 </p>
 
 <p>
-  <a href="https://github.com/zerotheory-labs/marlowe-ci/releases/tag/v0.5.0"><img alt="Release v0.5.0" src="https://img.shields.io/badge/release-v0.5.0-3ddc97?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
+  <a href="https://github.com/zerotheory-labs/marlowe-ci/releases/tag/v0.6.0"><img alt="Release v0.6.0" src="https://img.shields.io/badge/release-v0.6.0-3ddc97?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
   <a href="https://www.npmjs.com/package/@zerotheory-labs/marlowe-ci"><img alt="npm @zerotheory-labs/marlowe-ci" src="https://img.shields.io/badge/npm-%40zerotheory--labs%2Fmarlowe--ci-3ddc97?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
   <a href="https://registry.modelcontextprotocol.io/v0/servers?search=io.github.zerotheory-labs/marlowe-ci"><img alt="MCP Registry io.github.zerotheory-labs/marlowe-ci" src="https://img.shields.io/badge/MCP_Registry-io.github.zerotheory--labs-3ddc97?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
   <a href="./LICENSE"><img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm_Noncommercial_1.0.0-e5c07b?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
@@ -33,13 +33,15 @@
 
 AI coding agents mutate files, run shell commands, and open pull requests in seconds. Giving an agent an unguarded shell is a liability — and shallow static scanners drown teams in unreachable alerts.
 
-**Marlowe CI / Guard** (`v0.5.0`) brings [Marlowe](https://github.com/zerotheory-labs/marlowe)'s host-enforced security boundaries directly into **Claude Code hooks**, **MCP clients** (Claude Code, Cursor, VS Code, Codex CLI, Windsurf, Antigravity), **GitHub Actions (SARIF v2.1.0)**, and **git pre-commit** hooks with zero runtime dependencies and no LLM key required.
+**Marlowe CI / Guard** (`v0.6.0`) brings [Marlowe](https://github.com/zerotheory-labs/marlowe)'s host-enforced security boundaries directly into **Claude Code hooks**, **MCP clients** (Claude Code, Cursor, VS Code, Codex CLI, Windsurf, Antigravity), **GitHub Actions (SARIF v2.1.0)**, and **git pre-commit** hooks with zero runtime dependencies and no LLM key required.
 
-### What's New in `v0.5.0`
-- **`agent-guard` (AI Prompt Injection, Trojan Source & Supply-Chain Rug-Pulls):** Detects Unicode bidirectional overrides (`U+202E`, `CWE-116`), Unicode Tag-block/zero-width smuggling, indirect prompt injection inside `CLAUDE.md`/`.cursorrules`/HTML comments (`CWE-74`), malicious `package.json` `preinstall`/`postinstall` scripts (`CWE-506`), and untrusted MCP server configs — wired into diffs, `PreToolUse` Bash checks, and `PostToolUse` feedback.
-- **One-Command Multi-Agent Installers:** Added `init --cursor`, `--vscode`, `--codex`, `--windsurf`, and `--all-agents` (writing idempotent MCP configs plus `.cursor/rules/marlowe-guard.mdc` and `.windsurf/rules/marlowe-guard.md` without overwriting existing entries).
-- **Dogfooding Precision Fixes & OIDC Releases:** Scoped `package.json` specifier checks strictly to dependency blocks (ignoring `repository.url`), exempted non-code docs/manifests from removed-control prose checks, and added [`.github/workflows/release-npm-mcp.yml`](./.github/workflows/release-npm-mcp.yml) for OIDC publishing.
-- **Reproducible 24-Scenario Benchmark Suite (`npm run bench`):** Measures exact 3-state accuracy (`24/24`, `100%`), `0%` clean false-positive rate (`0/8`), and `18ms` median / `22.45ms` p95 latency in [`benchmarks/results.json`](./benchmarks/results.json).
+### What's New in `v0.6.0`
+- **10-Rule Shirudo Static & Offline Verifier (`SHIRUDO-BPF-001..004`, `SHIRUDO-BEE-001..003`, `SHIRUDO-TPM-001..003`):**
+  - **`.bpf.c` upatches:** Flags illegal sleepable `fmod_ret.s/` targets (`BPF-001`), missing `return 0;` or stripped `-EAGAIN` / `<= -512` / positive returns (`BPF-002`), `fmod_ret/` where `lsm/` avoids re-entrant fail-open gaps (`BPF-003`), and writes to read-only `shirudo_task_policy` / `shirudo_sock_policy` maps (`BPF-004`).
+  - **`Beefile` manifests & `PreToolUse`:** Enforces selector cardinality, control-char escapes, and omitted CVE/enforcing selectors (`BEE-001`), blocks `[[upatches.rodata]]` shell/network `generator` & `update` hooks running with operator key privileges (`BEE-002`), and checks `tree.id` matching, 64-bit one-hot policy bitmasks, path glob placement, `load_target`, and TOML subset validity (`BEE-003`).
+  - **TPM 2.0 & Verifier Boundaries:** Catches `shirudo status` without `--check`, self-asserted `--ak-name=$(jq ...)` / missing `--nonce`, unpinned offline `ev.json`, zero PCR 11 QEMU boots, missing `0x01818E00` PCR 9 anchors, and `reset_count` mismatches (`TPM-001..003`).
+- **Expanded 33-Scenario Benchmark Suite (`npm run bench`):** Lifted Shirudo scenarios from `3/3` → `12/12` (`33/33` overall `100%` exact 3-state accuracy, `0%` clean FP rate, `18.11ms` p50).
+- **SARIF First-Class `ruleId`s + Maintainer Docs:** Preserves explicit `SHIRUDO-*` rule IDs in SARIF v2.1.0 output and adds [`CLAUDE.md`](./CLAUDE.md).
 
 ---
 
@@ -57,21 +59,22 @@ Every audit emits one explicit verdict:
 
 ## Recorded Benchmark Scorecard (`npm run bench`)
 
-Executed offline via [`benchmarks/run-benchmarks.cjs`](./benchmarks/run-benchmarks.cjs) against 24 ephemeral Git diff repositories (`Node.js v26.12.0`, `darwin-arm64`, `0` skipped; saved in [`benchmarks/results.json`](./benchmarks/results.json)):
+Executed offline via [`benchmarks/run-benchmarks.cjs`](./benchmarks/run-benchmarks.cjs) against 33 ephemeral Git diff repositories (`Node.js v26.12.0`, `darwin-arm64`, `0` skipped; saved in [`benchmarks/results.json`](./benchmarks/results.json)):
 
-- **Exact 3-State Verdict Accuracy:** `24/24` (**`100%`**)
+- **Exact 3-State Verdict Accuracy:** `33/33` (**`100%`**)
 - **`FAILS` Precision / Recall / F1:** `100% / 100% / 100%` (`FP = 0`, `FN = 0`)
-- **Clean / Benign False-Positive Rate:** **`0%`** (`0/8`)
-- **Latency (`p50` / `p95` / `mean`):** **`18ms` / `22.45ms` / `18.95ms`**
+- **Clean / Benign False-Positive Rate:** **`0%`** (`0/9`)
+- **`CAN'T TELL` Exact Match:** **`7/7`**
+- **Latency (`p50` / `p95` / `mean`):** **`18.11ms` / `25.16ms` / `18.85ms`**
 
 | Domain | Passed | Accuracy | p50 | p95 |
 | :--- | :---: | :---: | :---: | :---: |
-| AppSec & Cross-File Reachability | `6/6` | `100%` | `18.35ms` | `30.32ms` |
-| Secrets & Masking | `3/3` | `100%` | `17.76ms` | `17.97ms` |
-| Guardrail Regressions & Precision | `5/5` | `100%` | `18.69ms` | `22.45ms` |
-| Agent Guard (Prompt Injection / Trojan / Rug-Pull) | `5/5` | `100%` | `18.45ms` | `19.17ms` |
-| Shirudo eBPF & Attestation | `3/3` | `100%` | `18.45ms` | `18.86ms` |
-| Binaries & Clean Refactors | `2/2` | `100%` | `17.3ms` | `17.86ms` |
+| AppSec & Cross-File Reachability | `6/6` | `100%` | `17.91ms` | `31.29ms` |
+| Secrets & Masking | `3/3` | `100%` | `18.11ms` | `18.86ms` |
+| Guardrail Regressions & Precision | `5/5` | `100%` | `17.93ms` | `19ms` |
+| Agent Guard (Prompt Injection / Trojan / Rug-Pull) | `5/5` | `100%` | `18.11ms` | `19.23ms` |
+| Shirudo eBPF, Beefile & TPM Attestation | `12/12` | `100%` | `18.28ms` | `19.54ms` |
+| Binaries & Clean Refactors | `2/2` | `100%` | `16.98ms` | `18.11ms` |
 
 ---
 
@@ -156,7 +159,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: zerotheory-labs/marlowe-ci@v0.5.0
+      - uses: zerotheory-labs/marlowe-ci@v0.6.0
         with:
           mode: diff
           fail-on: high

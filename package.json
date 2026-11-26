@@ -1,6 +1,6 @@
 {
   "name": "@zerotheory-labs/marlowe-ci",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "mcpName": "io.github.zerotheory-labs/marlowe-ci",
   "description": "Marlowe CI / Guard — Source-available security guardrails for Claude Code hooks, MCP agents, GitHub Actions, and pre-commit workflows.",
   "bin": {

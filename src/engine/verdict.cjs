@@ -23,7 +23,14 @@ const { normalizeFinding, toSarifReport, toMarkdownReport } = require('../core/f
 const { getGitDiff } = require('./git-diff.cjs');
 const { detectGuardrailRegressions } = require('./regressions.cjs');
 const { loadBaseline, applyBaseline } = require('./baseline.cjs');
-const { isBeefilePath, isBpfSourcePath, auditBeefile, auditBpfUpatchSource } = require('../core/shirudo.cjs');
+const {
+  isBeefilePath,
+  isBpfSourcePath,
+  auditBeefile,
+  auditBpfUpatchSource,
+  auditShirudoCommands,
+  auditShirudoEvidenceJson
+} = require('../core/shirudo.cjs');
 const { scanAgentGuard } = require('../core/agent-guard.cjs');
 
 const SEVERITY_RANK = { critical: 4, high: 3, medium: 2, low: 1, info: 0 };
@@ -176,7 +183,7 @@ function normalizeFindingsList(rawFindings, workspaceRoot) {
       status: item.reachability === 'unverified' ? 'open' : 'verified'
     }, { playbook: 'ci', runId: 'marlowe-ci' });
     normalized.reachability = item.reachability || 'reachable';
-    const key = `${normalized.title.toLowerCase()}|${normalized.location.toLowerCase()}|${normalized.cwe}`;
+    const key = `${(normalized.ruleId || '').toLowerCase()}|${normalized.title.toLowerCase()}|${normalized.location.toLowerCase()}|${normalized.cwe}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(normalized);
@@ -360,6 +367,16 @@ async function runAudit({
       const bpfRes = auditBpfUpatchSource(cand.relPath, text);
       rawFindings.push(...bpfRes.findings);
       cantTellReasons.push(...bpfRes.cantTellReasons);
+    } else if (/\.(?:sh|bash|zsh|ya?ml)$|(?:^|\/)(?:Makefile|Dockerfile|Containerfile)$/i.test(cand.relPath)) {
+      const cmdRes = auditShirudoCommands(cand.relPath, text, { allowedLines: cand.allowedLines });
+      rawFindings.push(...cmdRes.findings);
+      cantTellReasons.push(...cmdRes.cantTellReasons);
+    } else if (/(?:^|\/)(?:ev|evidence|attest|attestation)[^/]*\.json$/i.test(cand.relPath)) {
+      const evRes = auditShirudoEvidenceJson(cand.relPath, text);
+      if (evRes.isEvidence) {
+        rawFindings.push(...evRes.findings);
+        cantTellReasons.push(...evRes.cantTellReasons);
+      }
     }
 
     for (const hit of codeHits) {
