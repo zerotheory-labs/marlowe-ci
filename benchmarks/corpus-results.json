@@ -1,60 +1,163 @@
 {
-  "generatedAt": "2026-11-27T01:07:08.803Z",
+  "generatedAt": "2026-11-27T16:13:22.602Z",
   "nodeVersion": "v26.12.0",
   "platform": "darwin-arm64",
+  "summary": {
+    "totalRepos": 12,
+    "cleanReposCount": 9,
+    "vulnerableReposCount": 3,
+    "totalPrDiffs": 135,
+    "prHoldsCount": 128,
+    "prCantTellCount": 7,
+    "prFailsCount": 0,
+    "prFalseFailRatePct": 0,
+    "prP50Ms": 11.32,
+    "prP95Ms": 18.58,
+    "prMeanMs": 12.26,
+    "cleanFullRepoFailsRepos": 1,
+    "vulnerableTotalFailing": 98,
+    "vulnerableReposCaught": 3,
+    "vulnerableCweBreakdown": {
+      "CWE-94": 13,
+      "CWE-798": 40,
+      "CWE-502": 11,
+      "CWE-200": 9,
+      "CWE-89": 13,
+      "CWE-116": 6,
+      "CWE-78": 3,
+      "CWE-522": 3
+    }
+  },
   "repos": [
     {
       "slug": "express",
       "repo": "expressjs/express",
+      "ecosystem": "JS",
       "commitSha": "43fca52",
-      "role": "clean-framework",
+      "role": "clean-production",
       "verdict": "holds",
       "verdictLabel": "HOLDS UP",
       "scannedFiles": 215,
-      "durationMs": 47.02,
+      "durationMs": 34.74,
       "totalFindings": 0,
       "failingFindings": 0,
       "cantTellCount": 0,
       "ruleBreakdown": {},
       "cantTellBreakdown": {},
       "sampleFindings": [],
-      "sampleCantTell": []
+      "sampleCantTell": [],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 13,
+        "cantTellCount": 2,
+        "failsCount": 0,
+        "p50Ms": 11.07,
+        "p95Ms": 15.53,
+        "nonHoldsSamples": [
+          {
+            "sha": "6389ae5",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 15.53,
+            "changedFiles": 5,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/ci.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/ci.yml, .github/workflows/codeql.yml, .github/workflows/legacy.yml (+2 more))."
+              }
+            ]
+          },
+          {
+            "sha": "2717ae3",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 10.05,
+            "changedFiles": 2,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/codeql.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/codeql.yml, .github/workflows/scorecard.yml)."
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "slug": "fastify",
       "repo": "fastify/fastify",
+      "ecosystem": "JS",
       "commitSha": "a94dc37",
-      "role": "clean-framework",
+      "role": "clean-production",
       "verdict": "holds",
       "verdictLabel": "HOLDS UP",
       "scannedFiles": 397,
-      "durationMs": 88.7,
+      "durationMs": 81.69,
       "totalFindings": 0,
       "failingFindings": 0,
       "cantTellCount": 0,
       "ruleBreakdown": {},
       "cantTellBreakdown": {},
       "sampleFindings": [],
-      "sampleCantTell": []
+      "sampleCantTell": [],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 14,
+        "cantTellCount": 1,
+        "failsCount": 0,
+        "p50Ms": 11.11,
+        "p95Ms": 24.46,
+        "nonHoldsSamples": [
+          {
+            "sha": "4679723",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 9.87,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": "SECURITY.md",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (SECURITY.md)."
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "slug": "hono",
       "repo": "honojs/hono",
+      "ecosystem": "TS",
       "commitSha": "717dc17",
-      "role": "clean-framework",
-      "verdict": "fails",
-      "verdictLabel": "FAILS",
+      "role": "clean-production",
+      "verdict": "cant-tell",
+      "verdictLabel": "CAN'T TELL",
       "scannedFiles": 581,
-      "durationMs": 161.61,
+      "durationMs": 156,
       "totalFindings": 3,
-      "failingFindings": 2,
-      "cantTellCount": 1,
+      "failingFindings": 0,
+      "cantTellCount": 3,
       "ruleBreakdown": {
         "CWE-78": 2,
         "CWE-79": 1
       },
       "cantTellBreakdown": {
-        "unverified-sink": 1
+        "unverified-sink": 3
       },
       "sampleFindings": [
         {
@@ -62,7 +165,7 @@
           "severity": "high",
           "cwe": "CWE-78",
           "category": "appsec",
-          "title": "Potential OS Command Injection sink",
+          "title": "Potential OS Command Injection sink (Unverified Reachability)",
           "location": "build/release-adapter.ts:22",
           "evidence": "const run = (cmd: string, cwd = '.') => execSync(cmd, { cwd, stdio: 'inherit' })"
         },
@@ -71,7 +174,7 @@
           "severity": "high",
           "cwe": "CWE-78",
           "category": "appsec",
-          "title": "Potential OS Command Injection sink",
+          "title": "Potential OS Command Injection sink (Unverified Reachability)",
           "location": "build/release-adapter.ts:24",
           "evidence": "execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] })"
         },
@@ -88,138 +191,282 @@
       "sampleCantTell": [
         {
           "code": "unverified-sink",
+          "path": "build/release-adapter.ts",
+          "line": 22,
+          "message": "Unverified CWE-78 sink \"Potential OS Command Injection sink\" in build/tooling CLI script build/release-adapter.ts:22 — confirm no untrusted input reaches this sink."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "build/release-adapter.ts",
+          "line": 24,
+          "message": "Unverified CWE-78 sink \"Potential OS Command Injection sink\" in build/tooling CLI script build/release-adapter.ts:24 — confirm no untrusted input reaches this sink."
+        },
+        {
+          "code": "unverified-sink",
           "path": "src/jsx/dom/render.ts",
           "line": 188,
           "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at src/jsx/dom/render.ts:188 — no HTTP/URL/CLI ingress detected in file; verify manually."
         }
-      ]
+      ],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 15,
+        "cantTellCount": 0,
+        "failsCount": 0,
+        "p50Ms": 11.24,
+        "p95Ms": 12.1,
+        "nonHoldsSamples": []
+      }
     },
     {
-      "slug": "shirudo",
-      "repo": "shirudo-dev/shirudo",
-      "commitSha": "8a8e165",
-      "role": "upstream-shirudo",
-      "verdict": "fails",
-      "verdictLabel": "FAILS",
-      "scannedFiles": 1852,
-      "durationMs": 608.67,
-      "totalFindings": 4,
-      "failingFindings": 2,
-      "cantTellCount": 31,
+      "slug": "koa",
+      "repo": "koajs/koa",
+      "ecosystem": "JS",
+      "commitSha": "98a19bc",
+      "role": "clean-production",
+      "verdict": "holds",
+      "verdictLabel": "HOLDS UP",
+      "scannedFiles": 124,
+      "durationMs": 25.97,
+      "totalFindings": 0,
+      "failingFindings": 0,
+      "cantTellCount": 0,
+      "ruleBreakdown": {},
+      "cantTellBreakdown": {},
+      "sampleFindings": [],
+      "sampleCantTell": [],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 15,
+        "cantTellCount": 0,
+        "failsCount": 0,
+        "p50Ms": 11.49,
+        "p95Ms": 29.89,
+        "nonHoldsSamples": []
+      }
+    },
+    {
+      "slug": "zod",
+      "repo": "colinhacks/zod",
+      "ecosystem": "TS",
+      "commitSha": "d40c329",
+      "role": "clean-production",
+      "verdict": "cant-tell",
+      "verdictLabel": "CAN'T TELL",
+      "scannedFiles": 688,
+      "durationMs": 196.03,
+      "totalFindings": 1,
+      "failingFindings": 0,
+      "cantTellCount": 1,
       "ruleBreakdown": {
-        "SHIRUDO-TPM-003": 2,
-        "CWE-79": 1,
-        "CWE-250": 1
+        "CWE-94": 1
       },
       "cantTellBreakdown": {
-        "unverified-sink": 1,
-        "SHIRUDO-TPM-003": 1,
-        "SHIRUDO-BPF-001": 2,
-        "shirudo-bpf-unbounded-hook": 7,
-        "SHIRUDO-BEE-001": 4,
-        "SHIRUDO-BEE-002": 8,
-        "shirudo-upatch-missing-source": 3,
-        "shirudo-bpf-missing-license": 5
+        "unverified-sink": 1
       },
       "sampleFindings": [
         {
-          "ruleId": "SHIRUDO-TPM-003",
+          "ruleId": "CWE-94",
           "severity": "high",
-          "cwe": "CWE-252",
+          "cwe": "CWE-94",
           "category": "appsec",
-          "title": "shirudo status invoked in gating workflow/script without --check",
-          "location": "testing/ci-checks/t0008-check-docs.sh:180",
-          "evidence": "\"       \\\"\\$(shirudo status --json |\"  \"          jq --arg k v)\\\" \\\\\" \"       --json\" &&"
-        },
-        {
-          "ruleId": "SHIRUDO-TPM-003",
-          "severity": "high",
-          "cwe": "CWE-252",
-          "category": "appsec",
-          "title": "shirudo status invoked in gating workflow/script without --check",
-          "location": "testing/ci-checks/t0008-check-docs.sh:184",
-          "evidence": "\"       \\\"\\$(shirudo status --json |\"  \"          jq --arg k v)\\\" \\\\\" \"       --bogus\" &&"
-        },
-        {
-          "ruleId": "CWE-79",
-          "severity": "medium",
-          "cwe": "CWE-79",
-          "category": "appsec",
-          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
-          "location": "Documentation/_themes/shirudo/static/shirudo.js:27",
-          "evidence": "button.innerHTML = chevron;"
-        },
-        {
-          "ruleId": "CWE-250",
-          "severity": "medium",
-          "cwe": "CWE-250",
-          "category": "config",
-          "title": "Privileged container or world-writable permissions",
-          "location": "testing/functional/image/t5007-config-update.sh:233",
-          "evidence": "chmod 777 \"$WORK/real-dir\" &&"
+          "title": "Dynamic code evaluation (eval / Function / vm) (Unverified Reachability)",
+          "location": "packages/bench/memory/dict-mode.ts:13",
+          "evidence": "const hasFast: (o: object) => boolean = eval(\"(o) => %HasFastProperties(o)\");"
         }
       ],
       "sampleCantTell": [
         {
           "code": "unverified-sink",
-          "path": "Documentation/_themes/shirudo/static/shirudo.js",
-          "line": 27,
-          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at Documentation/_themes/shirudo/static/shirudo.js:27 — no HTTP/URL/CLI ingress detected in file; verify manually."
-        },
-        {
-          "code": "SHIRUDO-TPM-003",
-          "path": "testing/end2end/operator.sh",
-          "line": 152,
-          "message": "shirudo attest verify at testing/end2end/operator.sh:152 omits --expect-config-root/--expect-config-pcr; active config image remains unapproved."
-        },
-        {
-          "code": "SHIRUDO-BPF-001",
-          "path": "testing/fixtures/fmod-ret-tagged.bpf.c",
-          "line": 17,
-          "message": "Unverified internal kernel fmod_ret target \"vfs_fallocate\" at testing/fixtures/fmod-ret-tagged.bpf.c:17; confirm no inline unlocks/refcounts are bypassed."
-        },
-        {
-          "code": "SHIRUDO-BPF-001",
-          "path": "testing/fixtures/fmod-ret-unlisted.bpf.c",
+          "path": "packages/bench/memory/dict-mode.ts",
           "line": 13,
-          "message": "Unverified internal kernel fmod_ret target \"vfs_fallocate\" at testing/fixtures/fmod-ret-unlisted.bpf.c:13; confirm no inline unlocks/refcounts are bypassed."
-        },
+          "message": "Unverified CWE-94 sink \"Dynamic code evaluation (eval / Function / vm)\" at packages/bench/memory/dict-mode.ts:13 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        }
+      ],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 15,
+        "cantTellCount": 0,
+        "failsCount": 0,
+        "p50Ms": 14.74,
+        "p95Ms": 20.64,
+        "nonHoldsSamples": []
+      }
+    },
+    {
+      "slug": "flask",
+      "repo": "pallets/flask",
+      "ecosystem": "Python",
+      "commitSha": "49943b5",
+      "role": "clean-production",
+      "verdict": "cant-tell",
+      "verdictLabel": "CAN'T TELL",
+      "scannedFiles": 229,
+      "durationMs": 55.41,
+      "totalFindings": 1,
+      "failingFindings": 0,
+      "cantTellCount": 1,
+      "ruleBreakdown": {
+        "CWE-94": 1
+      },
+      "cantTellBreakdown": {
+        "unverified-sink": 1
+      },
+      "sampleFindings": [
         {
-          "code": "shirudo-bpf-unbounded-hook",
-          "path": "testing/fixtures/scope-kprobe.bpf.c",
-          "line": 8,
-          "message": "Broad kernel hook in \"testing/fixtures/scope-kprobe.bpf.c\" (line 8) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
-        },
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm) (Unverified Reachability)",
+          "location": "src/flask/cli.py:1022",
+          "evidence": "eval(compile(f.read(), startup, \"exec\"), ctx)"
+        }
+      ],
+      "sampleCantTell": [
         {
-          "code": "SHIRUDO-BEE-001",
-          "path": "testing/fixtures/app-sandbox/probe.Beefile",
-          "line": 26,
-          "message": "Shirudo [upatches.tree] \"app-sandbox\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
-        },
+          "code": "unverified-sink",
+          "path": "src/flask/cli.py",
+          "line": 1022,
+          "message": "Unverified CWE-94 sink \"Dynamic code evaluation (eval / Function / vm)\" at src/flask/cli.py:1022 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        }
+      ],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 15,
+        "cantTellCount": 0,
+        "failsCount": 0,
+        "p50Ms": 10.93,
+        "p95Ms": 17.15,
+        "nonHoldsSamples": []
+      }
+    },
+    {
+      "slug": "fastapi",
+      "repo": "fastapi/fastapi",
+      "ecosystem": "Python",
+      "commitSha": "05e6df7",
+      "role": "clean-production",
+      "verdict": "fails",
+      "verdictLabel": "FAILS",
+      "scannedFiles": 3078,
+      "durationMs": 446.61,
+      "totalFindings": 1,
+      "failingFindings": 1,
+      "cantTellCount": 0,
+      "ruleBreakdown": {
+        "CWE-522": 1
+      },
+      "cantTellBreakdown": {},
+      "sampleFindings": [
         {
-          "code": "SHIRUDO-BEE-002",
-          "path": "testing/fixtures/app-sandbox/probe.Beefile",
-          "line": 10,
-          "message": "Unreviewed [[upatches.rodata]].generator command (python3) at testing/fixtures/app-sandbox/probe.Beefile:10 runs via execvp during bpm build/update; review before operator signing."
-        },
-        {
-          "code": "SHIRUDO-BEE-002",
-          "path": "testing/fixtures/app-sandbox/probe.Beefile",
-          "line": 10,
-          "message": "Unreviewed [[upatches.rodata]].update command (python3) at testing/fixtures/app-sandbox/probe.Beefile:10 runs via execvp during bpm build/update; review before operator signing."
-        },
-        {
-          "code": "shirudo-upatch-missing-source",
-          "path": "testing/fixtures/app-sandbox/probe.Beefile",
-          "line": 7,
-          "message": "Referenced upatch artifact \"app-sandbox.bpf.c\" (testing/fixtures/app-sandbox/app-sandbox.bpf.c) was not found inside workspace."
-        },
-        {
-          "code": "SHIRUDO-BEE-001",
-          "path": "testing/fixtures/pipeline/net-guard/Beefile",
-          "line": 10,
-          "message": "Shirudo [upatches.tree] \"net-guard\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
-        },
+          "ruleId": "CWE-522",
+          "severity": "high",
+          "cwe": "CWE-522",
+          "category": "secrets",
+          "title": "Authorization Credential",
+          "location": "fastapi/security/http.py:42",
+          "evidence": "Authorization: Bearer dead…[REDACTED]…346"
+        }
+      ],
+      "sampleCantTell": [],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 15,
+        "cantTellCount": 0,
+        "failsCount": 0,
+        "p50Ms": 11.61,
+        "p95Ms": 20.35,
+        "nonHoldsSamples": []
+      }
+    },
+    {
+      "slug": "gin",
+      "repo": "gin-gonic/gin",
+      "ecosystem": "Go",
+      "commitSha": "0f09c3a",
+      "role": "clean-production",
+      "verdict": "holds",
+      "verdictLabel": "HOLDS UP",
+      "scannedFiles": 128,
+      "durationMs": 29.06,
+      "totalFindings": 0,
+      "failingFindings": 0,
+      "cantTellCount": 0,
+      "ruleBreakdown": {},
+      "cantTellBreakdown": {},
+      "sampleFindings": [],
+      "sampleCantTell": [],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 13,
+        "cantTellCount": 2,
+        "failsCount": 0,
+        "p50Ms": 10.93,
+        "p95Ms": 13.08,
+        "nonHoldsSamples": [
+          {
+            "sha": "3329b63",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 9.31,
+            "changedFiles": 2,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/gin.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/gin.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "bc141b4",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.92,
+            "changedFiles": 4,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/gin.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/gin.yml)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "shirudo",
+      "repo": "shirudo-dev/shirudo",
+      "ecosystem": "eBPF / C / Rust",
+      "commitSha": "5879ce3",
+      "role": "clean-production",
+      "verdict": "cant-tell",
+      "verdictLabel": "CAN'T TELL",
+      "scannedFiles": 1873,
+      "durationMs": 455.33,
+      "totalFindings": 0,
+      "failingFindings": 0,
+      "cantTellCount": 21,
+      "ruleBreakdown": {},
+      "cantTellBreakdown": {
+        "SHIRUDO-BEE-001": 2,
+        "SHIRUDO-BEE-002": 6,
+        "shirudo-upatch-missing-source": 2,
+        "shirudo-bpf-unbounded-hook": 6,
+        "shirudo-bpf-missing-license": 5
+      },
+      "sampleFindings": [],
+      "sampleCantTell": [
         {
           "code": "SHIRUDO-BEE-001",
           "path": "upatches/app-sandbox/Beefile",
@@ -279,63 +526,91 @@
           "path": "upatches/kernel-cve/sources/cve-2026-31675-net-sched-sch-netem-oob-access-packet-corruption/observability/cve-2026-31675-netem-detector.bpf.c",
           "line": 45,
           "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31675-net-sched-sch-netem-oob-access-packet-corruption/observability/cve-2026-31675-netem-detector.bpf.c\" (line 45) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+        },
+        {
+          "code": "shirudo-bpf-unbounded-hook",
+          "path": "upatches/kernel-cve/sources/cve-2026-63984-ipv6-rpl-hdrlen-overflow-ipv6-rpl-srh-decompress/observability/cve-2026-63984-rpl-detector.bpf.c",
+          "line": 36,
+          "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-63984-ipv6-rpl-hdrlen-overflow-ipv6-rpl-srh-decompress/observability/cve-2026-63984-rpl-detector.bpf.c\" (line 36) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+        },
+        {
+          "code": "SHIRUDO-BEE-001",
+          "path": "upatches/kernel-obs/Beefile",
+          "line": 22,
+          "message": "Shirudo [upatches.tree] \"kernel-obs\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
+        },
+        {
+          "code": "SHIRUDO-BEE-002",
+          "path": "upatches/kernel-obs/Beefile",
+          "line": 10,
+          "message": "Unreviewed [[upatches.rodata]].generator command (python3) at upatches/kernel-obs/Beefile:10 runs via execvp during bpm build/update; review before operator signing."
+        },
+        {
+          "code": "SHIRUDO-BEE-002",
+          "path": "upatches/kernel-obs/Beefile",
+          "line": 10,
+          "message": "Unreviewed [[upatches.rodata]].update command (python3) at upatches/kernel-obs/Beefile:10 runs via execvp during bpm build/update; review before operator signing."
+        },
+        {
+          "code": "SHIRUDO-BEE-002",
+          "path": "upatches/kernel-obs/Beefile",
+          "line": 16,
+          "message": "Unreviewed [[upatches.rodata]].generator command (python3) at upatches/kernel-obs/Beefile:16 runs via execvp during bpm build/update; review before operator signing."
         }
       ],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 13,
+        "cantTellCount": 2,
+        "failsCount": 0,
+        "p50Ms": 10.99,
+        "p95Ms": 13.19,
+        "nonHoldsSamples": [
+          {
+            "sha": "59aaf2b",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 10.99,
+            "changedFiles": 6,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": "Documentation/security/reporting.rst",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (Documentation/security/reporting.rst, SECURITY.md)."
+              }
+            ]
+          },
+          {
+            "sha": "c1b0c0e",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 10.83,
+            "changedFiles": 3,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".agents/skills/security-audit/SKILL.md",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.agents/skills/security-audit/SKILL.md, .agents/skills/security-audit/bug-classes.md, .agents/skills/security-audit/claims.md)."
+              }
+            ]
+          }
+        ]
+      },
       "shirudoDirectAudit": {
         "verdict": "cant-tell",
-        "inspectedCount": 61,
+        "inspectedCount": 24,
         "findingsCount": 0,
-        "cantTellCount": 34,
+        "cantTellCount": 26,
         "findings": [],
         "cantTellReasons": [
-          {
-            "code": "SHIRUDO-BPF-001",
-            "path": "testing/fixtures/fmod-ret-tagged.bpf.c",
-            "line": 17,
-            "message": "Unverified internal kernel fmod_ret target \"vfs_fallocate\" at testing/fixtures/fmod-ret-tagged.bpf.c:17; confirm no inline unlocks/refcounts are bypassed."
-          },
-          {
-            "code": "SHIRUDO-BPF-001",
-            "path": "testing/fixtures/fmod-ret-unlisted.bpf.c",
-            "line": 13,
-            "message": "Unverified internal kernel fmod_ret target \"vfs_fallocate\" at testing/fixtures/fmod-ret-unlisted.bpf.c:13; confirm no inline unlocks/refcounts are bypassed."
-          },
-          {
-            "code": "shirudo-bpf-unbounded-hook",
-            "path": "testing/fixtures/scope-kprobe.bpf.c",
-            "line": 8,
-            "message": "Broad kernel hook in \"testing/fixtures/scope-kprobe.bpf.c\" (line 8) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
-          },
-          {
-            "code": "SHIRUDO-BEE-001",
-            "path": "testing/fixtures/app-sandbox/probe.Beefile",
-            "line": 26,
-            "message": "Shirudo [upatches.tree] \"app-sandbox\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
-          },
-          {
-            "code": "SHIRUDO-BEE-002",
-            "path": "testing/fixtures/app-sandbox/probe.Beefile",
-            "line": 10,
-            "message": "Unreviewed [[upatches.rodata]].generator command (python3) at testing/fixtures/app-sandbox/probe.Beefile:10 runs via execvp during bpm build/update; review before operator signing."
-          },
-          {
-            "code": "SHIRUDO-BEE-002",
-            "path": "testing/fixtures/app-sandbox/probe.Beefile",
-            "line": 10,
-            "message": "Unreviewed [[upatches.rodata]].update command (python3) at testing/fixtures/app-sandbox/probe.Beefile:10 runs via execvp during bpm build/update; review before operator signing."
-          },
-          {
-            "code": "shirudo-upatch-missing-source",
-            "path": "testing/fixtures/app-sandbox/probe.Beefile",
-            "line": 7,
-            "message": "Referenced upatch artifact \"app-sandbox.bpf.c\" (testing/fixtures/app-sandbox/app-sandbox.bpf.c) was not found inside workspace."
-          },
-          {
-            "code": "SHIRUDO-BEE-001",
-            "path": "testing/fixtures/pipeline/net-guard/Beefile",
-            "line": 10,
-            "message": "Shirudo [upatches.tree] \"net-guard\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
-          },
           {
             "code": "SHIRUDO-BEE-001",
             "path": "upatches/app-sandbox/Beefile",
@@ -425,18 +700,6 @@
             "path": "upatches/kernel-cve/sources/cve-2026-31675-net-sched-sch-netem-oob-access-packet-corruption/observability/cve-2026-31675-netem-detector.bpf.c",
             "line": 45,
             "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31675-net-sched-sch-netem-oob-access-packet-corruption/observability/cve-2026-31675-netem-detector.bpf.c\" (line 45) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
-          },
-          {
-            "code": "shirudo-bpf-unbounded-hook",
-            "path": "upatches/kernel-cve/sources/cve-2026-63984-ipv6-rpl-hdrlen-overflow-ipv6-rpl-srh-decompress/observability/cve-2026-63984-rpl-detector.bpf.c",
-            "line": 36,
-            "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-63984-ipv6-rpl-hdrlen-overflow-ipv6-rpl-srh-decompress/observability/cve-2026-63984-rpl-detector.bpf.c\" (line 36) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
-          },
-          {
-            "code": "SHIRUDO-BEE-001",
-            "path": "upatches/kernel-obs/Beefile",
-            "line": 22,
-            "message": "Shirudo [upatches.tree] \"kernel-obs\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
           }
         ]
       }
@@ -444,12 +707,13 @@
     {
       "slug": "NodeGoat",
       "repo": "OWASP/NodeGoat",
+      "ecosystem": "Node.js",
       "commitSha": "c5cb68a",
-      "role": "vulnerable-app",
+      "role": "vulnerable-target",
       "verdict": "fails",
       "verdictLabel": "FAILS",
       "scannedFiles": 102,
-      "durationMs": 36.26,
+      "durationMs": 39.57,
       "totalFindings": 9,
       "failingFindings": 7,
       "cantTellCount": 2,
@@ -458,8 +722,9 @@
         "CWE-798": 1,
         "CWE-79": 2
       },
-      "cantTellBreakdown": {
-        "unverified-sink": 2
+      "cweBreakdown": {
+        "CWE-94": 6,
+        "CWE-798": 1
       },
       "sampleFindings": [
         {
@@ -543,48 +808,40 @@
           "location": "config/env/development.js:11",
           "evidence": "`<script>document.write(\"<script src='http://\" + (location.host || \"localhost\").split(\":\")[0] + \":35729/livereload.js'></\" + \"script>\");</sc"
         }
-      ],
-      "sampleCantTell": [
-        {
-          "code": "unverified-sink",
-          "path": "app/assets/vendor/html5shiv.js",
-          "line": 6,
-          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at app/assets/vendor/html5shiv.js:6 — no HTTP/URL/CLI ingress detected in file; verify manually."
-        },
-        {
-          "code": "unverified-sink",
-          "path": "config/env/development.js",
-          "line": 11,
-          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at config/env/development.js:11 — no HTTP/URL/CLI ingress detected in file; verify manually."
-        }
       ]
     },
     {
       "slug": "juice-shop",
       "repo": "juice-shop/juice-shop",
+      "ecosystem": "Node.js / TS",
       "commitSha": "c9f9922",
-      "role": "vulnerable-app",
+      "role": "vulnerable-target",
       "verdict": "fails",
       "verdictLabel": "FAILS",
       "scannedFiles": 1196,
-      "durationMs": 623.98,
-      "totalFindings": 91,
-      "failingFindings": 70,
+      "durationMs": 570.99,
+      "totalFindings": 86,
+      "failingFindings": 65,
       "cantTellCount": 6,
       "ruleBreakdown": {
         "CWE-502": 6,
         "CWE-798": 26,
         "ARTEX-EDGE-001": 9,
         "CWE-89": 13,
-        "CWE-116": 11,
+        "CWE-116": 6,
         "CWE-94": 6,
         "CWE-78": 1,
         "CWE-79": 16,
         "CWE-327": 2,
         "CWE-338": 1
       },
-      "cantTellBreakdown": {
-        "unverified-sink": 6
+      "cweBreakdown": {
+        "CWE-502": 6,
+        "CWE-798": 26,
+        "CWE-200": 9,
+        "CWE-89": 13,
+        "CWE-116": 6,
+        "CWE-94": 5
       },
       "sampleFindings": [
         {
@@ -722,110 +979,174 @@
           "location": "data/static/users.yml:107",
           "evidence": "password: 'mDLx…[REDACTED]…bJb'"
         }
-      ],
-      "sampleCantTell": [
+      ]
+    },
+    {
+      "slug": "pygoat",
+      "repo": "adeyosemanputra/pygoat",
+      "ecosystem": "Python / Django",
+      "commitSha": "2aa4cc1",
+      "role": "vulnerable-target",
+      "verdict": "fails",
+      "verdictLabel": "FAILS",
+      "scannedFiles": 451,
+      "durationMs": 94.78,
+      "totalFindings": 70,
+      "failingFindings": 26,
+      "cantTellCount": 24,
+      "ruleBreakdown": {
+        "CWE-502": 5,
+        "CWE-798": 13,
+        "CWE-94": 2,
+        "CWE-78": 6,
+        "CWE-522": 3,
+        "CWE-89": 2,
+        "CWE-79": 39
+      },
+      "cweBreakdown": {
+        "CWE-502": 5,
+        "CWE-798": 13,
+        "CWE-94": 2,
+        "CWE-78": 3,
+        "CWE-522": 3
+      },
+      "sampleFindings": [
         {
-          "code": "unverified-sink",
-          "path": "frontend/src/app/data-export/data-export.component.ts",
-          "line": 72,
-          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at frontend/src/app/data-export/data-export.component.ts:72 — no HTTP/URL/CLI ingress detected in file; verify manually."
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "dockerized_labs/a9_uckv_lab/app.py:62",
+          "evidence": "data = yaml.load(file.stream, Loader=yaml.Loader)"
         },
         {
-          "code": "unverified-sink",
-          "path": "frontend/src/assets/private/stats.min.js",
-          "line": 3,
-          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at frontend/src/assets/private/stats.min.js:3 — no HTTP/URL/CLI ingress detected in file; verify manually."
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "dockerized_labs/insec_des_lab/main.py:40",
+          "evidence": "user = pickle.loads(decoded_data)"
         },
         {
-          "code": "unverified-sink",
-          "path": "frontend/src/assets/private/stats.min.js",
-          "line": 4,
-          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at frontend/src/assets/private/stats.min.js:4 — no HTTP/URL/CLI ingress detected in file; verify manually."
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "dockerized_labs/insec_des_lab/templates/secure-fix.html:108",
+          "evidence": "<li>Never use pickle.loads() with untrusted data (can execute arbitrary code).</li>"
         },
         {
-          "code": "unverified-sink",
-          "path": "frontend/src/hacking-instructor/index.ts",
-          "line": 126,
-          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at frontend/src/hacking-instructor/index.ts:126 — no HTTP/URL/CLI ingress detected in file; verify manually."
+          "ruleId": "CWE-798",
+          "severity": "critical",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Stripe Secret Key",
+          "location": "dockerized_labs/package_injection_lab/app.py:11",
+          "evidence": "\"api_key\": \"sk_l…[REDACTED]…def\","
         },
         {
-          "code": "unverified-sink",
-          "path": "lib/xml.ts",
-          "line": 12,
-          "message": "Unverified CWE-94 sink \"Dynamic code evaluation (eval / Function / vm)\" at lib/xml.ts:12 — no HTTP/URL/CLI ingress detected in file; verify manually."
+          "ruleId": "CWE-798",
+          "severity": "critical",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Stripe Secret Key",
+          "location": "dockerized_labs/sec_misconfig/app.py:60",
+          "evidence": "\"STRIPE_API_KEY\": \"sk_l…[REDACTED]…nop\","
         },
         {
-          "code": "unverified-sink",
-          "path": "scripts/package.mjs",
-          "line": 19,
-          "message": "Unverified CWE-78 sink \"Potential OS Command Injection sink\" at scripts/package.mjs:19 — no HTTP/URL/CLI ingress detected in file; verify manually."
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "dockerized_labs/software_integrity_lab/app.py:44",
+          "evidence": "admin = pickle.loads("
+        },
+        {
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "dockerized_labs/software_integrity_lab/templates/secure-fix.html:52",
+          "evidence": "return pickle.loads(base64.b64decode(pickle_data))"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "challenge/labs/business_logic_lab/app.py:5",
+          "evidence": "app.secret_key = \"busi…[REDACTED]…024\""
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "challenge/labs/security_headers_lab/app.py:15",
+          "evidence": "app.secret_key = \"secu…[REDACTED]…024\""
+        },
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm)",
+          "location": "dockerized_labs/a9_uckv_lab/app.py:94",
+          "evidence": "output = ImageMath.eval(expression, img=img, r=r, g=g, b=b)"
+        },
+        {
+          "ruleId": "CWE-78",
+          "severity": "high",
+          "cwe": "CWE-78",
+          "category": "appsec",
+          "title": "Potential OS Command Injection sink (Unverified Reachability)",
+          "location": "dockerized_labs/a9_uckv_lab/templates/lab2.html:54",
+          "evidence": "<code>image.size[0] if True else exec('import os; os.system(\"ls\")')</code></li>"
+        },
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm)",
+          "location": "dockerized_labs/command_injection_lab/app.py:49",
+          "evidence": "output = eval(expression)"
+        },
+        {
+          "ruleId": "CWE-78",
+          "severity": "high",
+          "cwe": "CWE-78",
+          "category": "appsec",
+          "title": "Potential OS Command Injection sink",
+          "location": "dockerized_labs/command_injection_lab/templates/index.html:88",
+          "evidence": "<br>Now, if we submit os.system(\"id\"), we get nothing in the output. But if we check the terminal, we will see that the command gets execute"
+        },
+        {
+          "ruleId": "CWE-78",
+          "severity": "high",
+          "cwe": "CWE-78",
+          "category": "appsec",
+          "title": "Potential OS Command Injection sink",
+          "location": "dockerized_labs/command_injection_lab/templates/index.html:95",
+          "evidence": "<li>Malicious usage: Enter Python code like <code>os.system(\"command\")</code></li>"
+        },
+        {
+          "ruleId": "CWE-78",
+          "severity": "high",
+          "cwe": "CWE-78",
+          "category": "appsec",
+          "title": "Potential OS Command Injection sink",
+          "location": "dockerized_labs/command_injection_lab/templates/index.html:96",
+          "evidence": "<li>Try <code>os.system(\"id\")</code> or <code>os.system(\"whoami\")</code></li>"
         }
       ]
     }
-  ],
-  "baselineBeforeTuning": {
-    "generatedAt": "2026-11-27T01:05:44.071Z",
-    "repos": [
-      {
-        "slug": "express",
-        "repo": "expressjs/express",
-        "commitSha": "43fca52",
-        "role": "clean-framework",
-        "verdict": "cant-tell",
-        "totalFindings": 4,
-        "failingFindings": 0,
-        "cantTellCount": 4
-      },
-      {
-        "slug": "fastify",
-        "repo": "fastify/fastify",
-        "commitSha": "a94dc37",
-        "role": "clean-framework",
-        "verdict": "fails",
-        "totalFindings": 13,
-        "failingFindings": 8,
-        "cantTellCount": 0
-      },
-      {
-        "slug": "hono",
-        "repo": "honojs/hono",
-        "commitSha": "717dc17",
-        "role": "clean-framework",
-        "verdict": "fails",
-        "totalFindings": 27,
-        "failingFindings": 6,
-        "cantTellCount": 14
-      },
-      {
-        "slug": "shirudo",
-        "repo": "shirudo-dev/shirudo",
-        "commitSha": "8a8e165",
-        "role": "upstream-shirudo",
-        "verdict": "fails",
-        "totalFindings": 50,
-        "failingFindings": 37,
-        "cantTellCount": 42
-      },
-      {
-        "slug": "NodeGoat",
-        "repo": "OWASP/NodeGoat",
-        "commitSha": "c5cb68a",
-        "role": "vulnerable-app",
-        "verdict": "fails",
-        "totalFindings": 11,
-        "failingFindings": 9,
-        "cantTellCount": 2
-      },
-      {
-        "slug": "juice-shop",
-        "repo": "juice-shop/juice-shop",
-        "commitSha": "c9f9922",
-        "role": "vulnerable-app",
-        "verdict": "fails",
-        "totalFindings": 100,
-        "failingFindings": 73,
-        "cantTellCount": 12
-      }
-    ]
-  }
+  ]
 }

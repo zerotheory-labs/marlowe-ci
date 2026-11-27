@@ -191,3 +191,53 @@ test('marlowe-ci init --all-agents configures Cursor, VS Code, Codex, Windsurf, 
   const windsurfRule = await fs.readFile(path.join(dir, '.windsurf', 'rules', 'marlowe-guard.md'), 'utf8');
   assert.ok(windsurfRule.includes('trigger: always_on'));
 });
+
+test('agent-guard allows emoji ZWJ and i18n directional marks in docs while catching real smuggling and placeholders vs real secrets', async t => {
+  const { scanTextLines } = require('../src/engine/verdict.cjs');
+  const repo = await makeTempGitRepo();
+  t.after(() => fs.rm(repo, { recursive: true, force: true }));
+
+  await fs.mkdir(path.join(repo, 'docs'), { recursive: true });
+  await fs.writeFile(
+    path.join(repo, 'docs', 'async.md'),
+    'Multiple cashiers \u{1F468}\u200D\u{1F4BC}\u{1F468}\u200D\u{1F4BC}\u{1F468}\u200D\u{1F4BC}\u{1F468}\u200D\u{1F4BC} in a line.\n',
+    'utf8'
+  );
+  await fs.writeFile(
+    path.join(repo, 'docs', 'language_names.yml'),
+    'ug: \u0626\u06C7\u064A\u063A\u06C7\u0631\u0686\u06D5\u200E\n',
+    'utf8'
+  );
+  await fs.writeFile(
+    path.join(repo, 'src', 'config.py'),
+    "SECRET_KEY = 'development key'\n",
+    'utf8'
+  );
+
+  const clean = await runAudit({ root: repo, mode: 'full', queryOsv: false, failOn: 'high' });
+  assert.equal(clean.verdict, 'holds');
+  assert.equal(clean.failingFindings.length, 0);
+
+  // Verify placeholder vs real credential in scanTextLines
+  assert.equal(scanTextLines('src/config.py', "SECRET_KEY = 'development key'\n").secretHits.length, 0);
+  assert.equal(scanTextLines('src/config.py', "SECRET_KEY = '9xK!mP2vQ7rT4wZ8yB1'\n").secretHits.length, 1);
+
+  // Non-emoji U+200D smuggling in docs still fails
+  await fs.writeFile(path.join(repo, 'docs', 'async.md'), 'abc\u200d\u200d\u200ddef\n', 'utf8');
+  const zwSmuggle = await runAudit({ root: repo, mode: 'diff', queryOsv: false });
+  assert.equal(zwSmuggle.verdict, 'fails');
+  assert.ok(zwSmuggle.failingFindings.some(f => f.cwe === 'CWE-116'));
+
+  // U+200E in source code or CLAUDE.md still fails
+  await fs.writeFile(path.join(repo, 'docs', 'async.md'), 'Clean text\n', 'utf8');
+  await fs.writeFile(path.join(repo, 'CLAUDE.md'), '# Note\u200E\n', 'utf8');
+  const markFail = await runAudit({ root: repo, mode: 'diff', queryOsv: false });
+  assert.equal(markFail.verdict, 'fails');
+  assert.ok(markFail.failingFindings.some(f => f.cwe === 'CWE-116'));
+
+  await fs.rm(path.join(repo, 'CLAUDE.md'));
+  await fs.writeFile(path.join(repo, 'src', 'auth.js'), 'const x = "\u202eadmin";\n', 'utf8');
+  const bidiFail = await runAudit({ root: repo, mode: 'diff', queryOsv: false });
+  assert.equal(bidiFail.verdict, 'fails');
+  assert.ok(bidiFail.failingFindings.some(f => f.cwe === 'CWE-116'));
+});

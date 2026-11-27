@@ -49,10 +49,12 @@ const HIGH_CERTAINTY_SECRET_IDS = new Set([
 const ENTROPY_SECRET_RE = /\b([A-Za-z_][A-Za-z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIAL|AUTH)[A-Za-z0-9_]*)\s*[:=]\s*['"]([A-Za-z0-9+/=_-]{20,128})['"]/i;
 const REACHABLE_STATIC_CATEGORIES = new Set(['deserialization', 'crypto', 'iac']);
 const AUTO_SCANNER_PRIORITY = ['gitleaks', 'semgrep', 'trivy', 'osv-scanner'];
+const TEST_OR_FIXTURE_PATH_RE = /(?:^|\/)(?:tests?|testing|__tests__|benchmarks?|fixtures?|testdata)\/|(?:\.(?:test|spec)\.[cm]?[jt]sx?|_test\.(?:go|py)|test_[^/]+\.py)$/i;
+const DEV_BUILD_SCRIPT_PATH_RE = /(?:^|\/)(?:build|scripts|tools|hack)\//i;
 
 function scanTextLines(relPath, text, { allowedLines = null } = {}) {
-  const isDoc = /\.(?:md|mdx|rst|txt)$/i.test(relPath);
-  const isDemoOrTest = /(?:^|\/)(?:tests?|__tests__|benchmarks?|fixtures?)\/|(?:\.(?:test|spec)\.[cm]?[jt]sx?|_test\.go|test_[^/]+\.py)$/i.test(relPath);
+  const isDoc = /\.(?:md|mdx|rst|txt)$/i.test(relPath) || /(?:^|\/)(?:docs|docs_src|documentation)\//i.test(relPath);
+  const isDemoOrTest = TEST_OR_FIXTURE_PATH_RE.test(relPath);
   const secretHits = [];
   const codeHits = [];
   const lines = text.split('\n');
@@ -371,29 +373,37 @@ async function runAudit({
     rawFindings.push(...artexRes.findings);
     cantTellReasons.push(...artexRes.cantTellReasons);
 
-    if (isBeefilePath(cand.relPath)) {
-      const bfRes = await auditBeefile(cand.relPath, text, { root: absRoot });
-      rawFindings.push(...bfRes.findings);
-      cantTellReasons.push(...bfRes.cantTellReasons);
-    } else if (isBpfSourcePath(cand.relPath)) {
-      const bpfRes = auditBpfUpatchSource(cand.relPath, text);
-      rawFindings.push(...bpfRes.findings);
-      cantTellReasons.push(...bpfRes.cantTellReasons);
-    } else if (/\.(?:sh|bash|zsh|ya?ml)$|(?:^|\/)(?:Makefile|Dockerfile|Containerfile)$/i.test(cand.relPath)) {
-      const cmdRes = auditShirudoCommands(cand.relPath, text, { allowedLines: cand.allowedLines });
-      rawFindings.push(...cmdRes.findings);
-      cantTellReasons.push(...cmdRes.cantTellReasons);
-    } else if (/(?:^|\/)(?:ev|evidence|attest|attestation)[^/]*\.json$/i.test(cand.relPath)) {
-      const evRes = auditShirudoEvidenceJson(cand.relPath, text);
-      if (evRes.isEvidence) {
-        rawFindings.push(...evRes.findings);
-        cantTellReasons.push(...evRes.cantTellReasons);
+    if (!TEST_OR_FIXTURE_PATH_RE.test(cand.relPath) || Array.isArray(files)) {
+      if (isBeefilePath(cand.relPath)) {
+        const bfRes = await auditBeefile(cand.relPath, text, { root: absRoot });
+        rawFindings.push(...bfRes.findings);
+        cantTellReasons.push(...bfRes.cantTellReasons);
+      } else if (isBpfSourcePath(cand.relPath)) {
+        const bpfRes = auditBpfUpatchSource(cand.relPath, text);
+        rawFindings.push(...bpfRes.findings);
+        cantTellReasons.push(...bpfRes.cantTellReasons);
+      } else if (/\.(?:sh|bash|zsh|ya?ml)$|(?:^|\/)(?:Makefile|Dockerfile|Containerfile)$/i.test(cand.relPath)) {
+        const cmdRes = auditShirudoCommands(cand.relPath, text, { allowedLines: cand.allowedLines });
+        rawFindings.push(...cmdRes.findings);
+        cantTellReasons.push(...cmdRes.cantTellReasons);
+      } else if (/(?:^|\/)(?:ev|evidence|attest|attestation)[^/]*\.json$/i.test(cand.relPath)) {
+        const evRes = auditShirudoEvidenceJson(cand.relPath, text);
+        if (evRes.isEvidence) {
+          rawFindings.push(...evRes.findings);
+          cantTellReasons.push(...evRes.cantTellReasons);
+        }
       }
     }
 
     for (const hit of codeHits) {
       const reach = await inspectSourceReachability(absRoot, hit.path, hit.line, { cache: reachCache });
-      const hasExternalEntry = Boolean(reach?.entryKind) || REACHABLE_STATIC_CATEGORIES.has(hit.category);
+      const isDevBuildCliOnly =
+        DEV_BUILD_SCRIPT_PATH_RE.test(hit.path) &&
+        Boolean(reach?.entryKind) &&
+        !/HTTP|Socket|URL|DOM/i.test(reach.entryKind);
+      const hasExternalEntry =
+        (!isDevBuildCliOnly && Boolean(reach?.entryKind)) ||
+        REACHABLE_STATIC_CATEGORIES.has(hit.category);
       if (hasExternalEntry) {
         const remediation = reach?.hops > 0 && reach.via?.length
           ? `Validate or parameterize untrusted input (${reach.entryKind} via ${reach.via.join(' → ')}) before reaching this sink.`
@@ -425,7 +435,9 @@ async function runAudit({
           code: 'unverified-sink',
           path: hit.path,
           line: hit.line,
-          message: `Unverified ${hit.cwe || hit.category} sink "${hit.title}" at ${hit.path}:${hit.line} — no HTTP/URL/CLI ingress detected in file; verify manually.`
+          message: isDevBuildCliOnly
+            ? `Unverified ${hit.cwe || hit.category} sink "${hit.title}" in build/tooling CLI script ${hit.path}:${hit.line} — confirm no untrusted input reaches this sink.`
+            : `Unverified ${hit.cwe || hit.category} sink "${hit.title}" at ${hit.path}:${hit.line} — no HTTP/URL/CLI ingress detected in file; verify manually.`
         });
       }
     }

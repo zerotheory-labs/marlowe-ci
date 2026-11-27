@@ -44,33 +44,42 @@ function isMcpConfigPath(relPath) {
   return false;
 }
 
-function extractUnicodeControlSummary(str) {
+function extractUnicodeControlSummary(str, { allowDirectionalMarks = false } = {}) {
   const s = String(str || '');
   const codePoints = [];
   let zeroWidthCount = 0;
   let tagCount = 0;
   let bidiCount = 0;
 
-  let index = 0;
-  for (const ch of s) {
+  const chars = Array.from(s);
+  for (let i = 0; i < chars.length; i++) {
+    const ch = chars[i];
     const cp = ch.codePointAt(0);
-    if (
-      (cp >= 0x202a && cp <= 0x202e) ||
-      (cp >= 0x2066 && cp <= 0x2069) ||
-      cp === 0x200e ||
-      cp === 0x200f ||
-      cp === 0x061c
-    ) {
+    if ((cp >= 0x202a && cp <= 0x202e) || (cp >= 0x2066 && cp <= 0x2069)) {
+      bidiCount++;
+      codePoints.push(`U+${cp.toString(16).toUpperCase().padStart(4, '0')}`);
+    } else if (!allowDirectionalMarks && (cp === 0x200e || cp === 0x200f || cp === 0x061c)) {
       bidiCount++;
       codePoints.push(`U+${cp.toString(16).toUpperCase().padStart(4, '0')}`);
     } else if (cp >= 0xe0001 && cp <= 0xe007f) {
       tagCount++;
       codePoints.push(`U+${cp.toString(16).toUpperCase().padStart(5, '0')}`);
-    } else if (cp === 0x200b || cp === 0x200c || cp === 0x200d || (cp === 0xfeff && index > 0)) {
+    } else if (cp === 0x200b || cp === 0x200c || cp === 0x200d || (cp === 0xfeff && i > 0)) {
+      if (cp === 0x200d) {
+        const prev = i > 0 ? chars[i - 1] : '';
+        const next = i + 1 < chars.length ? chars[i + 1] : '';
+        const isEmojiZwj = Boolean(
+          prev &&
+          next &&
+          (/\p{Extended_Pictographic}/u.test(prev) ||
+            prev.codePointAt(0) === 0xfe0f ||
+            /\p{Extended_Pictographic}/u.test(next))
+        );
+        if (isEmojiZwj) continue;
+      }
       zeroWidthCount++;
       codePoints.push(`U+${cp.toString(16).toUpperCase().padStart(4, '0')}`);
     }
-    index++;
   }
 
   return {
@@ -263,6 +272,7 @@ function scanAgentGuard(relPath, text, { allowedLines = null, addedLines = null 
 
   const lines = text.split('\n');
   const isAgentDoc = isAgentInstructionPath(relPath);
+  const isI18nOrDocData = !isAgentDoc && /\.(?:md|mdx|rst|txt|ya?ml|json|po|xlf)$/i.test(String(relPath || ''));
   const baseName = path.posix.basename(String(relPath || '').replace(/\\/g, '/'));
 
   for (let i = 0; i < lines.length; i++) {
@@ -271,7 +281,7 @@ function scanAgentGuard(relPath, text, { allowedLines = null, addedLines = null 
     const raw = lines[i].replace(/\r$/, '');
     if (!raw || raw.length > 4000) continue;
 
-    const uni = extractUnicodeControlSummary(raw);
+    const uni = extractUnicodeControlSummary(raw, { allowDirectionalMarks: isI18nOrDocData });
     if (uni.hasHazard) {
       const kind = uni.bidiCount > 0 ? 'Trojan Source bidirectional Unicode control' : 'Hidden Unicode tag/zero-width smuggling';
       findings.push({

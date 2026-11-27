@@ -1204,7 +1204,7 @@ function auditShirudoCommands(relPath, text, { allowedLines = null, isShellComma
 
     // SHIRUDO-TPM-003 on shirudo status in CI workflows or gated shell scripts without --check or JSON verdict assertion
     const statusMatch = /(?:^|[\s;&|(])shirudo\s+status(?:\s|$|;|&&|\|\|)/.exec(cmdBlock);
-    if (statusMatch && !/(?:marlowe-ci|echo|printf|console)\b[^\n]*shirudo\s+status|"\s*\\?\$\s*shirudo\s+status/.test(cmdBlock)) {
+    if (statusMatch && !/^\s*["']/.test(cmdBlock) && !/(?:marlowe-ci|echo|printf|console)\b[^\n]*shirudo\s+status|"\s*\\?\$\s*shirudo\s+status/.test(cmdBlock)) {
       const hasCheckFlag = /\s--check(?:\s|$|;|&&)/.test(cmdBlock);
       const hasVerdictAssert = /\.(?:verdict|tampered)\b|\|\|\s*(?:exit|return|die)/.test(cmdBlock);
       const isGatingContext = isWorkflow || hasStrictShell || /\bif\s+shirudo\s+status\b|shirudo\s+status[^\n]*&&/.test(cmdBlock);
@@ -1493,10 +1493,13 @@ async function inspectShirudoTarget(root, relTarget = '.', signal = new AbortCon
   const stat = await fs.stat(resolved.fullPath);
 
   const candidates = [];
+  const isTestFixtureRel = /(?:^|\/)(?:tests?|testing|__tests__|fixtures?|testdata)\//i;
+  const targetIsExplicitTestDir = /(?:^|\/)(?:tests?|testing|__tests__|fixtures?|testdata)(?:\/|$)/i.test(resolved.relPath);
   if (stat.isDirectory()) {
     const walkState = { truncated: false, deadline: Date.now() + 10000 };
     for await (const fullPath of walkWorkspace(resolved.fullPath, signal, walkState)) {
       const rel = path.relative(resolved.rootReal, fullPath).split(path.sep).join('/');
+      if (!targetIsExplicitTestDir && isTestFixtureRel.test(rel)) continue;
       if (isShirudoArtifactPath(rel)) {
         candidates.push({ fullPath, relPath: rel });
       }

@@ -1008,7 +1008,7 @@ async function scanWorkspaceDna(root, { findings = [], tools = [], maxFiles = 26
 
 const REACH_SOURCE_EXT_RE = /\.(?:[cm]?[jt]sx?|py|go)$/i;
 const REACH_SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', 'vendor', 'coverage', '.next', 'release', 'playwright-report', 'test-results']);
-const REACH_TEST_FILE_RE = /(?:^|\/)(?:test|tests|__tests__)\/|(?:\.(?:test|spec)\.[cm]?[jt]sx?|_test\.(?:go|py)|test_[^/]+\.py)$/i;
+const REACH_TEST_FILE_RE = /(?:^|\/)(?:tests?|testing|__tests__|testdata)\/|(?:\.(?:test|spec)\.[cm]?[jt]sx?|_test\.(?:go|py)|test_[^/]+\.py)$/i;
 const REACH_PROTECTED_RE = /^\.(?:env(?:\.|$)|ssh$|aws$|gnupg$|npmrc$|netrc$|shirudo$|marlowe)|shirudo-keys/i;
 
 function detectExternalIngress(text) {

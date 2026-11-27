@@ -1,5 +1,5 @@
 const DOC_FILE_RE = /\.(?:md|mdx|rst|txt)$/i;
-const TEST_FILE_RE = /(?:^|\/)(?:tests?|__tests__|benchmarks?)\/|\.(?:test|spec)\.[cm]?[jt]sx?$|_test\.go$|test_[^/]+\.py$/i;
+const TEST_FILE_RE = /(?:^|\/)(?:tests?|testing|__tests__|benchmarks?|fixtures?|testdata)\/|\.(?:test|spec)\.[cm]?[jt]sx?$|_test\.go$|test_[^/]+\.py$/i;
 const COMMENT_OR_RULE_RE = /^(?:\/\/|\/\*|\*|\s*(?:const|let|var)\s+[A-Z0-9_]+_RE\s*=|\s*(?:regex|re|remediation|title|message|summary)\s*:)/;
 
 const PUBLIC_SOURCEMAP_PATH_RE = /(?:^|\/)(?:public|static|dist|build|www|assets)\/[^/]*\.(?:[cm]?js)\.map$/i;

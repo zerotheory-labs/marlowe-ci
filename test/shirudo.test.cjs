@@ -281,3 +281,54 @@ test('Shirudo CLI audit & TPM attestation ignore workspace rogue binaries and re
     assert.equal(badAttest.verified, false);
   }
 });
+
+test('runAudit treats testing/ doc checks safely and downgrades build CLI scripts while preserving route FAILS', async t => {
+  const repo = await makeTempRepo();
+  t.after(() => fs.rm(repo, { recursive: true, force: true }));
+
+  await fs.mkdir(path.join(repo, 'testing/ci-checks'), { recursive: true });
+  await fs.writeFile(
+    path.join(repo, 'testing/ci-checks/check-docs.sh'),
+    [
+      '#!/bin/sh',
+      'expect_out=$(cat <<EOF',
+      '"  \\"$(shirudo status --json | jq)\\""',
+      'EOF',
+      ')',
+      'chmod 777 "$PWD/tmp-fixture"'
+    ].join('\n') + '\n',
+    'utf8'
+  );
+
+  await fs.mkdir(path.join(repo, 'build'), { recursive: true });
+  await fs.writeFile(
+    path.join(repo, 'build/release-adapter.ts'),
+    [
+      'import { execSync } from "node:child_process";',
+      'const target = process.argv[2] || "default";',
+      'export const run = (cmd: string) => execSync(cmd + " " + target, { stdio: "inherit" });'
+    ].join('\n') + '\n',
+    'utf8'
+  );
+
+  const nonFailing = await runAudit({ root: repo, mode: 'full', queryOsv: false, failOn: 'high' });
+  assert.equal(nonFailing.verdict, 'cant-tell');
+  assert.equal(nonFailing.failingFindings.length, 0);
+  assert.ok(nonFailing.cantTellReasons.some(r => r.code === 'unverified-sink' && r.path === 'build/release-adapter.ts'));
+
+  await fs.mkdir(path.join(repo, 'src/routes'), { recursive: true });
+  await fs.writeFile(
+    path.join(repo, 'src/routes/diag.ts'),
+    [
+      'import { execSync } from "node:child_process";',
+      'export function pingHost(req: any) {',
+      '  return execSync(`ping -c 1 ${req.query.host}`);',
+      '}'
+    ].join('\n') + '\n',
+    'utf8'
+  );
+
+  const failing = await runAudit({ root: repo, mode: 'full', queryOsv: false, failOn: 'high' });
+  assert.equal(failing.verdict, 'fails');
+  assert.ok(failing.failingFindings.some(f => f.cwe === 'CWE-78' && f.location.startsWith('src/routes/diag.ts:')));
+});

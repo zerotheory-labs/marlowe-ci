@@ -267,7 +267,7 @@ const SECRET_RULES = [
   {
     id: 'generic-secret-assignment', label: 'Hardcoded Secret Assignment', cwe: 'CWE-798', severity: 'high',
     regex: /\b((?:api[_-]?key|secret[_-]?key|access[_-]?token|auth[_-]?token|client[_-]?secret|private[_-]?key|password|passwd)\s*[:=]\s*['"])([^'"\r\n]{8,256})(['"])/gi,
-    filter: (_m, _pre, value) => !value.includes('[REDACTED]') && !/^(?:changeme|password|example|placeholder|your[_-]|<|{\s*{|\$\{|REDACTED|\*+)/i.test(value.trim()),
+    filter: (_m, _pre, value) => !value.includes('[REDACTED]') && !/^(?:changeme|password|example|placeholder|your[_-]|dev(?:elopment)?[-_\s]+(?:key|secret|token|pass(?:word)?)|(?:demo|test|dummy|fake|sample|local)[-_]|<|{\s*{|\$\{|REDACTED|\*+)/i.test(value.trim()),
     replace: (_m, pre, value, post) => `${pre}${maskToken(value)}${post}`
   }
 ];
