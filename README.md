@@ -40,8 +40,11 @@ AI coding agents mutate files, run shell commands, and open pull requests in sec
   - **`.bpf.c` upatches:** Flags illegal sleepable `fmod_ret.s/` targets (`BPF-001`), missing `return 0;` or stripped `-EAGAIN` / `<= -512` / positive returns (`BPF-002`), `fmod_ret/` where `lsm/` avoids re-entrant fail-open gaps (`BPF-003`), and writes to read-only `shirudo_task_policy` / `shirudo_sock_policy` maps (`BPF-004`).
   - **`Beefile` manifests & `PreToolUse`:** Enforces selector cardinality, control-char escapes, and omitted CVE/enforcing selectors (`BEE-001`), blocks `[[upatches.rodata]]` shell/network `generator` & `update` hooks running with operator key privileges (`BEE-002`), and checks `tree.id` matching, 64-bit one-hot policy bitmasks, path glob placement, `load_target`, and TOML subset validity (`BEE-003`).
   - **TPM 2.0 & Verifier Boundaries:** Catches `shirudo status` without `--check`, self-asserted `--ak-name=$(jq ...)` / missing `--nonce`, unpinned offline `ev.json`, zero PCR 11 QEMU boots, missing `0x01818E00` PCR 9 anchors, and `reset_count` mismatches (`TPM-001..003`).
-- **Expanded 33-Scenario Benchmark Suite (`npm run bench`):** Lifted Shirudo scenarios from `3/3` → `12/12` (`33/33` overall `100%` exact 3-state accuracy, `0%` clean FP rate, `18.11ms` p50).
-- **SARIF First-Class `ruleId`s + Maintainer Docs:** Preserves explicit `SHIRUDO-*` rule IDs in SARIF v2.1.0 output and adds [`CLAUDE.md`](./CLAUDE.md).
+- **ARTEX Defense & Behavioral Pack (`ARTEX-EDGE-001..003`, `ARTEX-BEHAV-001`):**
+  - **Pre-merge Edge & Identity Rules:** Flags unauthenticated Swagger/OpenAPI/GraphQL introspection and public `.js.map` / production sourcemaps (`EDGE-001`), OAuth `state: false` / open redirects / credentialed wildcard CORS / weak reset tokens (`EDGE-002`), and `skipAuth` or unauthenticated `/admin` / `/backup` / `/webhook` routes (`EDGE-003`).
+  - **Behavioral Agentic Log Detector (`analyzeLogs`):** Detects machine-speed HTTP recon → OAuth/auth pivots, `400`/`422` payload adaptation bursts, and low-static-ratio enumeration even behind rotated IPs and browser User-Agents (`ARTEX-BEHAV-001`, MITRE `T1595`).
+- **Expanded 40-Scenario Benchmark Suite (`npm run bench`):** Lifted Shirudo `3/3` → `12/12` and added `7/7` ARTEX Edge Defense (`40/40` overall `100%` exact 3-state accuracy, `0%` clean FP rate, `19.96ms` p50).
+- **SARIF First-Class `ruleId`s + Maintainer Docs:** Preserves explicit `SHIRUDO-*` and `ARTEX-*` rule IDs in SARIF v2.1.0 output and adds [`CLAUDE.md`](./CLAUDE.md).
 
 ---
 
@@ -59,22 +62,23 @@ Every audit emits one explicit verdict:
 
 ## Recorded Benchmark Scorecard (`npm run bench`)
 
-Executed offline via [`benchmarks/run-benchmarks.cjs`](./benchmarks/run-benchmarks.cjs) against 33 ephemeral Git diff repositories (`Node.js v26.12.0`, `darwin-arm64`, `0` skipped; saved in [`benchmarks/results.json`](./benchmarks/results.json)):
+Executed offline via [`benchmarks/run-benchmarks.cjs`](./benchmarks/run-benchmarks.cjs) against 40 ephemeral Git diff repositories (`Node.js v26.12.0`, `darwin-arm64`, `0` skipped; saved in [`benchmarks/results.json`](./benchmarks/results.json)):
 
-- **Exact 3-State Verdict Accuracy:** `33/33` (**`100%`**)
+- **Exact 3-State Verdict Accuracy:** `40/40` (**`100%`**)
 - **`FAILS` Precision / Recall / F1:** `100% / 100% / 100%` (`FP = 0`, `FN = 0`)
-- **Clean / Benign False-Positive Rate:** **`0%`** (`0/9`)
-- **`CAN'T TELL` Exact Match:** **`7/7`**
-- **Latency (`p50` / `p95` / `mean`):** **`18.11ms` / `25.16ms` / `18.85ms`**
+- **Clean / Benign False-Positive Rate:** **`0%`** (`0/10`)
+- **`CAN'T TELL` Exact Match:** **`9/9`**
+- **Latency (`p50` / `p95` / `mean`):** **`19.96ms` / `23.42ms` / `20.92ms`**
 
 | Domain | Passed | Accuracy | p50 | p95 |
 | :--- | :---: | :---: | :---: | :---: |
-| AppSec & Cross-File Reachability | `6/6` | `100%` | `17.91ms` | `31.29ms` |
-| Secrets & Masking | `3/3` | `100%` | `18.11ms` | `18.86ms` |
-| Guardrail Regressions & Precision | `5/5` | `100%` | `17.93ms` | `19ms` |
-| Agent Guard (Prompt Injection / Trojan / Rug-Pull) | `5/5` | `100%` | `18.11ms` | `19.23ms` |
-| Shirudo eBPF, Beefile & TPM Attestation | `12/12` | `100%` | `18.28ms` | `19.54ms` |
-| Binaries & Clean Refactors | `2/2` | `100%` | `16.98ms` | `18.11ms` |
+| AppSec & Cross-File Reachability | `6/6` | `100%` | `21.25ms` | `36.9ms` |
+| Secrets & Masking | `3/3` | `100%` | `19.93ms` | `21.11ms` |
+| Guardrail Regressions & Precision | `5/5` | `100%` | `19.43ms` | `20.61ms` |
+| Agent Guard (Prompt Injection / Trojan / Rug-Pull) | `5/5` | `100%` | `20.14ms` | `21.64ms` |
+| Shirudo eBPF, Beefile & TPM Attestation | `12/12` | `100%` | `19.96ms` | `28.41ms` |
+| ARTEX Edge Defense (Maps / OAuth / CORS / Admin) | `7/7` | `100%` | `19.8ms` | `22.12ms` |
+| Binaries & Clean Refactors | `2/2` | `100%` | `19.38ms` | `20.9ms` |
 
 ---
 

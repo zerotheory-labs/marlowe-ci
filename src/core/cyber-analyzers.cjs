@@ -5,6 +5,7 @@ const net = require('node:net');
 const tls = require('node:tls');
 const { createHash } = require('node:crypto');
 const { SECRET_RULES, maskToken, isPrivateOrReservedIp, assertTargetInScope, redactSecrets } = require('./cyber-scope.cjs');
+const { analyzeAgenticBehavior } = require('./artex-defense.cjs');
 
 const MAX_ARTIFACT_BYTES = 10 * 1024 * 1024;
 const RESULT_BUDGET = 22000;
@@ -684,7 +685,7 @@ async function analyzeLogs(file, relPath, { filter = '' }, signal) {
   const text = buf.toString('utf8');
   const lines = text.split(/\r?\n/);
   const needle = filter.trim().toLowerCase();
-  const ipCounts = new Map(), statusCounts = {}, sigCounts = {}, alerts = [];
+  const ipCounts = new Map(), statusCounts = {}, sigCounts = {}, alerts = [], analyzedLineEntries = [];
   let matchedLines = 0, jsonLines = 0;
   for (let i = 0; i < lines.length; i++) {
     if ((i & 2047) === 0) signal.throwIfAborted();
@@ -692,6 +693,7 @@ async function analyzeLogs(file, relPath, { filter = '' }, signal) {
     if (!line) continue;
     if (needle && !line.toLowerCase().includes(needle)) continue;
     matchedLines++;
+    analyzedLineEntries.push({ line: i + 1, text: line });
     if (line.startsWith('{') && line.endsWith('}')) jsonLines++;
     const ipMatch = /\b(?:\d{1,3}\.){3}\d{1,3}\b/.exec(line);
     if (ipMatch && net.isIP(ipMatch[0]) === 4) ipCounts.set(ipMatch[0], (ipCounts.get(ipMatch[0]) || 0) + 1);
@@ -711,6 +713,18 @@ async function analyzeLogs(file, relPath, { filter = '' }, signal) {
       }
     }
   }
+  const agenticBehavior = analyzeAgenticBehavior(analyzedLineEntries, relPath);
+  if (agenticBehavior.detected) {
+    sigCounts['artex-agentic-behavior'] = agenticBehavior.indicators.length;
+    alerts.unshift({
+      line: agenticBehavior.indicators[0]?.line || 1,
+      type: 'artex-agentic-behavior',
+      ruleId: agenticBehavior.ruleId,
+      label: 'Agentic Machine-Speed Attack Behavior (ARTEX-style)',
+      mitre: agenticBehavior.mitre,
+      sample: redactSecrets(agenticBehavior.indicators.map(x => x.summary).join(' | ').slice(0, 240)).text
+    });
+  }
   const topIps = [...ipCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([ip, count]) => ({ ip, count, private: isPrivateOrReservedIp(ip) }));
   return {
     path: relPath,
@@ -721,7 +735,8 @@ async function analyzeLogs(file, relPath, { filter = '' }, signal) {
     signatureCounts: sigCounts,
     topSourceIps: topIps,
     alerts,
-    summary: `Analyzed ${matchedLines} log line(s) in ${relPath}: ${alerts.length} suspicious event sample(s) across ${Object.keys(sigCounts).length} detection signature(s).`
+    agenticBehavior,
+    summary: `Analyzed ${matchedLines} log line(s) in ${relPath}: ${alerts.length} suspicious event sample(s) across ${Object.keys(sigCounts).length} detection signature(s)${agenticBehavior.detected ? ` [ARTEX-BEHAV-001 ${agenticBehavior.confidence} confidence]` : ''}.`
   };
 }
 

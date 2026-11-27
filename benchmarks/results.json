@@ -1,26 +1,26 @@
 {
   "version": "0.6.0",
-  "generatedAt": "2026-11-26T23:53:36.189Z",
+  "generatedAt": "2026-11-27T00:18:18.283Z",
   "nodeVersion": "v26.12.0",
   "platform": "darwin-arm64",
   "workspace": "ephemeral-temp-repos",
   "summary": {
-    "totalScenarios": 33,
-    "exactMatches": 33,
+    "totalScenarios": 40,
+    "exactMatches": 40,
     "exactAccuracyPct": 100,
     "failsPrecisionPct": 100,
     "failsRecallPct": 100,
     "failsF1Pct": 100,
     "falsePositives": 0,
     "falseNegatives": 0,
-    "cleanScenarios": 9,
+    "cleanScenarios": 10,
     "cleanFalsePositives": 0,
     "cleanFalsePositiveRatePct": 0,
-    "cantTellExact": 7,
-    "cantTellTotal": 7,
-    "p50Ms": 18.8,
-    "p95Ms": 20.55,
-    "meanMs": 18.88
+    "cantTellExact": 9,
+    "cantTellTotal": 9,
+    "p50Ms": 19.96,
+    "p95Ms": 23.42,
+    "meanMs": 20.92
   },
   "domains": [
     {
@@ -28,48 +28,56 @@
       "total": 6,
       "passed": 6,
       "accuracyPct": 100,
-      "p50Ms": 17.45,
-      "p95Ms": 30.41
+      "p50Ms": 21.25,
+      "p95Ms": 36.9
     },
     {
       "domain": "Secrets & Masking",
       "total": 3,
       "passed": 3,
       "accuracyPct": 100,
-      "p50Ms": 16.94,
-      "p95Ms": 17.46
+      "p50Ms": 19.93,
+      "p95Ms": 21.11
     },
     {
       "domain": "Regressions & Precision",
       "total": 5,
       "passed": 5,
       "accuracyPct": 100,
-      "p50Ms": 16.86,
-      "p95Ms": 17.04
+      "p50Ms": 19.43,
+      "p95Ms": 20.61
     },
     {
       "domain": "Agent Guard",
       "total": 5,
       "passed": 5,
       "accuracyPct": 100,
-      "p50Ms": 19.44,
-      "p95Ms": 20.48
+      "p50Ms": 20.14,
+      "p95Ms": 21.64
     },
     {
       "domain": "Shirudo eBPF & Attest",
       "total": 12,
       "passed": 12,
       "accuracyPct": 100,
-      "p50Ms": 19.37,
-      "p95Ms": 20.55
+      "p50Ms": 19.96,
+      "p95Ms": 28.41
+    },
+    {
+      "domain": "ARTEX Edge Defense",
+      "total": 7,
+      "passed": 7,
+      "accuracyPct": 100,
+      "p50Ms": 19.8,
+      "p95Ms": 22.12
     },
     {
       "domain": "Binaries & Refactors",
       "total": 2,
       "passed": 2,
       "accuracyPct": 100,
-      "p50Ms": 18.73,
-      "p95Ms": 19.24
+      "p50Ms": 19.38,
+      "p95Ms": 20.9
     }
   ],
   "scenarios": [
@@ -79,7 +87,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 30.41,
+      "durationMs": 36.9,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -89,7 +97,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.49,
+      "durationMs": 22.8,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -99,7 +107,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 17.31,
+      "durationMs": 20.81,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -109,7 +117,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 17.92,
+      "durationMs": 21.25,
       "findingsCount": 1,
       "cantTellCount": 1
     },
@@ -119,7 +127,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 17.45,
+      "durationMs": 19.8,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -129,7 +137,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 16.85,
+      "durationMs": 23.42,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -139,7 +147,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 17.46,
+      "durationMs": 21.11,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -149,7 +157,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 16.94,
+      "durationMs": 19.41,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -159,7 +167,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 16.91,
+      "durationMs": 19.93,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -169,7 +177,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 17.04,
+      "durationMs": 20.61,
       "findingsCount": 2,
       "cantTellCount": 0
     },
@@ -179,7 +187,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 16.47,
+      "durationMs": 19.43,
       "findingsCount": 0,
       "cantTellCount": 2
     },
@@ -189,7 +197,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 16.86,
+      "durationMs": 19.37,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -199,7 +207,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 17.02,
+      "durationMs": 19.95,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -209,7 +217,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 16.51,
+      "durationMs": 18.83,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -219,7 +227,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 18.04,
+      "durationMs": 21.64,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -229,7 +237,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.53,
+      "durationMs": 20.14,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -239,7 +247,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.33,
+      "durationMs": 19.57,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -249,7 +257,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.48,
+      "durationMs": 19.57,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -259,7 +267,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 19.44,
+      "durationMs": 21.32,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -269,7 +277,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.59,
+      "durationMs": 28.41,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -279,7 +287,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 18.99,
+      "durationMs": 21.75,
       "findingsCount": 1,
       "cantTellCount": 1
     },
@@ -289,7 +297,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 18.92,
+      "durationMs": 19.96,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -299,7 +307,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.37,
+      "durationMs": 19.39,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -309,7 +317,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 18.79,
+      "durationMs": 19.38,
       "findingsCount": 3,
       "cantTellCount": 0
     },
@@ -319,7 +327,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.74,
+      "durationMs": 20,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -329,7 +337,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.82,
+      "durationMs": 19.74,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -339,7 +347,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 20.24,
+      "durationMs": 19.42,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -349,7 +357,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.55,
+      "durationMs": 19.83,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -359,7 +367,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.13,
+      "durationMs": 19.97,
       "findingsCount": 3,
       "cantTellCount": 0
     },
@@ -369,7 +377,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 18.56,
+      "durationMs": 20.39,
       "findingsCount": 3,
       "cantTellCount": 1
     },
@@ -379,7 +387,77 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 18.8,
+      "durationMs": 20.57,
+      "findingsCount": 0,
+      "cantTellCount": 0
+    },
+    {
+      "id": "artex-a01-swagger-graphql-unauth",
+      "domain": "ARTEX Edge Defense",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 19.72,
+      "findingsCount": 2,
+      "cantTellCount": 0
+    },
+    {
+      "id": "artex-a02-prod-sourcemap-exposed",
+      "domain": "ARTEX Edge Defense",
+      "expected": "cant-tell",
+      "actual": "cant-tell",
+      "exact": true,
+      "durationMs": 19.57,
+      "findingsCount": 0,
+      "cantTellCount": 1
+    },
+    {
+      "id": "artex-a03-oauth-state-open-redirect",
+      "domain": "ARTEX Edge Defense",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 19.8,
+      "findingsCount": 2,
+      "cantTellCount": 0
+    },
+    {
+      "id": "artex-a04-credentialed-wildcard-cors",
+      "domain": "ARTEX Edge Defense",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 20.79,
+      "findingsCount": 1,
+      "cantTellCount": 0
+    },
+    {
+      "id": "artex-a05-backup-skip-auth",
+      "domain": "ARTEX Edge Defense",
+      "expected": "fails",
+      "actual": "fails",
+      "exact": true,
+      "durationMs": 20.53,
+      "findingsCount": 1,
+      "cantTellCount": 0
+    },
+    {
+      "id": "artex-a06-unverified-admin-route",
+      "domain": "ARTEX Edge Defense",
+      "expected": "cant-tell",
+      "actual": "cant-tell",
+      "exact": true,
+      "durationMs": 22.12,
+      "findingsCount": 0,
+      "cantTellCount": 1
+    },
+    {
+      "id": "artex-a07-hardened-edge-clean-control",
+      "domain": "ARTEX Edge Defense",
+      "expected": "holds",
+      "actual": "holds",
+      "exact": true,
+      "durationMs": 19.52,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -389,7 +467,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.24,
+      "durationMs": 19.38,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -399,7 +477,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 18.73,
+      "durationMs": 20.9,
       "findingsCount": 0,
       "cantTellCount": 0
     }

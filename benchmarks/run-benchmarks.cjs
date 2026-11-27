@@ -421,7 +421,94 @@ const SCENARIOS = [
     }
   },
 
-  // 6. Opaque Binary & Clean Refactor (2)
+  // 6. ARTEX Edge Defense & Identity Surface (7)
+  {
+    id: 'artex-a01-swagger-graphql-unauth',
+    domain: 'ARTEX Edge Defense',
+    expected: 'fails',
+    expectedRuleId: 'ARTEX-EDGE-001',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'src/graphql.js': 'import { ApolloServer } from "@apollo/server";\nexport const gql = new ApolloServer({ ' + 'introspection' + ': true });\n',
+        'src/docs.js': 'export function mountDocs(app, swaggerUi, spec) {\n  app.use("/api-' + 'docs", swaggerUi.serve, swaggerUi.setup(spec));\n}\n',
+        'test/docs.test.js': 'test("docs", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'artex-a02-prod-sourcemap-exposed',
+    domain: 'ARTEX Edge Defense',
+    expected: 'cant-tell',
+    expectedReason: 'ARTEX-EDGE-001',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'vite.config.js': 'export default {\n  build: { ' + 'sourcemap' + ': true }\n};\n',
+        'test/build.test.js': 'test("build", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'artex-a03-oauth-state-open-redirect',
+    domain: 'ARTEX Edge Defense',
+    expected: 'fails',
+    expectedRuleId: 'ARTEX-EDGE-002',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'src/auth/oauth.js': 'export function initOauth(passport) {\n  passport.use({ ' + 'state' + ': false });\n}\nexport function callback(req, res) {\n  return res.' + 'redirect(req.query.redirect_uri);\n}\n',
+        'test/oauth.test.js': 'test("oauth", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'artex-a04-credentialed-wildcard-cors',
+    domain: 'ARTEX Edge Defense',
+    expected: 'fails',
+    expectedRuleId: 'ARTEX-EDGE-002',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'src/cors.js': 'export const corsOpts = {\n  ' + 'origin' + ': true,\n  ' + 'credentials' + ': true\n};\n',
+        'test/cors.test.js': 'test("cors", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'artex-a05-backup-skip-auth',
+    domain: 'ARTEX Edge Defense',
+    expected: 'fails',
+    expectedRuleId: 'ARTEX-EDGE-003',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'src/routes/backup.js': 'export function mountBackup(app, runBackup) {\n  app.post("/backup/export", { ' + 'skipAuth' + ': true }, runBackup);\n}\n',
+        'test/backup.test.js': 'test("backup", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'artex-a06-unverified-admin-route',
+    domain: 'ARTEX Edge Defense',
+    expected: 'cant-tell',
+    expectedReason: 'ARTEX-EDGE-003',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'src/routes/admin-export.js': 'export function mountAdmin(app) {\n  app.get("/admin/export", (req, res) => res.json({ ok: true }));\n}\n',
+        'test/admin.test.js': 'test("admin", () => {});\n'
+      });
+    }
+  },
+  {
+    id: 'artex-a07-hardened-edge-clean-control',
+    domain: 'ARTEX Edge Defense',
+    expected: 'holds',
+    async setup(dir) {
+      await applyDiffFiles(dir, {
+        'vite.config.js': 'const isDev = process.env.NODE_ENV !== "production";\nexport default {\n  build: { sourcemap: isDev }\n};\n',
+        'src/auth/hardened-edge.js': 'const isDev = process.env.NODE_ENV !== "production";\nexport const corsOpts = { origin: ["https://app.example.com"], credentials: true };\nexport function mountEdge(app, requireAuth, swaggerUi, spec) {\n  if (isDev) { app.use("/api-docs", requireAuth, swaggerUi.serve); }\n  app.get("/admin/users", requireAuth, (req, res) => res.json({ ok: true }));\n}\n',
+        'test/hardened-edge.test.js': 'test("hardened edge", () => {});\n'
+      });
+    }
+  },
+
+  // 7. Opaque Binary & Clean Refactor (2)
   {
     id: 'binary-elf-unverified',
     domain: 'Binaries & Refactors',

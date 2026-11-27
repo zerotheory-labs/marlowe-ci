@@ -14,7 +14,7 @@ Requires **Node.js `>=20.0.0`** (CI runs on Node `20` and `22`). Zero runtime `d
 
 ```sh
 npm test                  # Run full node --test suite across test/*.test.cjs
-npm run bench             # Run 33-scenario reproducible diff benchmark -> benchmarks/results.json
+npm run bench             # Run 40-scenario reproducible diff benchmark -> benchmarks/results.json
 npm run self-check        # Run Marlowe CI against its own workspace diff (--no-osv)
 npm pack --dry-run        # Inspect npm tarball whitelist (excludes test/, benchmarks/, docs/)
 ```
@@ -30,6 +30,7 @@ npm pack --dry-run        # Inspect npm tarball whitelist (excludes test/, bench
   - `cyber-scope.cjs`: `ScopeGate` + SSRF / DNS-rebinding guard + `redactSecrets` / `maskToken`.
   - `cyber-analyzers.cjs`: Secrets, CWE sinks, 2-hop cross-file reachability (`inspectSourceReachability`), OSV dependency checks, HTTP/TLS/DNS recon, DFIR log/IOC triage, and Shannon entropy.
   - `agent-guard.cjs`: Trojan Source bidirectional Unicode (`CWE-116`), Unicode tag/zero-width smuggling, indirect prompt injection (`CWE-74`), npm lifecycle script rug-pulls (`CWE-506`), and untrusted MCP configs.
+  - `artex-defense.cjs`: Pre-merge ARTEX edge/identity exposure rules (`ARTEX-EDGE-001..003`: public `.js.map` / sourcemaps, GraphQL introspection, unauth Swagger/actuator, OAuth `state: false` / open redirects / credentialed wildcard CORS, `skipAuth`/unauth peripheral routes) plus behavioral HTTP log detector (`ARTEX-BEHAV-001`, MITRE `T1595`) resilient to IP rotation & spoofed User-Agents.
   - `shirudo.cjs`: 10-rule pure-Node static verifier across `.bpf.c` (`SHIRUDO-BPF-001..004`), `Beefile` (`SHIRUDO-BEE-001..003`), and TPM 2.0 attestation workflows/evidence JSON (`SHIRUDO-TPM-001..003`), plus `shirudo status --check` and offline-enforced `verifyShirudoAttestation`.
   - `findings.cjs`: Normalizer + SARIF v2.1.0 generator (`ruleId` first-class when set, falling back to `cwe`) + Markdown report builder.
 - `src/integrations/`:

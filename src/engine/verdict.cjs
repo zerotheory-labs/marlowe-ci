@@ -32,6 +32,7 @@ const {
   auditShirudoEvidenceJson
 } = require('../core/shirudo.cjs');
 const { scanAgentGuard } = require('../core/agent-guard.cjs');
+const { scanArtexEdgeSurface } = require('../core/artex-defense.cjs');
 
 const SEVERITY_RANK = { critical: 4, high: 3, medium: 2, low: 1, info: 0 };
 const SAFE_MEDIA_RE = /\.(?:png|jpe?g|webp|gif|svg|ico|mp4|webm|mov|woff2?|ttf|otf|pdf|lock)$/i;
@@ -358,6 +359,13 @@ async function runAudit({
     });
     rawFindings.push(...agentRes.findings);
     cantTellReasons.push(...agentRes.cantTellReasons);
+
+    const artexRes = scanArtexEdgeSurface(cand.relPath, text, {
+      allowedLines: cand.allowedLines,
+      mode
+    });
+    rawFindings.push(...artexRes.findings);
+    cantTellReasons.push(...artexRes.cantTellReasons);
 
     if (isBeefilePath(cand.relPath)) {
       const bfRes = await auditBeefile(cand.relPath, text, { root: absRoot });

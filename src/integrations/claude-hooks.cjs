@@ -11,6 +11,7 @@ const {
   auditShirudoCommands
 } = require('../core/shirudo.cjs');
 const { hasHiddenUnicodeControls, scanAgentGuard } = require('../core/agent-guard.cjs');
+const { scanArtexEdgeSurface } = require('../core/artex-defense.cjs');
 const { scanTextLines, runAudit } = require('../engine/verdict.cjs');
 
 const FILE_READ_TOOLS = new Set(['Read', 'View']);
@@ -275,6 +276,14 @@ async function handlePostToolUse(payload) {
   }
   for (const ct of agentGuardRes.cantTellReasons.slice(0, 3)) {
     warnings.push(`• [AGENT-GUARD CAN'T TELL · ${ct.code}] ${ct.message}`);
+  }
+
+  const artexRes = scanArtexEdgeSurface(resolved.relPath, text);
+  for (const f of artexRes.findings.slice(0, 5)) {
+    warnings.push(`• [${f.ruleId} ${f.cwe} ${f.severity.toUpperCase()}] ${f.title} at ${f.location}: ${f.evidence}`);
+  }
+  for (const ct of artexRes.cantTellReasons.slice(0, 3)) {
+    warnings.push(`• [ARTEX CAN'T TELL · ${ct.code}] ${ct.message}`);
   }
 
   if (!warnings.length) return null;
