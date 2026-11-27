@@ -1,5 +1,6 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
+const { version } = require('../package.json');
 const { runAudit } = require('./engine/verdict.cjs');
 const { formatTerminalReport, formatMarkdownSummary } = require('./engine/format.cjs');
 const { runGit } = require('./engine/git-diff.cjs');
@@ -51,7 +52,7 @@ async function upsertPrComment({ token, repository, prNumber, body, fetchImpl = 
   const headers = {
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
-    'User-Agent': 'Marlowe-CI/0.4.0',
+    'User-Agent': `Marlowe-CI/${version}`,
     'X-GitHub-Api-Version': '2022-11-28'
   };
 
