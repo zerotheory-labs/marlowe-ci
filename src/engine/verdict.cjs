@@ -52,7 +52,7 @@ const AUTO_SCANNER_PRIORITY = ['gitleaks', 'semgrep', 'trivy', 'osv-scanner'];
 
 function scanTextLines(relPath, text, { allowedLines = null } = {}) {
   const isDoc = /\.(?:md|mdx|rst|txt)$/i.test(relPath);
-  const isDemoOrTest = /(?:^|\/)(?:demo|example|sample)[-_][^/]*$|_test\.go$|\.(?:test|spec)\.[cm]?[jt]sx?$/i.test(relPath);
+  const isDemoOrTest = /(?:^|\/)(?:tests?|__tests__|benchmarks?|fixtures?)\/|(?:\.(?:test|spec)\.[cm]?[jt]sx?|_test\.go|test_[^/]+\.py)$/i.test(relPath);
   const secretHits = [];
   const codeHits = [];
   const lines = text.split('\n');
@@ -64,27 +64,31 @@ function scanTextLines(relPath, text, { allowedLines = null } = {}) {
     const trimmed = raw.trim();
     if (!trimmed || raw.length > 4000) continue;
 
+    const isCommentLine = trimmed.startsWith('//') || trimmed.startsWith('/*') || /^\*(?:\s|$)/.test(trimmed) || (trimmed.startsWith('#') && !trimmed.startsWith('#!'));
+
     let matchedSecret = false;
-    for (const rule of SECRET_RULES) {
-      if ((isDoc || isDemoOrTest) && !HIGH_CERTAINTY_SECRET_IDS.has(rule.id)) continue;
-      rule.regex.lastIndex = 0;
-      const m = rule.regex.exec(raw);
-      if (!m || (rule.filter && !rule.filter(...m))) continue;
-      matchedSecret = true;
-      secretHits.push({
-        title: rule.label,
-        severity: rule.severity,
-        category: 'secrets',
-        cwe: rule.cwe,
-        reachability: 'reachable',
-        location: `${relPath}:${lineNum}`,
-        evidence: redactSecrets(trimmed.slice(0, 220)).text,
-        remediation: 'Remove the hardcoded secret from source control, rotate the exposed credential, and inject it via environment secrets.'
-      });
-      break;
+    if (!isCommentLine && !isDemoOrTest) {
+      for (const rule of SECRET_RULES) {
+        if (isDoc && !HIGH_CERTAINTY_SECRET_IDS.has(rule.id)) continue;
+        rule.regex.lastIndex = 0;
+        const m = rule.regex.exec(raw);
+        if (!m || (rule.filter && !rule.filter(...m))) continue;
+        matchedSecret = true;
+        secretHits.push({
+          title: rule.label,
+          severity: rule.severity,
+          category: 'secrets',
+          cwe: rule.cwe,
+          reachability: 'reachable',
+          location: `${relPath}:${lineNum}`,
+          evidence: redactSecrets(trimmed.slice(0, 220)).text,
+          remediation: 'Remove the hardcoded secret from source control, rotate the exposed credential, and inject it via environment secrets.'
+        });
+        break;
+      }
     }
 
-    if (!matchedSecret && !isDoc && !isDemoOrTest) {
+    if (!matchedSecret && !isCommentLine && !isDoc && !isDemoOrTest) {
       const em = ENTROPY_SECRET_RE.exec(raw);
       if (
         em &&
@@ -106,8 +110,8 @@ function scanTextLines(relPath, text, { allowedLines = null } = {}) {
       }
     }
 
-    if (/\.(?:md|txt|lock|svg|css|map)$/i.test(relPath)) continue;
-    if (trimmed.length > 1000 || trimmed.startsWith('//') || (trimmed.startsWith('#') && !trimmed.startsWith('#!'))) continue;
+    if (isDemoOrTest || isDoc || isCommentLine || /\.(?:md|txt|lock|svg|css|map)$/i.test(relPath)) continue;
+    if (trimmed.length > 1000) continue;
 
     for (const rule of CODE_RULES) {
       if (!rule.regex.test(raw) || (rule.filter && !rule.filter(trimmed))) continue;

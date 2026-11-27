@@ -43,7 +43,7 @@ AI coding agents mutate files, run shell commands, and open pull requests in sec
 - **ARTEX Defense & Behavioral Pack (`ARTEX-EDGE-001..003`, `ARTEX-BEHAV-001`):**
   - **Pre-merge Edge & Identity Rules:** Flags unauthenticated Swagger/OpenAPI/GraphQL introspection and public `.js.map` / production sourcemaps (`EDGE-001`), OAuth `state: false` / open redirects / credentialed wildcard CORS / weak reset tokens (`EDGE-002`), and `skipAuth` or unauthenticated `/admin` / `/backup` / `/webhook` routes (`EDGE-003`).
   - **Behavioral Agentic Log Detector (`analyzeLogs`):** Detects machine-speed HTTP recon → OAuth/auth pivots, `400`/`422` payload adaptation bursts, and low-static-ratio enumeration even behind rotated IPs and browser User-Agents (`ARTEX-BEHAV-001`, MITRE `T1595`).
-- **Expanded 40-Scenario Benchmark Suite (`npm run bench`):** Lifted Shirudo `3/3` → `12/12` and added `7/7` ARTEX Edge Defense (`40/40` overall `100%` exact 3-state accuracy, `0%` clean FP rate, `19.96ms` p50).
+- **Expanded 40-Scenario Benchmark Suite (`npm run bench`) & 6-Repo Real-World OSS Corpus Calibration (`npm run bench:corpus`):** Lifted Shirudo `3/3` → `12/12`, added `7/7` ARTEX Edge Defense (`40/40` `100%` accuracy, `0%` clean FP `0/10`, `21.3ms` p50), and calibrated rules against 6 real public OSS repos (`express`, `fastify`, `hono`, `shirudo-dev/shirudo`, `OWASP/NodeGoat`, `juice-shop`).
 - **SARIF First-Class `ruleId`s + Maintainer Docs:** Preserves explicit `SHIRUDO-*` and `ARTEX-*` rule IDs in SARIF v2.1.0 output and adds [`CLAUDE.md`](./CLAUDE.md).
 
 ---
@@ -68,17 +68,30 @@ Executed offline via [`benchmarks/run-benchmarks.cjs`](./benchmarks/run-benchmar
 - **`FAILS` Precision / Recall / F1:** `100% / 100% / 100%` (`FP = 0`, `FN = 0`)
 - **Clean / Benign False-Positive Rate:** **`0%`** (`0/10`)
 - **`CAN'T TELL` Exact Match:** **`9/9`**
-- **Latency (`p50` / `p95` / `mean`):** **`19.96ms` / `23.42ms` / `20.92ms`**
+- **Latency (`p50` / `p95` / `mean`):** **`21.3ms` / `24.37ms` / `21.84ms`**
 
 | Domain | Passed | Accuracy | p50 | p95 |
 | :--- | :---: | :---: | :---: | :---: |
-| AppSec & Cross-File Reachability | `6/6` | `100%` | `21.25ms` | `36.9ms` |
-| Secrets & Masking | `3/3` | `100%` | `19.93ms` | `21.11ms` |
-| Guardrail Regressions & Precision | `5/5` | `100%` | `19.43ms` | `20.61ms` |
-| Agent Guard (Prompt Injection / Trojan / Rug-Pull) | `5/5` | `100%` | `20.14ms` | `21.64ms` |
-| Shirudo eBPF, Beefile & TPM Attestation | `12/12` | `100%` | `19.96ms` | `28.41ms` |
-| ARTEX Edge Defense (Maps / OAuth / CORS / Admin) | `7/7` | `100%` | `19.8ms` | `22.12ms` |
-| Binaries & Clean Refactors | `2/2` | `100%` | `19.38ms` | `20.9ms` |
+| AppSec & Cross-File Reachability | `6/6` | `100%` | `21.9ms` | `36.17ms` |
+| Secrets & Masking | `3/3` | `100%` | `20.67ms` | `22.18ms` |
+| Guardrail Regressions & Precision | `5/5` | `100%` | `20.46ms` | `21.71ms` |
+| Agent Guard (Prompt Injection / Trojan / Rug-Pull) | `5/5` | `100%` | `22.21ms` | `24.4ms` |
+| Shirudo eBPF, Beefile & TPM Attestation | `12/12` | `100%` | `21.45ms` | `24.37ms` |
+| ARTEX Edge Defense (Maps / OAuth / CORS / Admin) | `7/7` | `100%` | `21.07ms` | `21.53ms` |
+| Binaries & Clean Refactors | `2/2` | `100%` | `21.46ms` | `21.53ms` |
+
+#### Real-World 6-Repo OSS Corpus Sweep (`npm run bench:corpus`)
+
+Measured full-repo scans across 6 public repositories at pinned commit SHAs (before vs. after corpus calibration, saved to [`benchmarks/corpus-results.json`](./benchmarks/corpus-results.json)):
+
+| Repository (Pinned SHA) | Role | Files | Time | Findings (Before → After) | Failing | Result Summary |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| `expressjs/express` (`43fca52`) | Clean framework | `215` | `47.02ms` | `4 → 0` | `0` | **`HOLDS UP`** (`test/res.redirect.js` JS string fixture FP eliminated) |
+| `fastify/fastify` (`a94dc37`) | Clean framework | `397` | `88.7ms` | `13 → 0` | `0` | **`HOLDS UP`** (`test/` TLS/MD5 test fixtures excluded) |
+| `honojs/hono` (`717dc17`) | Clean framework | `581` | `161.61ms` | `27 → 3` | `2` | `build/release-adapter.ts` `execSync` (real non-test CLI) + 1 unverified `innerHTML` |
+| `shirudo-dev/shirudo` (`8a8e165`) | Upstream Shirudo | `1,852` | `608.67ms` | `50 → 4` | `2` | **`0` failing** across `61` direct `Beefile`/`.bpf.c` checks; SQL prose FP fixed |
+| `OWASP/NodeGoat` (`c5cb68a`) | Vulnerable app | `102` | `36.26ms` | `11 → 9` | `7` | **`FAILS`** (`CWE-94` `eval(req.body.*)` + `CWE-798` creds caught) |
+| `juice-shop/juice-shop` (`c9f9922`) | Vulnerable app | `1,196` | `623.98ms` | `100 → 91` | `70` | **`FAILS`** (`9` `ARTEX-EDGE-001`, `yaml.load`, RSA keys, SQLi, XSS caught) |
 
 #### Recorded Live Localhost Purple-Team Run (`npm run bench:artex`)
 

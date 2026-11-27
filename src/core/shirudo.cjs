@@ -1204,7 +1204,7 @@ function auditShirudoCommands(relPath, text, { allowedLines = null, isShellComma
 
     // SHIRUDO-TPM-003 on shirudo status in CI workflows or gated shell scripts without --check or JSON verdict assertion
     const statusMatch = /(?:^|[\s;&|(])shirudo\s+status(?:\s|$|;|&&|\|\|)/.exec(cmdBlock);
-    if (statusMatch && !/(?:marlowe-ci|echo|printf)\s+[^\n]*shirudo\s+status/.test(cmdBlock)) {
+    if (statusMatch && !/(?:marlowe-ci|echo|printf|console)\b[^\n]*shirudo\s+status|"\s*\\?\$\s*shirudo\s+status/.test(cmdBlock)) {
       const hasCheckFlag = /\s--check(?:\s|$|;|&&)/.test(cmdBlock);
       const hasVerdictAssert = /\.(?:verdict|tampered)\b|\|\|\s*(?:exit|return|die)/.test(cmdBlock);
       const isGatingContext = isWorkflow || hasStrictShell || /\bif\s+shirudo\s+status\b|shirudo\s+status[^\n]*&&/.test(cmdBlock);

@@ -103,6 +103,21 @@ test('ARTEX-BEHAV-001 detects machine-speed ARTEX attack loop despite rotated IP
     const clean = await analyzeLogs(humanPath, 'human-access.jsonl', {}, new AbortController().signal);
     assert.equal(clean.agenticBehavior.detected, false);
     assert.equal(clean.alerts.length, 0);
+
+    // Noisy React/Next.js SPA dashboard firing 10 rapid 200 OK API requests with 0 static assets (CDN-cached) must NOT false-positive
+    const spaLines = Array.from({ length: 10 }, (_, idx) => JSON.stringify({
+      ts: new Date(Date.parse('2026-11-26T18:20:00.000Z') + idx * 15).toISOString(),
+      ip: '203.0.113.88',
+      method: 'GET',
+      path: `/api/widgets/panel-${idx}`,
+      status: 200,
+      ua: 'Mozilla/5.0 Chrome/128.0'
+    })).join('\n');
+    const spaPath = path.join(dir, 'spa-dashboard.jsonl');
+    await fs.writeFile(spaPath, spaLines, 'utf8');
+    const spaRes = await analyzeLogs(spaPath, 'spa-dashboard.jsonl', {}, new AbortController().signal);
+    assert.equal(spaRes.agenticBehavior.detected, false);
+    assert.equal(spaRes.alerts.length, 0);
   });
 });
 

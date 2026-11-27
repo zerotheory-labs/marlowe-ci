@@ -1,0 +1,831 @@
+{
+  "generatedAt": "2026-11-27T01:07:08.803Z",
+  "nodeVersion": "v26.12.0",
+  "platform": "darwin-arm64",
+  "repos": [
+    {
+      "slug": "express",
+      "repo": "expressjs/express",
+      "commitSha": "43fca52",
+      "role": "clean-framework",
+      "verdict": "holds",
+      "verdictLabel": "HOLDS UP",
+      "scannedFiles": 215,
+      "durationMs": 47.02,
+      "totalFindings": 0,
+      "failingFindings": 0,
+      "cantTellCount": 0,
+      "ruleBreakdown": {},
+      "cantTellBreakdown": {},
+      "sampleFindings": [],
+      "sampleCantTell": []
+    },
+    {
+      "slug": "fastify",
+      "repo": "fastify/fastify",
+      "commitSha": "a94dc37",
+      "role": "clean-framework",
+      "verdict": "holds",
+      "verdictLabel": "HOLDS UP",
+      "scannedFiles": 397,
+      "durationMs": 88.7,
+      "totalFindings": 0,
+      "failingFindings": 0,
+      "cantTellCount": 0,
+      "ruleBreakdown": {},
+      "cantTellBreakdown": {},
+      "sampleFindings": [],
+      "sampleCantTell": []
+    },
+    {
+      "slug": "hono",
+      "repo": "honojs/hono",
+      "commitSha": "717dc17",
+      "role": "clean-framework",
+      "verdict": "fails",
+      "verdictLabel": "FAILS",
+      "scannedFiles": 581,
+      "durationMs": 161.61,
+      "totalFindings": 3,
+      "failingFindings": 2,
+      "cantTellCount": 1,
+      "ruleBreakdown": {
+        "CWE-78": 2,
+        "CWE-79": 1
+      },
+      "cantTellBreakdown": {
+        "unverified-sink": 1
+      },
+      "sampleFindings": [
+        {
+          "ruleId": "CWE-78",
+          "severity": "high",
+          "cwe": "CWE-78",
+          "category": "appsec",
+          "title": "Potential OS Command Injection sink",
+          "location": "build/release-adapter.ts:22",
+          "evidence": "const run = (cmd: string, cwd = '.') => execSync(cmd, { cwd, stdio: 'inherit' })"
+        },
+        {
+          "ruleId": "CWE-78",
+          "severity": "high",
+          "cwe": "CWE-78",
+          "category": "appsec",
+          "title": "Potential OS Command Injection sink",
+          "location": "build/release-adapter.ts:24",
+          "evidence": "execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] })"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "src/jsx/dom/render.ts:188",
+          "evidence": "container.innerHTML = value.__html"
+        }
+      ],
+      "sampleCantTell": [
+        {
+          "code": "unverified-sink",
+          "path": "src/jsx/dom/render.ts",
+          "line": 188,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at src/jsx/dom/render.ts:188 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        }
+      ]
+    },
+    {
+      "slug": "shirudo",
+      "repo": "shirudo-dev/shirudo",
+      "commitSha": "8a8e165",
+      "role": "upstream-shirudo",
+      "verdict": "fails",
+      "verdictLabel": "FAILS",
+      "scannedFiles": 1852,
+      "durationMs": 608.67,
+      "totalFindings": 4,
+      "failingFindings": 2,
+      "cantTellCount": 31,
+      "ruleBreakdown": {
+        "SHIRUDO-TPM-003": 2,
+        "CWE-79": 1,
+        "CWE-250": 1
+      },
+      "cantTellBreakdown": {
+        "unverified-sink": 1,
+        "SHIRUDO-TPM-003": 1,
+        "SHIRUDO-BPF-001": 2,
+        "shirudo-bpf-unbounded-hook": 7,
+        "SHIRUDO-BEE-001": 4,
+        "SHIRUDO-BEE-002": 8,
+        "shirudo-upatch-missing-source": 3,
+        "shirudo-bpf-missing-license": 5
+      },
+      "sampleFindings": [
+        {
+          "ruleId": "SHIRUDO-TPM-003",
+          "severity": "high",
+          "cwe": "CWE-252",
+          "category": "appsec",
+          "title": "shirudo status invoked in gating workflow/script without --check",
+          "location": "testing/ci-checks/t0008-check-docs.sh:180",
+          "evidence": "\"       \\\"\\$(shirudo status --json |\"  \"          jq --arg k v)\\\" \\\\\" \"       --json\" &&"
+        },
+        {
+          "ruleId": "SHIRUDO-TPM-003",
+          "severity": "high",
+          "cwe": "CWE-252",
+          "category": "appsec",
+          "title": "shirudo status invoked in gating workflow/script without --check",
+          "location": "testing/ci-checks/t0008-check-docs.sh:184",
+          "evidence": "\"       \\\"\\$(shirudo status --json |\"  \"          jq --arg k v)\\\" \\\\\" \"       --bogus\" &&"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "Documentation/_themes/shirudo/static/shirudo.js:27",
+          "evidence": "button.innerHTML = chevron;"
+        },
+        {
+          "ruleId": "CWE-250",
+          "severity": "medium",
+          "cwe": "CWE-250",
+          "category": "config",
+          "title": "Privileged container or world-writable permissions",
+          "location": "testing/functional/image/t5007-config-update.sh:233",
+          "evidence": "chmod 777 \"$WORK/real-dir\" &&"
+        }
+      ],
+      "sampleCantTell": [
+        {
+          "code": "unverified-sink",
+          "path": "Documentation/_themes/shirudo/static/shirudo.js",
+          "line": 27,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at Documentation/_themes/shirudo/static/shirudo.js:27 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "SHIRUDO-TPM-003",
+          "path": "testing/end2end/operator.sh",
+          "line": 152,
+          "message": "shirudo attest verify at testing/end2end/operator.sh:152 omits --expect-config-root/--expect-config-pcr; active config image remains unapproved."
+        },
+        {
+          "code": "SHIRUDO-BPF-001",
+          "path": "testing/fixtures/fmod-ret-tagged.bpf.c",
+          "line": 17,
+          "message": "Unverified internal kernel fmod_ret target \"vfs_fallocate\" at testing/fixtures/fmod-ret-tagged.bpf.c:17; confirm no inline unlocks/refcounts are bypassed."
+        },
+        {
+          "code": "SHIRUDO-BPF-001",
+          "path": "testing/fixtures/fmod-ret-unlisted.bpf.c",
+          "line": 13,
+          "message": "Unverified internal kernel fmod_ret target \"vfs_fallocate\" at testing/fixtures/fmod-ret-unlisted.bpf.c:13; confirm no inline unlocks/refcounts are bypassed."
+        },
+        {
+          "code": "shirudo-bpf-unbounded-hook",
+          "path": "testing/fixtures/scope-kprobe.bpf.c",
+          "line": 8,
+          "message": "Broad kernel hook in \"testing/fixtures/scope-kprobe.bpf.c\" (line 8) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+        },
+        {
+          "code": "SHIRUDO-BEE-001",
+          "path": "testing/fixtures/app-sandbox/probe.Beefile",
+          "line": 26,
+          "message": "Shirudo [upatches.tree] \"app-sandbox\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
+        },
+        {
+          "code": "SHIRUDO-BEE-002",
+          "path": "testing/fixtures/app-sandbox/probe.Beefile",
+          "line": 10,
+          "message": "Unreviewed [[upatches.rodata]].generator command (python3) at testing/fixtures/app-sandbox/probe.Beefile:10 runs via execvp during bpm build/update; review before operator signing."
+        },
+        {
+          "code": "SHIRUDO-BEE-002",
+          "path": "testing/fixtures/app-sandbox/probe.Beefile",
+          "line": 10,
+          "message": "Unreviewed [[upatches.rodata]].update command (python3) at testing/fixtures/app-sandbox/probe.Beefile:10 runs via execvp during bpm build/update; review before operator signing."
+        },
+        {
+          "code": "shirudo-upatch-missing-source",
+          "path": "testing/fixtures/app-sandbox/probe.Beefile",
+          "line": 7,
+          "message": "Referenced upatch artifact \"app-sandbox.bpf.c\" (testing/fixtures/app-sandbox/app-sandbox.bpf.c) was not found inside workspace."
+        },
+        {
+          "code": "SHIRUDO-BEE-001",
+          "path": "testing/fixtures/pipeline/net-guard/Beefile",
+          "line": 10,
+          "message": "Shirudo [upatches.tree] \"net-guard\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
+        },
+        {
+          "code": "SHIRUDO-BEE-001",
+          "path": "upatches/app-sandbox/Beefile",
+          "line": 34,
+          "message": "Shirudo [upatches.tree] \"app-sandbox\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
+        },
+        {
+          "code": "SHIRUDO-BEE-002",
+          "path": "upatches/app-sandbox/Beefile",
+          "line": 16,
+          "message": "Unreviewed [[upatches.rodata]].generator command (python3) at upatches/app-sandbox/Beefile:16 runs via execvp during bpm build/update; review before operator signing."
+        },
+        {
+          "code": "SHIRUDO-BEE-002",
+          "path": "upatches/app-sandbox/Beefile",
+          "line": 16,
+          "message": "Unreviewed [[upatches.rodata]].update command (python3) at upatches/app-sandbox/Beefile:16 runs via execvp during bpm build/update; review before operator signing."
+        },
+        {
+          "code": "shirudo-upatch-missing-source",
+          "path": "upatches/java-base64/Beefile",
+          "line": 10,
+          "message": "Referenced upatch artifact \"java-base64.jar\" (upatches/java-base64/java-base64.jar) was not found inside workspace."
+        },
+        {
+          "code": "shirudo-upatch-missing-source",
+          "path": "upatches/java-sql-inj/Beefile",
+          "line": 10,
+          "message": "Referenced upatch artifact \"java-sql-inj.jar\" (upatches/java-sql-inj/java-sql-inj.jar) was not found inside workspace."
+        },
+        {
+          "code": "shirudo-bpf-unbounded-hook",
+          "path": "upatches/kernel-cve/sources/cve-2025-71093-e1000-oob-e1000-tbi-should-accept/observability/cve-2025-71093-e1000-tbi-detector.bpf.c",
+          "line": 43,
+          "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2025-71093-e1000-oob-e1000-tbi-should-accept/observability/cve-2025-71093-e1000-tbi-detector.bpf.c\" (line 43) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+        },
+        {
+          "code": "shirudo-bpf-unbounded-hook",
+          "path": "upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/mitigation/cve-2026-31431-af-alg-block.bpf.c",
+          "line": 19,
+          "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/mitigation/cve-2026-31431-af-alg-block.bpf.c\" (line 19) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+        },
+        {
+          "code": "shirudo-bpf-unbounded-hook",
+          "path": "upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/mitigation/cve-2026-31431-alg-splice-block.bpf.c",
+          "line": 34,
+          "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/mitigation/cve-2026-31431-alg-splice-block.bpf.c\" (line 34) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+        },
+        {
+          "code": "shirudo-bpf-unbounded-hook",
+          "path": "upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/observability/cve-2026-31431-copyfail-detector.bpf.c",
+          "line": 65,
+          "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/observability/cve-2026-31431-copyfail-detector.bpf.c\" (line 65) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+        },
+        {
+          "code": "shirudo-bpf-unbounded-hook",
+          "path": "upatches/kernel-cve/sources/cve-2026-31675-net-sched-sch-netem-oob-access-packet-corruption/observability/cve-2026-31675-netem-detector.bpf.c",
+          "line": 45,
+          "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31675-net-sched-sch-netem-oob-access-packet-corruption/observability/cve-2026-31675-netem-detector.bpf.c\" (line 45) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+        }
+      ],
+      "shirudoDirectAudit": {
+        "verdict": "cant-tell",
+        "inspectedCount": 61,
+        "findingsCount": 0,
+        "cantTellCount": 34,
+        "findings": [],
+        "cantTellReasons": [
+          {
+            "code": "SHIRUDO-BPF-001",
+            "path": "testing/fixtures/fmod-ret-tagged.bpf.c",
+            "line": 17,
+            "message": "Unverified internal kernel fmod_ret target \"vfs_fallocate\" at testing/fixtures/fmod-ret-tagged.bpf.c:17; confirm no inline unlocks/refcounts are bypassed."
+          },
+          {
+            "code": "SHIRUDO-BPF-001",
+            "path": "testing/fixtures/fmod-ret-unlisted.bpf.c",
+            "line": 13,
+            "message": "Unverified internal kernel fmod_ret target \"vfs_fallocate\" at testing/fixtures/fmod-ret-unlisted.bpf.c:13; confirm no inline unlocks/refcounts are bypassed."
+          },
+          {
+            "code": "shirudo-bpf-unbounded-hook",
+            "path": "testing/fixtures/scope-kprobe.bpf.c",
+            "line": 8,
+            "message": "Broad kernel hook in \"testing/fixtures/scope-kprobe.bpf.c\" (line 8) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+          },
+          {
+            "code": "SHIRUDO-BEE-001",
+            "path": "testing/fixtures/app-sandbox/probe.Beefile",
+            "line": 26,
+            "message": "Shirudo [upatches.tree] \"app-sandbox\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
+          },
+          {
+            "code": "SHIRUDO-BEE-002",
+            "path": "testing/fixtures/app-sandbox/probe.Beefile",
+            "line": 10,
+            "message": "Unreviewed [[upatches.rodata]].generator command (python3) at testing/fixtures/app-sandbox/probe.Beefile:10 runs via execvp during bpm build/update; review before operator signing."
+          },
+          {
+            "code": "SHIRUDO-BEE-002",
+            "path": "testing/fixtures/app-sandbox/probe.Beefile",
+            "line": 10,
+            "message": "Unreviewed [[upatches.rodata]].update command (python3) at testing/fixtures/app-sandbox/probe.Beefile:10 runs via execvp during bpm build/update; review before operator signing."
+          },
+          {
+            "code": "shirudo-upatch-missing-source",
+            "path": "testing/fixtures/app-sandbox/probe.Beefile",
+            "line": 7,
+            "message": "Referenced upatch artifact \"app-sandbox.bpf.c\" (testing/fixtures/app-sandbox/app-sandbox.bpf.c) was not found inside workspace."
+          },
+          {
+            "code": "SHIRUDO-BEE-001",
+            "path": "testing/fixtures/pipeline/net-guard/Beefile",
+            "line": 10,
+            "message": "Shirudo [upatches.tree] \"net-guard\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
+          },
+          {
+            "code": "SHIRUDO-BEE-001",
+            "path": "upatches/app-sandbox/Beefile",
+            "line": 34,
+            "message": "Shirudo [upatches.tree] \"app-sandbox\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
+          },
+          {
+            "code": "SHIRUDO-BEE-002",
+            "path": "upatches/app-sandbox/Beefile",
+            "line": 16,
+            "message": "Unreviewed [[upatches.rodata]].generator command (python3) at upatches/app-sandbox/Beefile:16 runs via execvp during bpm build/update; review before operator signing."
+          },
+          {
+            "code": "SHIRUDO-BEE-002",
+            "path": "upatches/app-sandbox/Beefile",
+            "line": 16,
+            "message": "Unreviewed [[upatches.rodata]].update command (python3) at upatches/app-sandbox/Beefile:16 runs via execvp during bpm build/update; review before operator signing."
+          },
+          {
+            "code": "shirudo-upatch-missing-source",
+            "path": "upatches/java-base64/Beefile",
+            "line": 10,
+            "message": "Referenced upatch artifact \"java-base64.jar\" (upatches/java-base64/java-base64.jar) was not found inside workspace."
+          },
+          {
+            "code": "shirudo-upatch-missing-source",
+            "path": "upatches/java-sql-inj/Beefile",
+            "line": 10,
+            "message": "Referenced upatch artifact \"java-sql-inj.jar\" (upatches/java-sql-inj/java-sql-inj.jar) was not found inside workspace."
+          },
+          {
+            "code": "shirudo-binary-artifact",
+            "path": "upatches/kernel-cve/cve-2025-71093-e1000-tbi-detector.bee",
+            "line": null,
+            "message": "Compiled Shirudo package \"upatches/kernel-cve/cve-2025-71093-e1000-tbi-detector.bee\" (SHA-256 f731acaaba282dc7…, entropy 5.23/8.00) has no sibling .bpf.c source for static review."
+          },
+          {
+            "code": "shirudo-binary-artifact",
+            "path": "upatches/kernel-cve/cve-2026-31431-af-alg-block.bee",
+            "line": null,
+            "message": "Compiled Shirudo package \"upatches/kernel-cve/cve-2026-31431-af-alg-block.bee\" (SHA-256 c99b02590495a5c0…, entropy 5.36/8.00) has no sibling .bpf.c source for static review."
+          },
+          {
+            "code": "shirudo-binary-artifact",
+            "path": "upatches/kernel-cve/cve-2026-31431-alg-splice-block.bee",
+            "line": null,
+            "message": "Compiled Shirudo package \"upatches/kernel-cve/cve-2026-31431-alg-splice-block.bee\" (SHA-256 4aa8d188d0ad1321…, entropy 5.32/8.00) has no sibling .bpf.c source for static review."
+          },
+          {
+            "code": "shirudo-binary-artifact",
+            "path": "upatches/kernel-cve/cve-2026-31675-netem-detector.bee",
+            "line": null,
+            "message": "Compiled Shirudo package \"upatches/kernel-cve/cve-2026-31675-netem-detector.bee\" (SHA-256 589c5cef274ac609…, entropy 5.28/8.00) has no sibling .bpf.c source for static review."
+          },
+          {
+            "code": "shirudo-binary-artifact",
+            "path": "upatches/kernel-cve/cve-2026-63984-rpl-detector.bee",
+            "line": null,
+            "message": "Compiled Shirudo package \"upatches/kernel-cve/cve-2026-63984-rpl-detector.bee\" (SHA-256 8843474194d29f7a…, entropy 5.27/8.00) has no sibling .bpf.c source for static review."
+          },
+          {
+            "code": "shirudo-bpf-unbounded-hook",
+            "path": "upatches/kernel-cve/sources/cve-2025-71093-e1000-oob-e1000-tbi-should-accept/observability/cve-2025-71093-e1000-tbi-detector.bpf.c",
+            "line": 43,
+            "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2025-71093-e1000-oob-e1000-tbi-should-accept/observability/cve-2025-71093-e1000-tbi-detector.bpf.c\" (line 43) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+          },
+          {
+            "code": "shirudo-bpf-unbounded-hook",
+            "path": "upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/mitigation/cve-2026-31431-af-alg-block.bpf.c",
+            "line": 19,
+            "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/mitigation/cve-2026-31431-af-alg-block.bpf.c\" (line 19) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+          },
+          {
+            "code": "shirudo-bpf-unbounded-hook",
+            "path": "upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/mitigation/cve-2026-31431-alg-splice-block.bpf.c",
+            "line": 34,
+            "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/mitigation/cve-2026-31431-alg-splice-block.bpf.c\" (line 34) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+          },
+          {
+            "code": "shirudo-bpf-unbounded-hook",
+            "path": "upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/observability/cve-2026-31431-copyfail-detector.bpf.c",
+            "line": 65,
+            "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31431-crypto-algif-aead-copy-fail/observability/cve-2026-31431-copyfail-detector.bpf.c\" (line 65) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+          },
+          {
+            "code": "shirudo-bpf-unbounded-hook",
+            "path": "upatches/kernel-cve/sources/cve-2026-31675-net-sched-sch-netem-oob-access-packet-corruption/observability/cve-2026-31675-netem-detector.bpf.c",
+            "line": 45,
+            "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-31675-net-sched-sch-netem-oob-access-packet-corruption/observability/cve-2026-31675-netem-detector.bpf.c\" (line 45) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+          },
+          {
+            "code": "shirudo-bpf-unbounded-hook",
+            "path": "upatches/kernel-cve/sources/cve-2026-63984-ipv6-rpl-hdrlen-overflow-ipv6-rpl-srh-decompress/observability/cve-2026-63984-rpl-detector.bpf.c",
+            "line": 36,
+            "message": "Broad kernel hook in \"upatches/kernel-cve/sources/cve-2026-63984-ipv6-rpl-hdrlen-overflow-ipv6-rpl-srh-decompress/observability/cve-2026-63984-rpl-detector.bpf.c\" (line 36) lacks process/cgroup/inode scoping predicates; verify unintended workloads are not disrupted."
+          },
+          {
+            "code": "SHIRUDO-BEE-001",
+            "path": "upatches/kernel-obs/Beefile",
+            "line": 22,
+            "message": "Shirudo [upatches.tree] \"kernel-obs\" fixes CVE/runtime behavior without [upatches.tree.selector]; verify unintended nodes will not pull it."
+          }
+        ]
+      }
+    },
+    {
+      "slug": "NodeGoat",
+      "repo": "OWASP/NodeGoat",
+      "commitSha": "c5cb68a",
+      "role": "vulnerable-app",
+      "verdict": "fails",
+      "verdictLabel": "FAILS",
+      "scannedFiles": 102,
+      "durationMs": 36.26,
+      "totalFindings": 9,
+      "failingFindings": 7,
+      "cantTellCount": 2,
+      "ruleBreakdown": {
+        "CWE-94": 6,
+        "CWE-798": 1,
+        "CWE-79": 2
+      },
+      "cantTellBreakdown": {
+        "unverified-sink": 2
+      },
+      "sampleFindings": [
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm)",
+          "location": "app/routes/contributions.js:32",
+          "evidence": "const preTax = eval(req.body.preTax);"
+        },
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm)",
+          "location": "app/routes/contributions.js:33",
+          "evidence": "const afterTax = eval(req.body.afterTax);"
+        },
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm)",
+          "location": "app/routes/contributions.js:34",
+          "evidence": "const roth = eval(req.body.roth);"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "app/views/tutorial/a1.html:220",
+          "evidence": "<pre>SELECT * FROM accounts WHERE username = '$username' AND password = '[REDACTED]'</pre>"
+        },
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm)",
+          "location": "app/views/tutorial/a1.html:157",
+          "evidence": "var preTax = eval(req.body.preTax);"
+        },
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm)",
+          "location": "app/views/tutorial/a1.html:158",
+          "evidence": "var afterTax = eval(req.body.afterTax);"
+        },
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm)",
+          "location": "app/views/tutorial/a1.html:159",
+          "evidence": "var roth = eval(req.body.roth);"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "app/assets/vendor/html5shiv.js:6",
+          "evidence": "c=d.insertBefore(c.lastChild,d.firstChild);b.hasCSS=!!c}g||t(a,b);return a}var k=l.html5||{},s=/^<|^(?:button|map|select|textarea|object|ifr"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "config/env/development.js:11",
+          "evidence": "`<script>document.write(\"<script src='http://\" + (location.host || \"localhost\").split(\":\")[0] + \":35729/livereload.js'></\" + \"script>\");</sc"
+        }
+      ],
+      "sampleCantTell": [
+        {
+          "code": "unverified-sink",
+          "path": "app/assets/vendor/html5shiv.js",
+          "line": 6,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at app/assets/vendor/html5shiv.js:6 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "config/env/development.js",
+          "line": 11,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at config/env/development.js:11 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        }
+      ]
+    },
+    {
+      "slug": "juice-shop",
+      "repo": "juice-shop/juice-shop",
+      "commitSha": "c9f9922",
+      "role": "vulnerable-app",
+      "verdict": "fails",
+      "verdictLabel": "FAILS",
+      "scannedFiles": 1196,
+      "durationMs": 623.98,
+      "totalFindings": 91,
+      "failingFindings": 70,
+      "cantTellCount": 6,
+      "ruleBreakdown": {
+        "CWE-502": 6,
+        "CWE-798": 26,
+        "ARTEX-EDGE-001": 9,
+        "CWE-89": 13,
+        "CWE-116": 11,
+        "CWE-94": 6,
+        "CWE-78": 1,
+        "CWE-79": 16,
+        "CWE-327": 2,
+        "CWE-338": 1
+      },
+      "cantTellBreakdown": {
+        "unverified-sink": 6
+      },
+      "sampleFindings": [
+        {
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "server.ts:141",
+          "evidence": "const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yml', 'utf8'))"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "critical",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "PEM Private Key",
+          "location": "infrastructure/terraform/networking.tf:171",
+          "evidence": "private_key      = \"-----BEGIN RSA PRIVATE KEY-----\\nMIICXAIBAAKBgQDNwqLEe9wgTXCbC7+RPdDbBbeqjdbs4kOPOIGzqLpXvJXlxxW8\\niMz0EaM4BKUqYsIa+ndv3"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "critical",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "PEM Private Key",
+          "location": "lib/insecurity.ts:21",
+          "evidence": "const privateKey = '-----BEGIN RSA PRIVATE KEY-----\\r\\nMIICXAIBAAKBgQDNwqLEe9wgTXCbC7+RPdDbBbeqjdbs4kOPOIGzqLpXvJXlxxW8iMz0EaM4BKUqYsIa+ndv3"
+        },
+        {
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "lib/scripts/lintConfig.ts:22",
+          "evidence": "configuration = yaml.load(await readFile(file, 'utf8'))"
+        },
+        {
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "routes/fileUpload.ts:114",
+          "evidence": "const yamlString = vm.runInContext('JSON.stringify(yaml.load(data))', sandbox, { timeout: 2000 })"
+        },
+        {
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "routes/vulnCodeFixes.ts:83",
+          "evidence": "const codingChallengeInfos = yaml.load(fs.readFileSync('./data/static/codefixes/' + key + '.info.yml', 'utf8'))"
+        },
+        {
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "routes/vulnCodeSnippet.ts:90",
+          "evidence": "const codingChallengeInfos = yaml.load(await fs.readFile('./data/static/codefixes/' + key + '.info.yml', { encoding: 'utf8' }))"
+        },
+        {
+          "ruleId": "CWE-502",
+          "severity": "critical",
+          "cwe": "CWE-502",
+          "category": "appsec",
+          "title": "Unsafe deserialization call",
+          "location": "rsn/rsnUtil.ts:135",
+          "evidence": "return yaml.load(content) as ChallengeInfo"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "critical",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "PEM Private Key",
+          "location": "terraform/networking.tf:171",
+          "evidence": "private_key      = \"-----BEGIN RSA PRIVATE KEY-----\\nMIICXAIBAAKBgQDNwqLEe9wgTXCbC7+RPdDbBbeqjdbs4kOPOIGzqLpXvJXlxxW8\\niMz0EaM4BKUqYsIa+ndv3"
+        },
+        {
+          "ruleId": "ARTEX-EDGE-001",
+          "severity": "high",
+          "cwe": "CWE-200",
+          "category": "config",
+          "title": "Unauthenticated API spec or debug endpoint exposed (ARTEX recon surface)",
+          "location": "server.ts:311",
+          "evidence": "app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "data/static/users.yml:3",
+          "evidence": "password: '[REDACTED]'"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "data/static/users.yml:31",
+          "evidence": "password: '[REDACTED]'"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "data/static/users.yml:63",
+          "evidence": "password: 'OhG0…[REDACTED]…or!'"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "data/static/users.yml:88",
+          "evidence": "password: 'bW9j…[REDACTED]…mI='"
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "data/static/users.yml:107",
+          "evidence": "password: 'mDLx…[REDACTED]…bJb'"
+        }
+      ],
+      "sampleCantTell": [
+        {
+          "code": "unverified-sink",
+          "path": "frontend/src/app/data-export/data-export.component.ts",
+          "line": 72,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at frontend/src/app/data-export/data-export.component.ts:72 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "frontend/src/assets/private/stats.min.js",
+          "line": 3,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at frontend/src/assets/private/stats.min.js:3 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "frontend/src/assets/private/stats.min.js",
+          "line": 4,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at frontend/src/assets/private/stats.min.js:4 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "frontend/src/hacking-instructor/index.ts",
+          "line": 126,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at frontend/src/hacking-instructor/index.ts:126 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "lib/xml.ts",
+          "line": 12,
+          "message": "Unverified CWE-94 sink \"Dynamic code evaluation (eval / Function / vm)\" at lib/xml.ts:12 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "scripts/package.mjs",
+          "line": 19,
+          "message": "Unverified CWE-78 sink \"Potential OS Command Injection sink\" at scripts/package.mjs:19 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        }
+      ]
+    }
+  ],
+  "baselineBeforeTuning": {
+    "generatedAt": "2026-11-27T01:05:44.071Z",
+    "repos": [
+      {
+        "slug": "express",
+        "repo": "expressjs/express",
+        "commitSha": "43fca52",
+        "role": "clean-framework",
+        "verdict": "cant-tell",
+        "totalFindings": 4,
+        "failingFindings": 0,
+        "cantTellCount": 4
+      },
+      {
+        "slug": "fastify",
+        "repo": "fastify/fastify",
+        "commitSha": "a94dc37",
+        "role": "clean-framework",
+        "verdict": "fails",
+        "totalFindings": 13,
+        "failingFindings": 8,
+        "cantTellCount": 0
+      },
+      {
+        "slug": "hono",
+        "repo": "honojs/hono",
+        "commitSha": "717dc17",
+        "role": "clean-framework",
+        "verdict": "fails",
+        "totalFindings": 27,
+        "failingFindings": 6,
+        "cantTellCount": 14
+      },
+      {
+        "slug": "shirudo",
+        "repo": "shirudo-dev/shirudo",
+        "commitSha": "8a8e165",
+        "role": "upstream-shirudo",
+        "verdict": "fails",
+        "totalFindings": 50,
+        "failingFindings": 37,
+        "cantTellCount": 42
+      },
+      {
+        "slug": "NodeGoat",
+        "repo": "OWASP/NodeGoat",
+        "commitSha": "c5cb68a",
+        "role": "vulnerable-app",
+        "verdict": "fails",
+        "totalFindings": 11,
+        "failingFindings": 9,
+        "cantTellCount": 2
+      },
+      {
+        "slug": "juice-shop",
+        "repo": "juice-shop/juice-shop",
+        "commitSha": "c9f9922",
+        "role": "vulnerable-app",
+        "verdict": "fails",
+        "totalFindings": 100,
+        "failingFindings": 73,
+        "cantTellCount": 12
+      }
+    ]
+  }
+}

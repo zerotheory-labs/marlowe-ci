@@ -406,6 +406,10 @@ function analyzeAgenticBehavior(lineEntries = [], relPath = '') {
     }
     const uniqPaths = new Set(winEvents.map(e => e.path)).size;
     if (uniqPaths >= 8 && staticRatio < 0.15) {
+      const winErrCount = winEvents.filter(e => ERROR_STATUS_SET.has(e.status)).length;
+      const winReconCount = winEvents.filter(e => e.isReconPath).length;
+      const winAuthCount = winEvents.filter(e => e.isAuthPivotPath).length;
+      if (winErrCount < 2 && winReconCount < 1 && winAuthCount < 3) continue;
       const winGaps = [];
       for (let k = 1; k < winEvents.length; k++) winGaps.push(winEvents[k].tsMs - winEvents[k - 1].tsMs);
       winGaps.sort((a, b) => a - b);
@@ -414,7 +418,7 @@ function analyzeAgenticBehavior(lineEntries = [], relPath = '') {
         indicators.push({
           id: 'machine-speed-enumeration',
           line: winEvents[0].line,
-          summary: `${uniqPaths} distinct API/edge endpoints probed in <=10s (median gap ${winMedianGap ?? '?'}ms, static asset ratio ${(staticRatio * 100).toFixed(0)}%).`
+          summary: `${uniqPaths} distinct API/edge endpoints probed in <=10s (${winErrCount} 4xx errors, median gap ${winMedianGap ?? '?'}ms, static asset ratio ${(staticRatio * 100).toFixed(0)}%).`
         });
         break;
       }

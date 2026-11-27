@@ -50,14 +50,14 @@ async function openRegularBuffer(file, maxBytes = MAX_ARTIFACT_BYTES) {
 const CODE_RULES = [
   { id: 'cmd-injection', category: 'injection', severity: 'high', cwe: 'CWE-78', title: 'Potential OS Command Injection sink', regex: /\b(?:child_process\s*\.\s*(?:exec|execSync)|execSync|os\.system|popen)\s*\(|\bexec\s*\(\s*(?:`[^`\n]*\$\{|[^)\n]*\+)|subprocess\.(?:Popen|run|call|check_output)\s*\([^)\n]*shell\s*=\s*True/ },
   { id: 'dynamic-code-exec', category: 'injection', severity: 'high', cwe: 'CWE-94', title: 'Dynamic code evaluation (eval / Function / vm)', regex: /\beval\s*\(\s*[^)\s]|\b(?:setTimeout|setInterval)\s*\(\s*['"`]|\bnew\s+Function\s*\(|\bvm\.runIn(?:New|This)?Context\s*\(/ },
-  { id: 'sql-concat', category: 'injection', severity: 'high', cwe: 'CWE-89', title: 'Unparameterized SQL string interpolation', regex: /\b(?:SELECT|INSERT\s+INTO|UPDATE|DELETE\s+FROM)\b[^\n]{0,120}(?:\$\{|['"]\s*\+\s*[a-zA-Z_$]|%\s*\(?[a-zA-Z_])/i },
+  { id: 'sql-concat', category: 'injection', severity: 'high', cwe: 'CWE-89', title: 'Unparameterized SQL string interpolation', regex: /\b(?:SELECT\s+[^\n;]{1,80}\bFROM\b|INSERT\s+INTO\b|UPDATE\s+[a-zA-Z_`"\[]+\s+SET\b|DELETE\s+FROM\b)[^\n]{0,120}(?:\$\{|['"]\s*\+\s*[a-zA-Z_$]|%\s*\(?[a-zA-Z_])/i },
   {
     id: 'dom-xss',
     category: 'xss',
     severity: 'medium',
     cwe: 'CWE-79',
     title: 'Unescaped HTML / DOM sink',
-    regex: /\.(?:innerHTML|outerHTML)\s*=(?!=)|\bdangerouslySetInnerHTML\b|\bdocument\.write\s*\(|\bv-html\s*=/,
+    regex: /\.(?:innerHTML|outerHTML)\s*=(?!=)|\bdangerouslySetInnerHTML\s*=\s*\{\{\s*__html\s*:\s*[^'"`\s]|\bdocument\.write\s*\(|\bv-html\s*=/,
     filter: trimmed => !/\.(?:innerHTML|outerHTML)\s*=\s*(?:''|""|``|'[^']*'|"(?:[^"\\]|\\.)*"|`[^`$]*`)\s*;?\s*$/.test(trimmed)
   },
   { id: 'insecure-deserialize', category: 'deserialization', severity: 'critical', cwe: 'CWE-502', title: 'Unsafe deserialization call', regex: /\b(?:pickle\.loads?|marshal\.loads?|yaml\.load\s*\([^)\n]*(?!SafeLoader)|unserialize\s*\()/ },

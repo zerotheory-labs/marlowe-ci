@@ -31,6 +31,7 @@
     "test": "node --test test/*.test.cjs",
     "bench": "node benchmarks/run-benchmarks.cjs",
     "bench:artex": "node benchmarks/run-artex-purple-team.cjs",
+    "bench:corpus": "node benchmarks/run-corpus-audit.cjs --out benchmarks/corpus-results.json",
     "self-check": "node bin/marlowe-ci.cjs scan --path . --no-osv",
     "prepublishOnly": "npm test && npm run self-check"
   },

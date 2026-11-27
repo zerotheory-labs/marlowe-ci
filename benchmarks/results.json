@@ -1,6 +1,6 @@
 {
   "version": "0.6.0",
-  "generatedAt": "2026-11-27T00:18:18.283Z",
+  "generatedAt": "2026-11-27T01:07:14.026Z",
   "nodeVersion": "v26.12.0",
   "platform": "darwin-arm64",
   "workspace": "ephemeral-temp-repos",
@@ -18,9 +18,9 @@
     "cleanFalsePositiveRatePct": 0,
     "cantTellExact": 9,
     "cantTellTotal": 9,
-    "p50Ms": 19.96,
-    "p95Ms": 23.42,
-    "meanMs": 20.92
+    "p50Ms": 21.3,
+    "p95Ms": 24.37,
+    "meanMs": 21.84
   },
   "domains": [
     {
@@ -28,56 +28,56 @@
       "total": 6,
       "passed": 6,
       "accuracyPct": 100,
-      "p50Ms": 21.25,
-      "p95Ms": 36.9
+      "p50Ms": 21.9,
+      "p95Ms": 36.17
     },
     {
       "domain": "Secrets & Masking",
       "total": 3,
       "passed": 3,
       "accuracyPct": 100,
-      "p50Ms": 19.93,
-      "p95Ms": 21.11
+      "p50Ms": 20.67,
+      "p95Ms": 22.18
     },
     {
       "domain": "Regressions & Precision",
       "total": 5,
       "passed": 5,
       "accuracyPct": 100,
-      "p50Ms": 19.43,
-      "p95Ms": 20.61
+      "p50Ms": 20.46,
+      "p95Ms": 21.71
     },
     {
       "domain": "Agent Guard",
       "total": 5,
       "passed": 5,
       "accuracyPct": 100,
-      "p50Ms": 20.14,
-      "p95Ms": 21.64
+      "p50Ms": 22.21,
+      "p95Ms": 24.4
     },
     {
       "domain": "Shirudo eBPF & Attest",
       "total": 12,
       "passed": 12,
       "accuracyPct": 100,
-      "p50Ms": 19.96,
-      "p95Ms": 28.41
+      "p50Ms": 21.45,
+      "p95Ms": 24.37
     },
     {
       "domain": "ARTEX Edge Defense",
       "total": 7,
       "passed": 7,
       "accuracyPct": 100,
-      "p50Ms": 19.8,
-      "p95Ms": 22.12
+      "p50Ms": 21.07,
+      "p95Ms": 21.53
     },
     {
       "domain": "Binaries & Refactors",
       "total": 2,
       "passed": 2,
       "accuracyPct": 100,
-      "p50Ms": 19.38,
-      "p95Ms": 20.9
+      "p50Ms": 21.46,
+      "p95Ms": 21.53
     }
   ],
   "scenarios": [
@@ -87,7 +87,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 36.9,
+      "durationMs": 36.17,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -97,7 +97,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 22.8,
+      "durationMs": 23.81,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -107,7 +107,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.81,
+      "durationMs": 21.94,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -117,7 +117,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 21.25,
+      "durationMs": 21.9,
       "findingsCount": 1,
       "cantTellCount": 1
     },
@@ -127,7 +127,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 19.8,
+      "durationMs": 20.45,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -137,7 +137,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 23.42,
+      "durationMs": 20.67,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -147,7 +147,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 21.11,
+      "durationMs": 22.18,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -157,7 +157,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.41,
+      "durationMs": 20.67,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -167,7 +167,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 19.93,
+      "durationMs": 19.88,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -177,7 +177,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.61,
+      "durationMs": 20.4,
       "findingsCount": 2,
       "cantTellCount": 0
     },
@@ -187,7 +187,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.43,
+      "durationMs": 20.52,
       "findingsCount": 0,
       "cantTellCount": 2
     },
@@ -197,7 +197,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.37,
+      "durationMs": 20.46,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -207,7 +207,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 19.95,
+      "durationMs": 21.71,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -217,7 +217,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 18.83,
+      "durationMs": 20.12,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -227,7 +227,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 21.64,
+      "durationMs": 24.4,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -237,7 +237,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.14,
+      "durationMs": 22.21,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -247,7 +247,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.57,
+      "durationMs": 21.11,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -257,7 +257,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.57,
+      "durationMs": 22.28,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -267,7 +267,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 21.32,
+      "durationMs": 21.45,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -277,7 +277,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 28.41,
+      "durationMs": 23.29,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -287,7 +287,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 21.75,
+      "durationMs": 22.67,
       "findingsCount": 1,
       "cantTellCount": 1
     },
@@ -297,7 +297,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 19.96,
+      "durationMs": 21.84,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -307,7 +307,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.39,
+      "durationMs": 21.72,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -317,7 +317,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.38,
+      "durationMs": 20.77,
       "findingsCount": 3,
       "cantTellCount": 0
     },
@@ -327,7 +327,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 20,
+      "durationMs": 21.3,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -337,7 +337,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.74,
+      "durationMs": 19.52,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -347,7 +347,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.42,
+      "durationMs": 20.89,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -357,7 +357,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.83,
+      "durationMs": 21.45,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -367,7 +367,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.97,
+      "durationMs": 20.83,
       "findingsCount": 3,
       "cantTellCount": 0
     },
@@ -377,7 +377,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.39,
+      "durationMs": 22.45,
       "findingsCount": 3,
       "cantTellCount": 1
     },
@@ -387,7 +387,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 20.57,
+      "durationMs": 24.37,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -397,7 +397,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.72,
+      "durationMs": 21.28,
       "findingsCount": 2,
       "cantTellCount": 0
     },
@@ -407,7 +407,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.57,
+      "durationMs": 20.18,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -417,7 +417,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 19.8,
+      "durationMs": 21.03,
       "findingsCount": 2,
       "cantTellCount": 0
     },
@@ -427,7 +427,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.79,
+      "durationMs": 21.53,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -437,7 +437,7 @@
       "expected": "fails",
       "actual": "fails",
       "exact": true,
-      "durationMs": 20.53,
+      "durationMs": 21.09,
       "findingsCount": 1,
       "cantTellCount": 0
     },
@@ -447,7 +447,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 22.12,
+      "durationMs": 20.89,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -457,7 +457,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 19.52,
+      "durationMs": 21.07,
       "findingsCount": 0,
       "cantTellCount": 0
     },
@@ -467,7 +467,7 @@
       "expected": "cant-tell",
       "actual": "cant-tell",
       "exact": true,
-      "durationMs": 19.38,
+      "durationMs": 21.53,
       "findingsCount": 0,
       "cantTellCount": 1
     },
@@ -477,7 +477,7 @@
       "expected": "holds",
       "actual": "holds",
       "exact": true,
-      "durationMs": 20.9,
+      "durationMs": 21.46,
       "findingsCount": 0,
       "cantTellCount": 0
     }

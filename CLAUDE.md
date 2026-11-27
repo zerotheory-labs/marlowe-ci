@@ -16,6 +16,7 @@ Requires **Node.js `>=20.0.0`** (CI runs on Node `20` and `22`). Zero runtime `d
 npm test                  # Run full node --test suite across test/*.test.cjs
 npm run bench             # Run 40-scenario reproducible diff benchmark -> benchmarks/results.json
 npm run bench:artex       # Run sealed 127.0.0.1 live HTTP ARTEX purple-team harness -> benchmarks/artex-purple-team-results.json
+npm run bench:corpus      # Clone & scan 6 real OSS repos -> benchmarks/corpus-results.json
 npm run self-check        # Run Marlowe CI against its own workspace diff (--no-osv)
 npm pack --dry-run        # Inspect npm tarball whitelist (excludes test/, benchmarks/, docs/)
 ```
