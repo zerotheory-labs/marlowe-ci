@@ -194,7 +194,7 @@ function checkPackageJsonAddedRisk(relPath, fullText, addedLines = []) {
   return cantTell;
 }
 
-function normalizeFindingsList(rawFindings, workspaceRoot) {
+function normalizeFindingsList(rawFindings) {
   const seen = new Set();
   const out = [];
   for (const item of rawFindings) {
@@ -209,7 +209,8 @@ function normalizeFindingsList(rawFindings, workspaceRoot) {
       status: item.reachability === 'unverified' ? 'open' : 'verified'
     }, { playbook: 'ci', runId: 'marlowe-ci' });
     normalized.reachability = item.reachability || 'reachable';
-    const key = `${(normalized.ruleId || '').toLowerCase()}|${normalized.title.toLowerCase()}|${normalized.location.toLowerCase()}|${normalized.cwe}`;
+    if (item.commitSha) normalized.commitSha = item.commitSha;
+    const key = `${item.commitSha || ''}|${(normalized.ruleId || '').toLowerCase()}|${normalized.title.toLowerCase()}|${normalized.location.toLowerCase()}|${normalized.cwe}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(normalized);
@@ -217,23 +218,9 @@ function normalizeFindingsList(rawFindings, workspaceRoot) {
   return out.sort((a, b) => (SEVERITY_RANK[b.severity] || 0) - (SEVERITY_RANK[a.severity] || 0));
 }
 
-async function runAudit({
-  root = process.cwd(),
-  mode = 'diff',
-  staged = false,
-  baseRef = '',
-  files = null,
-  failOn = 'high',
-  queryOsv = true,
-  scanners = [],
-  scopeConfig = null,
-  baselinePath = '',
-  useBaseline = true,
-  signal = new AbortController().signal
-} = {}) {
-  const startedAt = Date.now();
-  const absRoot = await fs.realpath(path.resolve(root));
-  const scope = scopeConfig || await loadScopeConfig(absRoot);
+async function inspectWorkspace({
+  root: absRoot, mode, staged, baseRef, headRef, files, queryOsv, scanners, scope, signal
+}) {
   const rawFindings = [];
   const cantTellReasons = [];
   const dnaFlags = [];
@@ -256,7 +243,7 @@ async function runAudit({
       }
     }
   } else if (mode === 'diff') {
-    const diffRes = await getGitDiff(absRoot, { staged, baseRef });
+    const diffRes = await getGitDiff(absRoot, { staged, baseRef, headRef });
     if (!diffRes.inGitRepo) {
       cantTellReasons.push({
         code: 'not-git-repo',
@@ -265,25 +252,8 @@ async function runAudit({
         message: 'Not inside a Git repository; diff mode could not determine changed lines — re-run with --mode full.'
       });
       return {
-        verdict: 'cant-tell',
-        verdictLabel: "CAN'T TELL",
-        mode,
-        root: absRoot,
-        failOn,
-        scannedFiles: 0,
-        changedFiles: 0,
-        findings: [],
-        failingFindings: [],
-        baselinedFindings: [],
-        baselinedCount: 0,
-        baselinePath: '',
-        cantTellReasons,
-        dnaFlags: [],
-        dependencySummary: null,
-        scannerRuns: [],
-        sarif: toSarifReport({ workspace: absRoot, findings: [] }),
-        markdownReport: toMarkdownReport({ workspace: absRoot, scope, findings: [] }),
-        durationMs: Date.now() - startedAt
+        scannedPaths: [], changedPaths: [], rawFindings, cantTellReasons,
+        dnaFlags, dependencySummary: null, scannerRuns: []
       };
     }
 
@@ -328,7 +298,7 @@ async function runAudit({
     }
   }
 
-  let scannedFiles = 0;
+  const scannedPaths = [];
   const manifestPaths = [];
   const reachCache = new Map();
 
@@ -368,7 +338,7 @@ async function runAudit({
     } catch {
       continue;
     }
-    scannedFiles++;
+    scannedPaths.push(cand.relPath);
 
     if (baseName === 'package.json' && cand.addedLines?.length) {
       cantTellReasons.push(...checkPackageJsonAddedRisk(cand.relPath, text, cand.addedLines));
@@ -583,16 +553,70 @@ async function runAudit({
     }
   }
 
-  const allFindings = normalizeFindingsList(rawFindings, absRoot);
+  const changedPaths = diffFiles.length ? diffFiles.map(file => file.path) : candidates.map(file => file.relPath);
+  return { scannedPaths, changedPaths, rawFindings, cantTellReasons, dnaFlags, dependencySummary, scannerRuns };
+}
+
+async function runAudit({
+  root = process.cwd(),
+  mode = 'diff',
+  staged = false,
+  baseRef = '',
+  headRef = '',
+  snapshots,
+  files = null,
+  failOn = 'high',
+  queryOsv = true,
+  scanners = [],
+  scopeConfig = null,
+  baselinePath = '',
+  useBaseline = true,
+  signal = new AbortController().signal
+} = {}) {
+  const startedAt = Date.now();
+  const absRoot = await fs.realpath(path.resolve(root));
+  const scope = scopeConfig || await loadScopeConfig(absRoot);
+  const scannedPaths = new Set();
+  const changedPaths = new Set();
+  const scannedCommits = new Set();
+  const rawFindings = [];
+  const cantTellReasons = [];
+  const dnaFlags = [];
+  const scannerRuns = [];
+  const dependencies = [];
+  for await (const snapshot of snapshots || [{ root: absRoot, baseRef, headRef }]) {
+    const scan = await inspectWorkspace({ ...snapshot, mode, staged, files, queryOsv, scanners, scope, signal });
+    if (snapshot.commitSha) scannedCommits.add(snapshot.commitSha);
+    for (const file of scan.scannedPaths) scannedPaths.add(file);
+    for (const file of scan.changedPaths) changedPaths.add(file);
+    for (const finding of scan.rawFindings) {
+      if (snapshot.commitSha) finding.commitSha = snapshot.commitSha;
+      rawFindings.push(finding);
+    }
+    for (const reason of scan.cantTellReasons) {
+      if (snapshot.commitSha) reason.commitSha = snapshot.commitSha;
+      cantTellReasons.push(reason);
+    }
+    dnaFlags.push(...scan.dnaFlags);
+    scannerRuns.push(...scan.scannerRuns);
+    if (scan.dependencySummary) dependencies.push(scan.dependencySummary);
+  }
+  const dependencySummary = dependencies.length ? {
+    manifests: [...new Set(dependencies.flatMap(d => d.manifests))],
+    totalPackages: dependencies.reduce((sum, d) => sum + d.totalPackages, 0),
+    osvStatus: [...new Set(dependencies.map(d => d.osvStatus))].join(', '),
+    vulnerabilityCount: dependencies.reduce((sum, d) => sum + d.vulnerabilityCount, 0)
+  } : null;
+  const allFindings = normalizeFindingsList(rawFindings);
   const baseline = useBaseline ? await loadBaseline(absRoot, baselinePath) : null;
   const { activeFindings: findings, baselinedFindings } = applyBaseline(allFindings, baseline);
 
   // If an unverified-sink finding was explicitly baselined, remove its matching unverified-sink notice
   // while never silencing secrets, regressions, untriaged binaries, or new unverified sinks.
-  const baselinedLocs = new Set(baselinedFindings.map(f => f.location.toLowerCase()));
+  const baselinedLocs = new Set(baselinedFindings.map(f => `${f.commitSha || ''}|${f.location.toLowerCase()}`));
   const filteredCantTell = cantTellReasons.filter(r => {
     if (r.code !== 'unverified-sink') return true;
-    const key = `${String(r.path || '').replace(/^\.\//, '')}:${r.line || ''}`.toLowerCase();
+    const key = `${r.commitSha || ''}|${String(r.path || '').replace(/^\.\//, '')}:${r.line || ''}`.toLowerCase();
     return !baselinedLocs.has(key);
   });
 
@@ -617,8 +641,9 @@ async function runAudit({
     mode,
     root: absRoot,
     failOn,
-    scannedFiles,
-    changedFiles: diffFiles.length || candidates.length,
+    scannedFiles: scannedPaths.size,
+    ...(snapshots ? { scannedCommits: scannedCommits.size } : {}),
+    changedFiles: changedPaths.size,
     findings,
     failingFindings,
     baselinedFindings,

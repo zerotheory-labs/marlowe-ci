@@ -201,6 +201,7 @@ function toMarkdownReport({ workspace, scope = {}, findings = [], appVersion = D
       '',
       `- **Metadata:** ${tags}`,
       `- **Location:** \`${f.location}\``,
+      ...(f.commitSha ? [`- **Commit:** \`${f.commitSha}\``] : []),
       ''
     );
     if (f.evidence) lines.push('**Evidence:**', '```text', f.evidence, '```', '');
@@ -231,7 +232,12 @@ function toSarifReport({ workspace, findings = [], appVersion = DEFAULT_APP_VERS
     return {
       ruleId,
       level: SARIF_LEVEL[f.severity] || 'warning',
-      message: { text: [f.title, f.evidence ? `Evidence: ${f.evidence}` : '', f.remediation ? `Remediation: ${f.remediation}` : ''].filter(Boolean).join('\n\n') },
+      message: { text: [
+        f.title,
+        f.commitSha ? `Commit: ${f.commitSha}` : '',
+        f.evidence ? `Evidence: ${f.evidence}` : '',
+        f.remediation ? `Remediation: ${f.remediation}` : ''
+      ].filter(Boolean).join('\n\n') },
       locations: [{
         physicalLocation: {
           artifactLocation: { uri: loc.uri },
@@ -243,6 +249,7 @@ function toSarifReport({ workspace, findings = [], appVersion = DEFAULT_APP_VERS
         severity: f.severity,
         status: f.status,
         category: f.category,
+        ...(f.commitSha ? { commitSha: f.commitSha } : {}),
         ...(f.mitre ? { mitreAttack: f.mitre } : {}),
         recordedAt: f.updatedAt
       }

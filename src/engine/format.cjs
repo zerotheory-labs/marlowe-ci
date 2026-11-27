@@ -20,10 +20,12 @@ const VERDICT_META = {
 
 function formatTerminalReport(result) {
   const meta = VERDICT_META[result.verdict] || VERDICT_META['cant-tell'];
+  const commits = result.scannedCommits;
+  const commitScope = commits === undefined ? '' : ` across ${commits} commit${commits === 1 ? '' : 's'}`;
   const lines = [
     ``,
     `Zero Theory Labs · Marlowe CI / Guard v${PKG_VERSION}`,
-    `Verdict: ${meta.badge} (${result.mode} mode · ${result.scannedFiles} file(s) inspected in ${result.durationMs}ms)`,
+    `Verdict: ${meta.badge} (${result.mode} mode · ${result.scannedFiles} file(s) inspected${commitScope} in ${result.durationMs}ms)`,
     `${meta.summary}`,
     ``
   ];
@@ -37,7 +39,7 @@ function formatTerminalReport(result) {
     for (const f of result.findings.slice(0, 25)) {
       const tag = f.reachability === 'unverified' ? 'UNVERIFIED' : f.severity.toUpperCase();
       const idTag = f.ruleId && f.cwe ? ` [${f.ruleId} · ${f.cwe}]` : (f.ruleId || f.cwe ? ` [${f.ruleId || f.cwe}]` : '');
-      lines.push(`  - [${tag}] ${f.title} (${f.location})${idTag}`);
+      lines.push(`  - [${tag}] ${f.title} (${f.location}${f.commitSha ? ` @ ${f.commitSha}` : ''})${idTag}`);
       if (f.evidence) lines.push(`    Evidence: ${f.evidence}`);
     }
     lines.push('');
@@ -46,7 +48,7 @@ function formatTerminalReport(result) {
   if (result.cantTellReasons.length) {
     lines.push(`Can't Tell Reasons (${result.cantTellReasons.length}):`);
     for (const r of result.cantTellReasons.slice(0, 15)) {
-      lines.push(`  - [${r.code}] ${r.message}`);
+      lines.push(`  - [${r.code}] ${r.message}${r.commitSha ? ` (commit ${r.commitSha})` : ''}`);
     }
     lines.push('');
   }
@@ -76,6 +78,7 @@ function formatMarkdownSummary(result) {
     `> ${meta.summary}`,
     ``,
     `- **Mode:** \`${result.mode}\` · **Files inspected:** \`${result.scannedFiles}\` · **Threshold:** \`${result.failOn}\` · **Duration:** \`${result.durationMs}ms\`${result.baselinedCount > 0 ? ` · **Baselined:** \`${result.baselinedCount}\`` : ''}`,
+    ...(result.scannedCommits === undefined ? [] : [`- **Commits inspected:** \`${result.scannedCommits}\``]),
     ''
   ];
 
@@ -89,7 +92,7 @@ function formatMarkdownSummary(result) {
     for (const f of result.findings.slice(0, 40)) {
       const idCell = f.ruleId && f.cwe ? `${f.ruleId} (${f.cwe})` : (f.ruleId || f.cwe || '—');
       lines.push(
-        `| **${f.severity.toUpperCase()}** | \`${f.reachability || 'reachable'}\` | ${escapeMd(f.title)} | \`${escapeMd(f.location)}\` | ${escapeMd(idCell)} |`
+        `| **${f.severity.toUpperCase()}** | \`${f.reachability || 'reachable'}\` | ${escapeMd(f.title)} | \`${escapeMd(f.location)}\`${f.commitSha ? ` @ \`${f.commitSha}\`` : ''} | ${escapeMd(idCell)} |`
       );
     }
     lines.push('');
@@ -100,7 +103,7 @@ function formatMarkdownSummary(result) {
   if (result.cantTellReasons.length) {
     lines.push(`### Can't Tell Items (${result.cantTellReasons.length})`, '');
     for (const r of result.cantTellReasons.slice(0, 20)) {
-      lines.push(`- \`${r.code}\` — ${r.message}`);
+      lines.push(`- \`${r.code}\` — ${r.message}${r.commitSha ? ` (commit \`${r.commitSha}\`)` : ''}`);
     }
     lines.push('');
   }

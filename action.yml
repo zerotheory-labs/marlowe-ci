@@ -12,7 +12,7 @@ inputs:
     required: false
     default: 'diff'
   base-ref:
-    description: 'Git base ref for diff mode (defaults automatically to origin/$GITHUB_BASE_REF on PRs).'
+    description: 'Git commit to use as the comparison base. PRs default to the target branch. Pushes scan each newly reachable commit since the previous tip and require its history locally.'
     required: false
     default: ''
   fail-on:
@@ -50,7 +50,7 @@ inputs:
 
 outputs:
   verdict:
-    description: 'Result verdict: holds, fails, or cant-tell.'
+    description: 'Result verdict: holds, fails, or cant-tell. A deleted push ref is skipped.'
   findings-count:
     description: 'Total active findings count.'
   baselined-count:

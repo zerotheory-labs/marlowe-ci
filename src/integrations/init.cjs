@@ -121,7 +121,7 @@ jobs:
           github-token: \${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload SARIF to GitHub Code Scanning
-        if: always() && hashFiles('marlowe.sarif') != ''
+        if: always() && steps.marlowe.outputs.sarif-file != ''
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: marlowe.sarif

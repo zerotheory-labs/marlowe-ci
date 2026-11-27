@@ -3,6 +3,7 @@ const path = require('node:path');
 const { runAudit } = require('./engine/verdict.cjs');
 const { formatTerminalReport, formatMarkdownSummary } = require('./engine/format.cjs');
 const { runGit } = require('./engine/git-diff.cjs');
+const { resolvePushRange, pushSnapshots } = require('./github-push.cjs');
 
 const COMMENT_MARKER = '<!-- marlowe-ci-verdict -->';
 
@@ -108,13 +109,29 @@ async function runAction({ fetchImpl = fetch } = {}) {
   const token = getInput('github-token', '') || process.env.GITHUB_TOKEN || '';
   const baselineRaw = getInput('baseline-file', '.marlowe-baseline.json');
 
-  const baseRef = mode === 'diff' ? await resolvePrBaseRef(workspace, explicitBase) : '';
+  let range = {};
+  if (mode === 'diff') {
+    if (process.env.GITHUB_EVENT_NAME === 'push') {
+      const commits = await resolvePushRange(workspace, explicitBase);
+      if (!commits) {
+        const message = 'Skipped deleted ref. There are no pushed commits to scan.';
+        process.stdout.write(message + '\n');
+        await writeStepSummary(message);
+        await setOutputs({ verdict: 'skipped', 'findings-count': 0, 'baselined-count': 0, 'cant-tell-count': 0, 'sarif-file': '' });
+        process.exitCode = 0;
+        return { verdict: 'skipped' };
+      }
+      range = { snapshots: pushSnapshots(workspace, commits) };
+    } else {
+      range = { baseRef: await resolvePrBaseRef(workspace, explicitBase) };
+    }
+  }
   const scanners = scannersRaw.split(',').map(s => s.trim()).filter(Boolean);
 
   const result = await runAudit({
     root: workspace,
     mode,
-    baseRef,
+    ...range,
     failOn,
     queryOsv,
     scanners,
