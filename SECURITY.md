@@ -4,6 +4,7 @@
 
 | Version | Supported | Runtime |
 | --- | --- | --- |
+| `0.7.x` | Yes | Node.js `>=20.0.0` (macOS, Linux, Windows, GitHub Actions `node24`) |
 | `0.6.x` | Yes | Node.js `>=20.0.0` (macOS, Linux, Windows, GitHub Actions `node24`) |
 | `< 0.6.0` | No | Superseded |
 
