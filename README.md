@@ -22,6 +22,8 @@
   <a href="#1-claude-code-hooks--mcp-one-command"><b>Claude Code</b></a> &nbsp;·&nbsp;
   <a href="#2-universal-mcp-server-cursor-codex-windsurf-antigravity"><b>MCP Server</b></a> &nbsp;·&nbsp;
   <a href="#3-github-actions-sarif--pr-verdict-comment"><b>GitHub Action</b></a> &nbsp;·&nbsp;
+  <a href="https://zerotheorylabs.com/benchmarks"><b>Benchmarks</b></a> &nbsp;·&nbsp;
+  <a href="https://zerotheorylabs.com/marlowe-ci#playground"><b>Live Playground</b></a> &nbsp;·&nbsp;
   <a href="https://github.com/zerotheory-labs/marlowe"><b>Marlowe Desktop</b></a> &nbsp;·&nbsp;
   <a href="./SECURITY.md"><b>Security Policy</b></a> &nbsp;·&nbsp;
   <a href="./LICENSE"><b>License</b></a>
@@ -55,7 +57,7 @@ Every audit emits one explicit verdict:
 | Verdict | Meaning | Exit Code |
 | :--- | :--- | :---: |
 | **`HOLDS UP`** | Diff/workspace checked; no exposed secrets, reachable sinks, CVEs, or unverified guard gaps. | `0` |
-| **`FAILS`** | Confirmed hardcoded secret, reachable CWE sink, TLS bypass, or vulnerable dependency $\ge$ `--fail-on`. | `1` |
+| **`FAILS`** | Confirmed hardcoded secret, reachable CWE sink, TLS bypass, or vulnerable dependency ≥ `--fail-on`. | `1` |
 | **`CAN'T TELL`** | Unknown is never rounded to a pass — triggers on unverified local sinks without external ingress, security/auth files edited without tests, scanner suppression directives (`nosemgrep`, `gitleaks:allow`), high-entropy binaries, or unavailable OSV/CLI checks. | `0` (`2` with `--fail-on-cant-tell`) |
 
 ---
@@ -115,7 +117,9 @@ Executed against a sealed `127.0.0.1` Node HTTP target server (`662.48ms` total,
 | :--- | :---: | :---: | :---: | :---: |
 | **A. Before Hardening** | `FAILS` (`EDGE-001..003`) | **`4/4`** (recon, open redirect, CORS, unauth backup) | **Detected** (`high` confidence) | `0` |
 | **B. After Hardening** | `HOLDS UP` (`0` issues) | **`0/4`** (all blocked) | **Detected** (`high` confidence) | `0` |
-| **C. Benign Human Browser** | — | — | **Clean (`false`)** (`0` alerts) | `0` |
+| **C. Benign Human Browser (`5` reqs)** | — | — | **Clean (`false`)** (`0` alerts) | `0` |
+
+> An additional `10`-request rapid `200 OK` SPA API burst (`0` static assets, `0` alerts) is pinned in [`test/artex-defense.test.cjs`](./test/artex-defense.test.cjs). See all charts interactively at [`zerotheorylabs.com/benchmarks`](https://zerotheorylabs.com/benchmarks).
 
 ---
 
