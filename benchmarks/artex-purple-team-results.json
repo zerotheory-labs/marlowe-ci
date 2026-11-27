@@ -1,0 +1,91 @@
+{
+  "generatedAt": "2026-11-27T00:26:03.667Z",
+  "harnessType": "sealed-loopback-http-purple-team",
+  "bindHost": "127.0.0.1",
+  "nodeVersion": "v26.12.0",
+  "durationMs": 662.48,
+  "beforeHardening": {
+    "preMergeVerdict": "fails",
+    "preMergeRuleIds": [
+      "ARTEX-EDGE-002",
+      "ARTEX-EDGE-001",
+      "ARTEX-EDGE-003"
+    ],
+    "liveAttack": {
+      "totalRequests": 10,
+      "reconHarvested": true,
+      "openRedirectHijacked": true,
+      "corsOriginReflected": true,
+      "unauthBackupExported": true,
+      "compromises": [
+        "recon-harvested",
+        "oauth-open-redirect",
+        "credentialed-cors-reflection",
+        "unauth-backup-export"
+      ],
+      "compromisesCount": 4
+    },
+    "dfirLog": {
+      "analyzedLines": 10,
+      "scannerUaHits": 0,
+      "detected": true,
+      "confidence": "high",
+      "ruleId": "ARTEX-BEHAV-001",
+      "indicators": [
+        "recon-to-auth-pivot",
+        "error-adaptation-loop",
+        "machine-speed-enumeration"
+      ],
+      "burstMetrics": {
+        "totalHttpEvents": 10,
+        "distinctIps": 10,
+        "distinctNonStaticPaths": 10,
+        "errorResponses": 6,
+        "medianGapMs": 22,
+        "reconHits": 2,
+        "authPivotHits": 8
+      }
+    }
+  },
+  "afterHardening": {
+    "preMergeVerdict": "holds",
+    "preMergeFindingsCount": 0,
+    "preMergeCantTellCount": 0,
+    "liveAttack": {
+      "totalRequests": 9,
+      "reconHarvested": false,
+      "openRedirectHijacked": false,
+      "corsOriginReflected": false,
+      "unauthBackupExported": false,
+      "compromises": [],
+      "compromisesCount": 0
+    },
+    "dfirLog": {
+      "analyzedLines": 9,
+      "scannerUaHits": 0,
+      "detected": true,
+      "confidence": "high",
+      "ruleId": "ARTEX-BEHAV-001",
+      "indicators": [
+        "recon-to-auth-pivot",
+        "error-adaptation-loop",
+        "machine-speed-enumeration"
+      ],
+      "burstMetrics": {
+        "totalHttpEvents": 9,
+        "distinctIps": 9,
+        "distinctNonStaticPaths": 9,
+        "errorResponses": 9,
+        "medianGapMs": 22,
+        "reconHits": 2,
+        "authPivotHits": 7
+      }
+    }
+  },
+  "benignHumanBaseline": {
+    "totalRequests": 5,
+    "analyzedLines": 5,
+    "detected": false,
+    "alertsCount": 0
+  }
+}

@@ -30,6 +30,7 @@
   "scripts": {
     "test": "node --test test/*.test.cjs",
     "bench": "node benchmarks/run-benchmarks.cjs",
+    "bench:artex": "node benchmarks/run-artex-purple-team.cjs",
     "self-check": "node bin/marlowe-ci.cjs scan --path . --no-osv",
     "prepublishOnly": "npm test && npm run self-check"
   },

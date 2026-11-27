@@ -80,6 +80,16 @@ Executed offline via [`benchmarks/run-benchmarks.cjs`](./benchmarks/run-benchmar
 | ARTEX Edge Defense (Maps / OAuth / CORS / Admin) | `7/7` | `100%` | `19.8ms` | `22.12ms` |
 | Binaries & Clean Refactors | `2/2` | `100%` | `19.38ms` | `20.9ms` |
 
+#### Recorded Live Localhost Purple-Team Run (`npm run bench:artex`)
+
+Executed against a sealed `127.0.0.1` Node HTTP target server (`662.48ms` total, [`benchmarks/run-artex-purple-team.cjs`](./benchmarks/run-artex-purple-team.cjs) → [`benchmarks/artex-purple-team-results.json`](./benchmarks/artex-purple-team-results.json); note this uses a controlled local Planner→Worker HTTP attacker with rotated `X-Forwarded-For` IPs & standard Chrome `User-Agent`, not an external third-party binary):
+
+| Phase | Pre-Merge Gate | Live Compromises | DFIR `ARTEX-BEHAV-001` | Classic `scanner-ua` Hits |
+| :--- | :---: | :---: | :---: | :---: |
+| **A. Before Hardening** | `FAILS` (`EDGE-001..003`) | **`4/4`** (recon, open redirect, CORS, unauth backup) | **Detected** (`high` confidence) | `0` |
+| **B. After Hardening** | `HOLDS UP` (`0` issues) | **`0/4`** (all blocked) | **Detected** (`high` confidence) | `0` |
+| **C. Benign Human Browser** | — | — | **Clean (`false`)** (`0` alerts) | `0` |
+
 ---
 
 ## Quickstart

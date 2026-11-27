@@ -6,6 +6,7 @@ const path = require('node:path');
 const { scanArtexEdgeSurface } = require('../src/core/artex-defense.cjs');
 const { analyzeLogs } = require('../src/core/cyber-analyzers.cjs');
 const { handlePostToolUse } = require('../src/integrations/claude-hooks.cjs');
+const { runPurpleTeamHarness } = require('../benchmarks/run-artex-purple-team.cjs');
 
 async function withTmpDir(fn) {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'marlowe-artex-'));
@@ -117,4 +118,23 @@ test('PostToolUse reports ARTEX-EDGE exposure findings back to Claude Code', asy
     assert.ok(hookOut);
     assert.match(hookOut.hookSpecificOutput.additionalContext, /ARTEX-EDGE-001/);
   });
+});
+
+test('Live 127.0.0.1 purple-team harness records 4->0 compromises before/after hardening while ARTEX-BEHAV-001 detects attack bursts with 0 human FPs', async () => {
+  const report = await runPurpleTeamHarness({ saveReport: false });
+  assert.equal(report.beforeHardening.preMergeVerdict, 'fails');
+  assert.ok(report.beforeHardening.preMergeRuleIds.includes('ARTEX-EDGE-001'));
+  assert.ok(report.beforeHardening.preMergeRuleIds.includes('ARTEX-EDGE-002'));
+  assert.ok(report.beforeHardening.preMergeRuleIds.includes('ARTEX-EDGE-003'));
+  assert.equal(report.beforeHardening.liveAttack.compromisesCount, 4);
+  assert.equal(report.beforeHardening.dfirLog.detected, true);
+  assert.equal(report.beforeHardening.dfirLog.confidence, 'high');
+  assert.equal(report.beforeHardening.dfirLog.scannerUaHits, 0);
+
+  assert.equal(report.afterHardening.preMergeVerdict, 'holds');
+  assert.equal(report.afterHardening.liveAttack.compromisesCount, 0);
+  assert.equal(report.afterHardening.dfirLog.detected, true);
+
+  assert.equal(report.benignHumanBaseline.detected, false);
+  assert.equal(report.benignHumanBaseline.alertsCount, 0);
 });
