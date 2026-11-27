@@ -5,6 +5,7 @@ const path = require('node:path');
 const os = require('node:os');
 const { execFile } = require('node:child_process');
 const { promisify } = require('node:util');
+const { pathToFileURL } = require('node:url');
 const { runAction } = require('../src/github-action.cjs');
 const pkg = require('../package.json');
 
@@ -123,7 +124,7 @@ test('GitHub Action runner writes SARIF v2.1.0, GITHUB_OUTPUT, GITHUB_STEP_SUMMA
   assert.equal(sarif.runs[0].results.length, 1);
 });
 
-test('push action inspects the event range in a clean checkout', async t => {
+async function createPushFixture(t) {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'marlowe-push-'));
   t.after(() => fs.rm(dir, { recursive: true, force: true }));
   const repo = path.join(dir, 'repo');
@@ -138,22 +139,30 @@ test('push action inspects the event range in a clean checkout', async t => {
     await git('commit', '-m', file);
     return git('rev-parse', 'HEAD');
   }
-  const base = await commit('base.js', 'const base = 1;\n');
-  const first = await commit('first.js', 'const first = 1;\n');
-  const after = await commit('second.js', 'const second = 2;\n');
-
   // Use the real Action entry point with runner artifacts outside the checkout.
   const eventFile = path.join(dir, 'event.json');
+  const sarifFile = path.join(dir, 'result.sarif');
+  const outputFile = path.join(dir, 'outputs');
+  const summaryFile = path.join(dir, 'summary.md');
   const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^(GITHUB_|INPUT_)/.test(key)));
   async function push(event, inputs = {}) {
     await fs.writeFile(eventFile, JSON.stringify(event));
     const result = await execFileAsync(process.execPath, [path.resolve(__dirname, '../src/github-action.cjs')], {
       cwd: repo,
       env: { ...env, GITHUB_WORKSPACE: repo, GITHUB_EVENT_NAME: 'push', GITHUB_EVENT_PATH: eventFile,
-        INPUT_QUERY_OSV: 'false', INPUT_SARIF_FILE: path.join(dir, 'result.sarif'), ...inputs }
+        GITHUB_OUTPUT: outputFile, GITHUB_STEP_SUMMARY: summaryFile,
+        INPUT_QUERY_OSV: 'false', INPUT_SARIF_FILE: sarifFile, ...inputs }
     });
     return result.stdout;
   }
+  return { git, commit, push, sarifFile, outputFile, summaryFile };
+}
+
+test('push action inspects the event range in a clean checkout', async t => {
+  const { git, commit, push, sarifFile } = await createPushFixture(t);
+  const base = await commit('base.js', 'const base = 1;\n');
+  const first = await commit('first.js', 'const first = 1;\n');
+  const after = await commit('second.js', 'const second = 2;\n');
   const inspected = n => new RegExp(`HOLDS UP .*\\b${n} file\\(s\\) inspected`);
   assert.match(await push({ before: base, after }), inspected(2));
   assert.match(await push({ before: base, after }, { INPUT_BASE_REF: first }), inspected(1));
@@ -165,6 +174,9 @@ test('push action inspects the event range in a clean checkout', async t => {
   const oldTip = await commit('base.js', 'const base = 2;\n');
   await git('checkout', 'main');
   assert.match(await push({ before: oldTip, after, forced: true }), inspected(3));
+  await git('checkout', '--detach', base);
+  assert.match(await push({ before: oldTip, after: base, forced: true }), inspected(1));
+  await git('checkout', 'main');
   await assert.rejects(push({ before: '1'.repeat(base.length), after }), /push range/i);
   await assert.rejects(push({ after }), /push event/i);
   await assert.rejects(push({ before: base, after: first }), /checkout/i);
@@ -174,6 +186,83 @@ test('push action inspects the event range in a clean checkout', async t => {
   await commit('early.js', `export const key = "${exampleKey}";\n`);
   const final = await commit('guide.md', 'A harmless follow-up.\n');
   await assert.rejects(push({ before: after, after: final }), err => err.code === 1 && /Verdict: FAILS/.test(err.stdout));
-  const sarif = JSON.parse(await fs.readFile(path.join(dir, 'result.sarif'), 'utf8'));
+  const sarif = JSON.parse(await fs.readFile(sarifFile, 'utf8'));
   assert.equal(sarif.runs[0].results[0].locations[0].physicalLocation.artifactLocation.uri, 'early.js');
+});
+
+test('push fails for a secret added in one commit and removed in the next', async t => {
+  const { git, commit, push, sarifFile, outputFile, summaryFile } = await createPushFixture(t);
+  const safe = 'export const enabled = true;\n';
+  const before = await commit('config.js', safe);
+  const fixtureKey = 'AKIA' + 'ABCDEF1234567890';
+  const exposed = await commit('config.js', safe + `export const key = "${fixtureKey}";\n`);
+  const after = await commit('config.js', safe);
+  assert.equal(await git('diff', before, after), '');
+  const worktrees = await git('worktree', 'list', '--porcelain');
+
+  await assert.rejects(push({ before, after }), err => {
+    assert.equal(err.code, 1);
+    assert.match(err.stdout, /Verdict: FAILS/);
+    assert.match(err.stdout, /across 2 commits/);
+    assert.ok(!err.stdout.includes(fixtureKey));
+    return true;
+  });
+  const outputs = await fs.readFile(outputFile, 'utf8');
+  assert.match(outputs, /^verdict=fails$/m);
+  assert.match(outputs, /^findings-count=1$/m);
+  const sarif = await fs.readFile(sarifFile, 'utf8');
+  assert.ok(!sarif.includes(fixtureKey));
+  const findings = JSON.parse(sarif).runs[0].results;
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].properties.category, 'secrets');
+  assert.equal(findings[0].properties.commitSha, exposed);
+  const { artifactLocation, region } = findings[0].locations[0].physicalLocation;
+  assert.equal(artifactLocation.uri, 'config.js');
+  assert.equal(region.startLine, 2);
+  assert.ok((await fs.readFile(summaryFile, 'utf8')).includes(exposed));
+  assert.equal(await git('rev-parse', 'HEAD'), after);
+  assert.equal(await git('status', '--porcelain'), '');
+  assert.equal(await git('worktree', 'list', '--porcelain'), worktrees);
+});
+
+test('push inspects commits on a merged branch even when the event lists only the tip', async t => {
+  const { git, commit, push, sarifFile } = await createPushFixture(t);
+  const before = await commit('base.js', 'export const value = 1;\n');
+  await git('checkout', '-b', 'side');
+  const fixtureKey = 'AKIA' + 'ABCDEF1234567890';
+  const exposed = await commit('temporary.js', `export const key = "${fixtureKey}";\n`);
+  await git('rm', 'temporary.js');
+  await git('commit', '-m', 'Delete temporary file');
+  await git('checkout', 'main');
+  await git('merge', '--no-ff', '-m', 'Merge side', 'side');
+  const after = await git('rev-parse', 'HEAD');
+
+  await assert.rejects(push({ before, after, commits: [{ id: after }] }), err => err.code === 1 && /Verdict: FAILS/.test(err.stdout));
+  const { results } = JSON.parse(await fs.readFile(sarifFile, 'utf8')).runs[0];
+  assert.equal(results.length, 1);
+  assert.equal(results[0].properties.commitSha, exposed);
+  assert.equal(results[0].locations[0].physicalLocation.artifactLocation.uri, 'temporary.js');
+});
+
+test('new refs use the event commit list and fall back to history if it is incomplete', async t => {
+  const { commit, push } = await createPushFixture(t);
+  const fixtureKey = 'AKIA' + 'ABCDEF1234567890';
+  const exposed = await commit('config.js', `export const key = "${fixtureKey}";\n`);
+  await commit('config.js', 'export const enabled = true;\n');
+  const after = await commit('guide.md', 'Setup instructions.\n');
+  const event = { before: '0'.repeat(after.length), after, created: true, commits: [{ id: after }] };
+  assert.match(await push(event), /Verdict: HOLDS UP/);
+  await assert.rejects(push({ ...event, size: 3 }), err => err.code === 1 && err.stdout.includes(exposed));
+});
+
+test('push fails when a shallow checkout has both tips but lacks intermediate history', async t => {
+  const { git, commit, push } = await createPushFixture(t);
+  const before = await commit('config.js', 'export const value = 1;\n');
+  await commit('config.js', 'export const value = 2;\n');
+  const after = await commit('config.js', 'export const value = 1;\n');
+  const repo = await git('rev-parse', '--show-toplevel');
+  const shallow = path.join(path.dirname(repo), 'shallow');
+  await execFileAsync('git', ['clone', '--depth=1', pathToFileURL(repo).href, shallow]);
+  await execFileAsync('git', ['-C', shallow, 'fetch', '--depth=1', 'origin', before]);
+  await assert.rejects(push({ before, after }, { GITHUB_WORKSPACE: shallow }), /fetch-depth: 0/);
 });

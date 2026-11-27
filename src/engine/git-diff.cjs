@@ -187,7 +187,7 @@ async function getGitDiff(root, { staged = false, baseRef = '', headRef = '' } =
     if (baseRef.startsWith('-')) throw new Error('Invalid baseRef.');
     if (headRef) {
       if (headRef.startsWith('-')) throw new Error('Invalid headRef.');
-      // A push replaces one tree with another, including on divergent or rewound branches.
+      // These explicit endpoints describe the exact trees being audited.
       const { stdout } = await runGit(absRoot, ['diff', '--unified=0', '--no-color', baseRef, headRef, '--']);
       return { inGitRepo: true, files: parseUnifiedDiff(stdout) };
     }

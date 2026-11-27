@@ -1,9 +1,9 @@
 const fs = require('node:fs/promises');
-const { devNull } = require('node:os');
 const path = require('node:path');
 const { runAudit } = require('./engine/verdict.cjs');
 const { formatTerminalReport, formatMarkdownSummary } = require('./engine/format.cjs');
 const { runGit } = require('./engine/git-diff.cjs');
+const { resolvePushRange, pushSnapshots } = require('./github-push.cjs');
 
 const COMMENT_MARKER = '<!-- marlowe-ci-verdict -->';
 
@@ -30,36 +30,6 @@ async function resolvePrBaseRef(root, explicitBase) {
     }
   }
   return '';
-}
-
-async function resolvePushRange(root, explicitBase) {
-  let event;
-  try {
-    event = JSON.parse(await fs.readFile(process.env.GITHUB_EVENT_PATH, 'utf8'));
-  } catch (cause) {
-    throw new Error('Cannot read the GitHub push event to determine the pushed commits.', { cause });
-  }
-  const oid = /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i;
-  const { before, after } = event || {};
-  if (typeof after !== 'string' || !oid.test(after) || (!explicitBase && (typeof before !== 'string' || !oid.test(before)))) {
-    throw new Error('The GitHub push event is missing valid before/after object IDs.');
-  }
-  if (/^0+$/.test(after)) return null; // Ref deletion has no tree to audit.
-
-  const { stdout: head } = await runGit(root, ['rev-parse', '--verify', 'HEAD']);
-  const { stdout: pushedCommit } = await runGit(root, ['rev-parse', '--verify', `${after}^{commit}`]);
-  if (head.trim() !== pushedCommit.trim()) {
-    throw new Error('The checkout does not match the push event after SHA. Check out the pushed commit before running Marlowe.');
-  }
-  try {
-    // A new ref has no previous tree. Let Git select the repository's hash format.
-    const base = !explicitBase && /^0+$/.test(before)
-      ? await runGit(root, ['hash-object', '-t', 'tree', devNull])
-      : await runGit(root, ['rev-parse', '--verify', '--end-of-options', `${explicitBase || before}^{tree}`]);
-    return { baseRef: base.stdout.trim(), headRef: pushedCommit.trim() };
-  } catch (cause) {
-    throw new Error('Cannot resolve the push range. Fetch the previous tip and use fetch-depth: 0 in checkout.', { cause });
-  }
 }
 
 async function setOutputs(outputs) {
@@ -142,8 +112,8 @@ async function runAction({ fetchImpl = fetch } = {}) {
   let range = {};
   if (mode === 'diff') {
     if (process.env.GITHUB_EVENT_NAME === 'push') {
-      range = await resolvePushRange(workspace, explicitBase);
-      if (!range) {
+      const commits = await resolvePushRange(workspace, explicitBase);
+      if (!commits) {
         const message = 'Skipped deleted ref. There are no pushed commits to scan.';
         process.stdout.write(message + '\n');
         await writeStepSummary(message);
@@ -151,6 +121,7 @@ async function runAction({ fetchImpl = fetch } = {}) {
         process.exitCode = 0;
         return { verdict: 'skipped' };
       }
+      range = { snapshots: pushSnapshots(workspace, commits) };
     } else {
       range = { baseRef: await resolvePrBaseRef(workspace, explicitBase) };
     }

@@ -183,7 +183,9 @@ Exposed read-only tools (**13 total** across AppSec, Authorized Recon, DFIR & Sh
 
 ### 3. GitHub Actions (SARIF + PR Verdict Comment)
 
-In diff mode, pull requests use their merge base. Pushes compare the event's previous and new trees, including force pushes. A newly created ref scans its tracked tree. Deleting a ref skips the check. Use a full checkout so both push endpoints are available.
+In diff mode, pull requests use their merge base. On a push, Marlowe checks each newly reachable commit against its first parent, including commits on merged branches. A secret added and then removed in the same push fails the check. The step summary and SARIF report identify the commit and line.
+
+For a new ref, Marlowe checks the commits listed in the event and the final tracked tree. If the event lacks a complete commit list, it walks the new ref's history. A force push also checks what changed between the old and new tips. Deleting a ref skips the check. Use `fetch-depth: 0` so Git can read the push history.
 
 Add `.github/workflows/marlowe-ci.yml` (or run `npx --yes @zerotheory-labs/marlowe-ci init --github`):
 

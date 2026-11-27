@@ -12,7 +12,7 @@ inputs:
     required: false
     default: 'diff'
   base-ref:
-    description: 'Git comparison base. PRs default to the target branch. Pushes compare before and after trees, using the entire pushed tree for a new ref. Both endpoints must be available locally.'
+    description: 'Git commit to use as the comparison base. PRs default to the target branch. Pushes scan each newly reachable commit since the previous tip and require its history locally.'
     required: false
     default: ''
   fail-on:
