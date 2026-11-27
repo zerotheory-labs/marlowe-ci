@@ -166,7 +166,7 @@ test('MCP stdio server handles initialize, tools/list, and tools/call over newli
   assert.ok(['holds', 'fails', 'cant-tell'].includes(attestRes.verdict));
 });
 
-test('server.json MCP Registry manifest matches package.json version and name', async () => {
+test('release metadata matches the npm package and documents its supported series', async () => {
   const pkg = JSON.parse(await fs.readFile(path.resolve(__dirname, '../package.json'), 'utf8'));
   const manifest = JSON.parse(await fs.readFile(path.resolve(__dirname, '../server.json'), 'utf8'));
   assert.equal(manifest.name, pkg.mcpName);
@@ -174,4 +174,8 @@ test('server.json MCP Registry manifest matches package.json version and name', 
   assert.equal(manifest.packages[0].identifier, pkg.name);
   assert.equal(manifest.packages[0].version, pkg.version);
   assert.equal(manifest.packages[0].transport.type, 'stdio');
+  const policy = await fs.readFile(path.resolve(__dirname, '../SECURITY.md'), 'utf8');
+  const [major, minor] = pkg.version.split('.');
+  assert.ok(policy.split('\n').some(line => line.startsWith(`| \`${major}.${minor}.x\` | Yes |`)),
+    `SECURITY.md must list the current ${major}.${minor}.x series as supported`);
 });

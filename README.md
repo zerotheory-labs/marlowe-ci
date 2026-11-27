@@ -9,7 +9,7 @@
 </p>
 
 <p>
-  <a href="https://github.com/zerotheory-labs/marlowe-ci/releases/tag/v0.6.1"><img alt="Release v0.6.1" src="https://img.shields.io/badge/release-v0.6.1-3ddc97?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
+  <a href="https://github.com/zerotheory-labs/marlowe-ci/releases/tag/v0.7.0"><img alt="Release v0.7.0" src="https://img.shields.io/badge/release-v0.7.0-3ddc97?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
   <a href="https://www.npmjs.com/package/@zerotheory-labs/marlowe-ci"><img alt="npm @zerotheory-labs/marlowe-ci" src="https://img.shields.io/badge/npm-%40zerotheory--labs%2Fmarlowe--ci-3ddc97?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
   <a href="https://registry.modelcontextprotocol.io/v0/servers?search=io.github.zerotheory-labs/marlowe-ci"><img alt="MCP Registry io.github.zerotheory-labs/marlowe-ci" src="https://img.shields.io/badge/MCP_Registry-io.github.zerotheory--labs-3ddc97?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
   <a href="./LICENSE"><img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm_Noncommercial_1.0.0-e5c07b?style=flat-square&labelColor=181714" /></a>&nbsp;&nbsp;
@@ -35,7 +35,11 @@
 
 AI coding agents mutate files, run shell commands, and open pull requests in seconds. Giving an agent an unguarded shell is a liability — and shallow static scanners drown teams in unreachable alerts.
 
-**Marlowe CI / Guard** (`v0.6.1`) brings [Marlowe](https://github.com/zerotheory-labs/marlowe)'s host-enforced security boundaries directly into **Claude Code hooks**, **MCP clients** (Claude Code, Cursor, VS Code, Codex CLI, Windsurf, Antigravity), **GitHub Actions (SARIF v2.1.0)**, and **git pre-commit** hooks with zero runtime dependencies and no LLM key required.
+**Marlowe CI / Guard** (`v0.7.0`) brings [Marlowe](https://github.com/zerotheory-labs/marlowe)'s host-enforced security boundaries directly into **Claude Code hooks**, **MCP clients** (Claude Code, Cursor, VS Code, Codex CLI, Windsurf, Antigravity), **GitHub Actions (SARIF v2.1.0)**, and **git pre-commit** hooks with zero runtime dependencies and no LLM key required.
+
+### What's New in `v0.7.0`
+
+Semgrep replay checks whether a pull request drops coverage for a known, harmless fixture. The Action and CLI compare the same base-committed fixture and expected rule against both revisions. A lost match produces a high-severity finding in the PR summary and SARIF. Incomplete evidence produces `CAN'T TELL`. [Configure Semgrep replay](#replay-semgrep-coverage-on-pull-requests)
 
 ### What's New in `v0.6.1`
 
@@ -212,7 +216,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: zerotheory-labs/marlowe-ci@v0.6.1
+      - uses: zerotheory-labs/marlowe-ci@v0.7.0
         id: marlowe
         with:
           mode: diff
@@ -229,7 +233,7 @@ jobs:
 
 #### Replay Semgrep coverage on pull requests
 
-On an Action revision that includes replay, set the input `semgrep-replay: .marlowe/replay.json` and install the Semgrep CLI on the runner. Use `fetch-depth: 0` so Git can read both commits named in the pull request event.
+Set the Action input `semgrep-replay: .marlowe/replay.json` and install the Semgrep CLI on the runner. Use `fetch-depth: 0` so Git can read both commits named in the pull request event.
 
 Commit the manifest and a harmless fixture to the base branch. For example, a team with a `no-console-log` rule in `.semgrep/rules.yml` can put `console.log("Marlowe replay");` in `.marlowe/fixtures/console.js` and use this manifest in `.marlowe/replay.json`.
 
