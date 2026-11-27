@@ -1,6 +1,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
+const { version } = require('../../package.json');
 const { resolveWithinRoot, readRegularTextFile } = require('../core/fs-safe.cjs');
 
 const DEFAULT_BASELINE_FILE = '.marlowe-baseline.json';
@@ -123,7 +124,7 @@ async function writeBaseline(root, result, outPath = DEFAULT_BASELINE_FILE) {
 
   const payload = {
     version: 1,
-    generator: 'marlowe-ci@0.2.0',
+    generator: `marlowe-ci@${version}`,
     generatedAt: new Date().toISOString(),
     note: 'Acknowledged non-secret baseline findings. Secrets (category="secrets") are never baselined.',
     entries

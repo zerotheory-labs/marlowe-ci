@@ -1,6 +1,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const os = require('node:os');
+const { version } = require('../../package.json');
 
 const MARLOWE_CLAUDE_MARKER = 'marlowe-ci claude';
 const GIT_HOOK_START = '# --- marlowe-ci-pre-commit start ---';
@@ -112,7 +113,7 @@ jobs:
 
       - name: Run Marlowe CI / Guard
         id: marlowe
-        uses: zerotheory-labs/marlowe-ci@v0.6.0
+        uses: zerotheory-labs/marlowe-ci@v${version}
         with:
           mode: diff
           fail-on: high
