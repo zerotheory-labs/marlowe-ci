@@ -122,3 +122,58 @@ test('GitHub Action runner writes SARIF v2.1.0, GITHUB_OUTPUT, GITHUB_STEP_SUMMA
   assert.equal(sarif.version, '2.1.0');
   assert.equal(sarif.runs[0].results.length, 1);
 });
+
+test('push action inspects the event range in a clean checkout', async t => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'marlowe-push-'));
+  t.after(() => fs.rm(dir, { recursive: true, force: true }));
+  const repo = path.join(dir, 'repo');
+  await fs.mkdir(repo);
+  const git = async (...args) => (await execFileAsync('git', args, { cwd: repo })).stdout.trim();
+  await git('init', '-b', 'main');
+  await git('config', 'user.email', 'ci@example.com');
+  await git('config', 'user.name', 'Marlowe Test');
+  async function commit(file, content) {
+    await fs.writeFile(path.join(repo, file), content);
+    await git('add', file);
+    await git('commit', '-m', file);
+    return git('rev-parse', 'HEAD');
+  }
+  const base = await commit('base.js', 'const base = 1;\n');
+  const first = await commit('first.js', 'const first = 1;\n');
+  const after = await commit('second.js', 'const second = 2;\n');
+
+  // Use the real Action entry point with runner artifacts outside the checkout.
+  const eventFile = path.join(dir, 'event.json');
+  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^(GITHUB_|INPUT_)/.test(key)));
+  async function push(event, inputs = {}) {
+    await fs.writeFile(eventFile, JSON.stringify(event));
+    const result = await execFileAsync(process.execPath, [path.resolve(__dirname, '../src/github-action.cjs')], {
+      cwd: repo,
+      env: { ...env, GITHUB_WORKSPACE: repo, GITHUB_EVENT_NAME: 'push', GITHUB_EVENT_PATH: eventFile,
+        INPUT_QUERY_OSV: 'false', INPUT_SARIF_FILE: path.join(dir, 'result.sarif'), ...inputs }
+    });
+    return result.stdout;
+  }
+  const inspected = n => new RegExp(`HOLDS UP .*\\b${n} file\\(s\\) inspected`);
+  assert.match(await push({ before: base, after }), inspected(2));
+  assert.match(await push({ before: base, after }, { INPUT_BASE_REF: first }), inspected(1));
+  assert.match(await push({ before: '0'.repeat(base.length), after, created: true }), inspected(3));
+  assert.match(await push({ before: after, after }), inspected(0)); // genuinely empty range
+
+  // A force push also changes a file whose old-tip edit is absent from the common ancestor.
+  await git('checkout', '-b', 'old-tip', base);
+  const oldTip = await commit('base.js', 'const base = 2;\n');
+  await git('checkout', 'main');
+  assert.match(await push({ before: oldTip, after, forced: true }), inspected(3));
+  await assert.rejects(push({ before: '1'.repeat(base.length), after }), /push range/i);
+  await assert.rejects(push({ after }), /push event/i);
+  await assert.rejects(push({ before: base, after: first }), /checkout/i);
+  assert.match(await push({ before: after, after: '0'.repeat(base.length), deleted: true }), /deleted ref/i);
+
+  const exampleKey = 'AKIA' + 'ABCDEF1234567890';
+  await commit('early.js', `export const key = "${exampleKey}";\n`);
+  const final = await commit('guide.md', 'A harmless follow-up.\n');
+  await assert.rejects(push({ before: after, after: final }), err => err.code === 1 && /Verdict: FAILS/.test(err.stdout));
+  const sarif = JSON.parse(await fs.readFile(path.join(dir, 'result.sarif'), 'utf8'));
+  assert.equal(sarif.runs[0].results[0].locations[0].physicalLocation.artifactLocation.uri, 'early.js');
+});

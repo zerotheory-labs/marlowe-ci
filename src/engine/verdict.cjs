@@ -222,6 +222,7 @@ async function runAudit({
   mode = 'diff',
   staged = false,
   baseRef = '',
+  headRef = '',
   files = null,
   failOn = 'high',
   queryOsv = true,
@@ -256,7 +257,7 @@ async function runAudit({
       }
     }
   } else if (mode === 'diff') {
-    const diffRes = await getGitDiff(absRoot, { staged, baseRef });
+    const diffRes = await getGitDiff(absRoot, { staged, baseRef, headRef });
     if (!diffRes.inGitRepo) {
       cantTellReasons.push({
         code: 'not-git-repo',

@@ -165,7 +165,7 @@ async function synthesizeUntrackedFiles(root) {
   return added;
 }
 
-async function getGitDiff(root, { staged = false, baseRef = '' } = {}) {
+async function getGitDiff(root, { staged = false, baseRef = '', headRef = '' } = {}) {
   const absRoot = path.resolve(root);
   try {
     const { stdout } = await runGit(absRoot, ['rev-parse', '--is-inside-work-tree']);
@@ -185,6 +185,12 @@ async function getGitDiff(root, { staged = false, baseRef = '' } = {}) {
 
   if (baseRef) {
     if (baseRef.startsWith('-')) throw new Error('Invalid baseRef.');
+    if (headRef) {
+      if (headRef.startsWith('-')) throw new Error('Invalid headRef.');
+      // A push replaces one tree with another, including on divergent or rewound branches.
+      const { stdout } = await runGit(absRoot, ['diff', '--unified=0', '--no-color', baseRef, headRef, '--']);
+      return { inGitRepo: true, files: parseUnifiedDiff(stdout) };
+    }
     try {
       const { stdout } = await runGit(absRoot, ['diff', '--unified=0', '--no-color', `${baseRef}...HEAD`]);
       diffText = stdout;

@@ -183,6 +183,8 @@ Exposed read-only tools (**13 total** across AppSec, Authorized Recon, DFIR & Sh
 
 ### 3. GitHub Actions (SARIF + PR Verdict Comment)
 
+In diff mode, pull requests use their merge base. Pushes compare the event's previous and new trees, including force pushes. A newly created ref scans its tracked tree. Deleting a ref skips the check. Use a full checkout so both push endpoints are available.
+
 Add `.github/workflows/marlowe-ci.yml` (or run `npx --yes @zerotheory-labs/marlowe-ci init --github`):
 
 ```yaml
@@ -205,6 +207,7 @@ jobs:
           fetch-depth: 0
 
       - uses: zerotheory-labs/marlowe-ci@v0.6.0
+        id: marlowe
         with:
           mode: diff
           fail-on: high
@@ -213,7 +216,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: github/codeql-action/upload-sarif@v4
-        if: always() && hashFiles('marlowe.sarif') != ''
+        if: always() && steps.marlowe.outputs.sarif-file != ''
         with:
           sarif_file: marlowe.sarif
 ```
