@@ -18,6 +18,27 @@ const VERDICT_META = {
   }
 };
 
+function replayLines(replay, repoUrl = '') {
+  if (!replay) return [];
+  const lines = [`Semgrep replay (${replay.status})${replay.rule ? ` · ${replay.rule} in ${replay.target}` : ''}`];
+  for (const [label, side] of [['Base', replay.base], ['PR', replay.head]]) {
+    if (!side.commit) continue;
+    const ref = repoUrl ? `[${side.commit}](${repoUrl}/commit/${side.commit})` : side.commit;
+    lines.push(`- ${label} ${ref} — ${side.outcome || 'unavailable'}`);
+  }
+  if (replay.changedConfigs.length) {
+    let changed = replay.changedConfigs.join(', ');
+    if (replay.changedLine) {
+      const encoded = changed.split('/').map(encodeURIComponent).join('/');
+      changed = repoUrl
+        ? `[${changed}:${replay.changedLine}](${repoUrl}/blob/${replay.head.commit}/${encoded}#L${replay.changedLine})`
+        : `${changed}:${replay.changedLine}`;
+    }
+    lines.push(`- Changed configuration: ${changed}`);
+  }
+  return [...lines, ''];
+}
+
 function formatTerminalReport(result) {
   const meta = VERDICT_META[result.verdict] || VERDICT_META['cant-tell'];
   const commits = result.scannedCommits;
@@ -30,6 +51,7 @@ function formatTerminalReport(result) {
     ``
   ];
 
+  lines.push(...replayLines(result.semgrepReplay));
   if (result.baselinedCount > 0) {
     lines.push(`Baselined (acknowledged non-secret findings): ${result.baselinedCount}${result.baselinePath ? ` (${result.baselinePath})` : ''}`, '');
   }
@@ -82,6 +104,9 @@ function formatMarkdownSummary(result) {
     ''
   ];
 
+  const repoUrl = process.env.GITHUB_REPOSITORY
+    ? `${process.env.GITHUB_SERVER_URL || 'https://github.com'}/${process.env.GITHUB_REPOSITORY}` : '';
+  lines.push(...replayLines(result.semgrepReplay, repoUrl));
   if (result.findings.length) {
     lines.push(
       `### Findings (${result.findings.length})`,

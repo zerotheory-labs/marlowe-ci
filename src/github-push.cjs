@@ -1,19 +1,9 @@
 const fs = require('node:fs/promises');
 const { devNull, tmpdir } = require('node:os');
 const path = require('node:path');
-const { runGit } = require('./engine/git-diff.cjs');
+const { runGit, commitId, isObjectId } = require('./engine/git-diff.cjs');
 
-const OBJECT_ID = /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i;
 const PUSH_PAYLOAD_COMMIT_LIMIT = 2048;
-
-function isObjectId(value) {
-  return typeof value === 'string' && OBJECT_ID.test(value);
-}
-
-async function commitId(root, ref) {
-  const { stdout } = await runGit(root, ['rev-parse', '--verify', '--end-of-options', `${ref}^{commit}`]);
-  return stdout.trim();
-}
 
 async function isAncestor(root, before, after) {
   try {

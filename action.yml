@@ -31,6 +31,10 @@ inputs:
     description: 'Optional local CLIs to invoke alongside built-in engines: "none", "auto", or comma-separated list (e.g. "gitleaks,semgrep").'
     required: false
     default: 'none'
+  semgrep-replay:
+    description: 'On pull requests, replay the fixture defined by this base-committed JSON manifest against the base and PR head Semgrep configs. Requires a local Semgrep CLI.'
+    required: false
+    default: ''
   sarif-file:
     description: 'Output file path for SARIF v2.1.0 results (empty string disables file write).'
     required: false

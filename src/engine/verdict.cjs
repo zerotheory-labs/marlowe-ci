@@ -22,6 +22,7 @@ const {
 const { normalizeFinding, toSarifReport, toMarkdownReport } = require('../core/findings.cjs');
 const { getGitDiff } = require('./git-diff.cjs');
 const { detectGuardrailRegressions } = require('./regressions.cjs');
+const { runSemgrepReplay } = require('./semgrep-replay.cjs');
 const { loadBaseline, applyBaseline } = require('./baseline.cjs');
 const {
   isBeefilePath,
@@ -568,6 +569,7 @@ async function runAudit({
   failOn = 'high',
   queryOsv = true,
   scanners = [],
+  semgrepReplay,
   scopeConfig = null,
   baselinePath = '',
   useBaseline = true,
@@ -607,6 +609,19 @@ async function runAudit({
     osvStatus: [...new Set(dependencies.map(d => d.osvStatus))].join(', '),
     vulnerabilityCount: dependencies.reduce((sum, d) => sum + d.vulnerabilityCount, 0)
   } : null;
+  const replay = semgrepReplay && await runSemgrepReplay({ ...semgrepReplay, root: absRoot, signal });
+  if (replay?.status === 'regression') {
+    const location = replay.changedConfigs.length === 1 ? replay.changedConfigs[0] : replay.config;
+    rawFindings.push({
+      ruleId: 'MARLOWE-SEMGREP-REPLAY', category: 'config', severity: 'high',
+      title: `Semgrep lost coverage for ${replay.rule} in ${replay.target}`,
+      location: replay.changedLine ? `${location}:${replay.changedLine}` : location,
+      evidence: `Base ${replay.base.commit} matched. PR ${replay.head.commit}: ${replay.head.outcome}.`,
+      remediation: 'Review the changed Semgrep rules and ignore paths, then rerun the fixture.'
+    });
+  } else if (replay?.status === 'inconclusive') {
+    cantTellReasons.push({ code: 'semgrep-replay-inconclusive', path: semgrepReplay.manifest, line: null, message: replay.reason });
+  }
   const allFindings = normalizeFindingsList(rawFindings);
   const baseline = useBaseline ? await loadBaseline(absRoot, baselinePath) : null;
   const { activeFindings: findings, baselinedFindings } = applyBaseline(allFindings, baseline);
@@ -653,6 +668,7 @@ async function runAudit({
     dnaFlags,
     dependencySummary,
     scannerRuns,
+    ...(replay ? { semgrepReplay: replay } : {}),
     sarif: toSarifReport({ workspace: absRoot, findings }),
     markdownReport: toMarkdownReport({ workspace: absRoot, scope, findings }),
     durationMs: Date.now() - startedAt

@@ -7,14 +7,23 @@ const execFileAsync = promisify(execFile);
 const GIT_TIMEOUT_MS = 15000;
 const GIT_MAX_BUFFER = 12 * 1024 * 1024;
 
-function runGit(root, args) {
+function runGit(root, args, env = process.env) {
   return execFileAsync('git', args, {
     cwd: root,
     shell: false,
     timeout: GIT_TIMEOUT_MS,
     maxBuffer: GIT_MAX_BUFFER,
-    env: { ...process.env, GIT_TERMINAL_PROMPT: '0', LC_ALL: 'C' }
+    env: { ...env, GIT_TERMINAL_PROMPT: '0', LC_ALL: 'C' }
   });
+}
+
+function isObjectId(value) {
+  return typeof value === 'string' && /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/i.test(value);
+}
+
+async function commitId(root, ref) {
+  const { stdout } = await runGit(root, ['rev-parse', '--verify', '--end-of-options', `${ref}^{commit}`]);
+  return stdout.trim();
 }
 
 function unquoteGitPath(rawPath) {
@@ -235,6 +244,8 @@ async function getGitDiff(root, { staged = false, baseRef = '', headRef = '' } =
 
 module.exports = {
   runGit,
+  commitId,
+  isObjectId,
   parseUnifiedDiff,
   getGitDiff
 };
