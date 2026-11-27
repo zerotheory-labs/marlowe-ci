@@ -231,3 +231,48 @@ test('named-import isolation keeps unimported helper SQLi as CANT TELL unverifie
   assert.equal(res.verdict, 'cant-tell');
   assert.ok(res.cantTellReasons.some(r => r.code === 'unverified-sink'));
 });
+
+test('HTML templates skip tutorial prose while catching inline <script> sinks and high-certainty secrets', async t => {
+  const repo = await makeTempGitRepo();
+  t.after(() => fs.rm(repo, { recursive: true, force: true }));
+
+  const sqlWord = 'SEL' + 'ECT * FROM users WHERE';
+  const pickleCall = 'pickle.' + 'loads()';
+  const osSys = 'os.' + 'system("id")';
+  await fs.mkdir(path.join(repo, 'templates'), { recursive: true });
+  await fs.writeFile(
+    path.join(repo, 'templates', 'secure-fix.html'),
+    [
+      '<!doctype html>',
+      '<ul>',
+      `  <li>Never use ${pickleCall} with untrusted input.</li>`,
+      `  <li><code>${osSys}</code></li>`,
+      `  <li><pre>${sqlWord} password = '$password'</pre></li>`,
+      '</ul>'
+    ].join('\n') + '\n',
+    'utf8'
+  );
+
+  const cleanHtml = await runAudit({ root: repo, mode: 'full', queryOsv: false, failOn: 'high' });
+  assert.equal(cleanHtml.verdict, 'holds');
+  assert.equal(cleanHtml.findings.length, 0);
+
+  await fs.mkdir(path.join(repo, 'views'), { recursive: true });
+  const evalCall = 'ev' + 'al(location.hash.slice(1))';
+  const awsTok = 'AKIA' + '1234567890ABCDEF';
+  await fs.writeFile(
+    path.join(repo, 'views', 'page.html'),
+    [
+      `<p>Support key: ${awsTok}</p>`,
+      '<script>',
+      `  ${evalCall};`,
+      '</script>'
+    ].join('\n') + '\n',
+    'utf8'
+  );
+
+  const riskyHtml = await runAudit({ root: repo, mode: 'diff', queryOsv: false, failOn: 'high' });
+  assert.equal(riskyHtml.verdict, 'fails');
+  assert.ok(riskyHtml.failingFindings.some(f => f.cwe === 'CWE-798' && f.location.startsWith('views/page.html:')));
+  assert.ok(riskyHtml.failingFindings.some(f => f.cwe === 'CWE-94' && f.location.startsWith('views/page.html:')));
+});

@@ -51,27 +51,42 @@ const REACHABLE_STATIC_CATEGORIES = new Set(['deserialization', 'crypto', 'iac']
 const AUTO_SCANNER_PRIORITY = ['gitleaks', 'semgrep', 'trivy', 'osv-scanner'];
 const TEST_OR_FIXTURE_PATH_RE = /(?:^|\/)(?:tests?|testing|__tests__|benchmarks?|fixtures?|testdata)\/|(?:\.(?:test|spec)\.[cm]?[jt]sx?|_test\.(?:go|py)|test_[^/]+\.py)$/i;
 const DEV_BUILD_SCRIPT_PATH_RE = /(?:^|\/)(?:build|scripts|tools|hack)\//i;
+const HTML_TEMPLATE_RE = /\.(?:html?|ejs|hbs|handlebars|njk|jinja2?|twig)$/i;
+const HTML_SCRIPT_OPEN_RE = /<script(?:\s+(?![^>]*type\s*=\s*['"](?:application\/(?:ld\+)?json|text\/(?:template|html|plain))['"])[^>]*)?>/i;
+const HTML_SCRIPT_CLOSE_RE = /<\/script>/i;
+const CLIENT_JS_RULE_IDS = new Set(['dynamic-code-exec', 'dom-xss', 'insecure-random', 'permissive-cors']);
 
 function scanTextLines(relPath, text, { allowedLines = null } = {}) {
   const isDoc = /\.(?:md|mdx|rst|txt)$/i.test(relPath) || /(?:^|\/)(?:docs|docs_src|documentation)\//i.test(relPath);
   const isDemoOrTest = TEST_OR_FIXTURE_PATH_RE.test(relPath);
+  const isHtmlTemplate = HTML_TEMPLATE_RE.test(relPath);
+  let inScriptBlock = false;
   const secretHits = [];
   const codeHits = [];
   const lines = text.split('\n');
 
   for (let i = 0; i < lines.length; i++) {
     const lineNum = i + 1;
-    if (allowedLines && !allowedLines.has(lineNum)) continue;
     const raw = lines[i].replace(/\r$/, '');
+    let lineInScript = false;
+    if (isHtmlTemplate) {
+      const opensScript = HTML_SCRIPT_OPEN_RE.test(raw);
+      const closesScript = HTML_SCRIPT_CLOSE_RE.test(raw);
+      lineInScript = inScriptBlock || opensScript;
+      if (opensScript && !closesScript) inScriptBlock = true;
+      if (closesScript) inScriptBlock = false;
+    }
+    if (allowedLines && !allowedLines.has(lineNum)) continue;
     const trimmed = raw.trim();
     if (!trimmed || raw.length > 4000) continue;
 
     const isCommentLine = trimmed.startsWith('//') || trimmed.startsWith('/*') || /^\*(?:\s|$)/.test(trimmed) || (trimmed.startsWith('#') && !trimmed.startsWith('#!'));
 
     let matchedSecret = false;
+    const restrictToHighCertaintySecrets = isDoc || (isHtmlTemplate && !lineInScript);
     if (!isCommentLine && !isDemoOrTest) {
       for (const rule of SECRET_RULES) {
-        if (isDoc && !HIGH_CERTAINTY_SECRET_IDS.has(rule.id)) continue;
+        if (restrictToHighCertaintySecrets && !HIGH_CERTAINTY_SECRET_IDS.has(rule.id)) continue;
         rule.regex.lastIndex = 0;
         const m = rule.regex.exec(raw);
         if (!m || (rule.filter && !rule.filter(...m))) continue;
@@ -90,7 +105,7 @@ function scanTextLines(relPath, text, { allowedLines = null } = {}) {
       }
     }
 
-    if (!matchedSecret && !isCommentLine && !isDoc && !isDemoOrTest) {
+    if (!matchedSecret && !isCommentLine && !isDoc && !isDemoOrTest && !(isHtmlTemplate && !lineInScript)) {
       const em = ENTROPY_SECRET_RE.exec(raw);
       if (
         em &&
@@ -116,6 +131,10 @@ function scanTextLines(relPath, text, { allowedLines = null } = {}) {
     if (trimmed.length > 1000) continue;
 
     for (const rule of CODE_RULES) {
+      if (isHtmlTemplate) {
+        if (!lineInScript && !(rule.id === 'dom-xss' && /\bv-html\s*=/i.test(raw))) continue;
+        if (lineInScript && !CLIENT_JS_RULE_IDS.has(rule.id)) continue;
+      }
       if (!rule.regex.test(raw) || (rule.filter && !rule.filter(trimmed))) continue;
       codeHits.push({
         ruleId: rule.id,

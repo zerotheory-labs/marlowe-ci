@@ -1,44 +1,947 @@
 {
-  "generatedAt": "2026-11-27T16:13:22.602Z",
+  "generatedAt": "2026-11-27T16:24:27.110Z",
   "nodeVersion": "v26.12.0",
   "platform": "darwin-arm64",
   "summary": {
-    "totalRepos": 12,
-    "cleanReposCount": 9,
+    "totalRepos": 18,
+    "productionReposCount": 15,
     "vulnerableReposCount": 3,
-    "totalPrDiffs": 135,
-    "prHoldsCount": 128,
-    "prCantTellCount": 7,
+    "totalPrDiffs": 225,
+    "prHoldsCount": 197,
+    "prCantTellCount": 28,
     "prFailsCount": 0,
     "prFalseFailRatePct": 0,
-    "prP50Ms": 11.32,
-    "prP95Ms": 18.58,
-    "prMeanMs": 12.26,
-    "cleanFullRepoFailsRepos": 1,
-    "vulnerableTotalFailing": 98,
+    "prP50Ms": 12.88,
+    "prP95Ms": 24.36,
+    "calibration": {
+      "reposCount": 9,
+      "totalPrDiffs": 135,
+      "prHoldsCount": 129,
+      "prCantTellCount": 6,
+      "prFailsCount": 0,
+      "prFalseFailRatePct": 0,
+      "fullRepoFailsRepos": 1,
+      "prP50Ms": 13.2,
+      "prP95Ms": 25.82
+    },
+    "blindHeldOut": {
+      "reposCount": 6,
+      "totalPrDiffs": 90,
+      "prHoldsCount": 68,
+      "prCantTellCount": 22,
+      "prFailsCount": 0,
+      "prFalseFailRatePct": 0,
+      "fullRepoFailsRepos": 0,
+      "prP50Ms": 12.42,
+      "prP95Ms": 22.7
+    },
+    "vulnerableTotalFailing": 86,
     "vulnerableReposCaught": 3,
     "vulnerableCweBreakdown": {
-      "CWE-94": 13,
-      "CWE-798": 40,
-      "CWE-502": 11,
+      "CWE-94": 10,
+      "CWE-502": 9,
+      "CWE-798": 36,
       "CWE-200": 9,
       "CWE-89": 13,
       "CWE-116": 6,
-      "CWE-78": 3,
       "CWE-522": 3
-    }
+    },
+    "cveReplaysCount": 4,
+    "cveDetectedPrePatch": 1,
+    "cveFailsPrePatch": 0
   },
   "repos": [
+    {
+      "slug": "axios",
+      "repo": "axios/axios",
+      "ecosystem": "JS",
+      "commitSha": "71c87d5",
+      "cohort": "blind-held-out",
+      "role": "blind-held-out",
+      "verdict": "cant-tell",
+      "verdictLabel": "CAN'T TELL",
+      "scannedFiles": 514,
+      "durationMs": 105.38,
+      "totalFindings": 16,
+      "failingFindings": 0,
+      "cantTellCount": 17,
+      "ruleBreakdown": {
+        "CWE-79": 16
+      },
+      "cantTellBreakdown": {
+        "ARTEX-EDGE-001": 1,
+        "unverified-sink": 16
+      },
+      "sampleFindings": [
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/abort-controller/index.html:64",
+          "evidence": "singleStatus.innerHTML = '<span class=\"text-success\">' + response.data.message + '</span>';"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/abort-controller/index.html:68",
+          "evidence": "singleStatus.innerHTML = '<span class=\"text-warning\">Request canceled: ' + err.message + '</span>';"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/abort-controller/index.html:70",
+          "evidence": "singleStatus.innerHTML = '<span class=\"text-danger\">Error: ' + err.message + '</span>';"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/abort-controller/index.html:115",
+          "evidence": "searchStatus.innerHTML = '<span class=\"text-success\">Result for \"' + query + '\": ' + response.data.message + '</span>';"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/abort-controller/index.html:122",
+          "evidence": "searchStatus.innerHTML = '<span class=\"text-danger\">Error: ' + err.message + '</span>';"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/all/index.html:32",
+          "evidence": "document.getElementById('username').innerHTML = user.data.name;"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/all/index.html:33",
+          "evidence": "document.getElementById('orgs').innerHTML = orgs.data.map(function (org) {"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/amd/index.html:34",
+          "evidence": "document.getElementById('username').innerHTML = user.data.name;"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/get/index.html:17",
+          "evidence": "document.getElementById('people').innerHTML = response.data.map(function (person) {"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/get/index.html:31",
+          "evidence": "document.getElementById('people').innerHTML = '<li class=\"text-danger\">' + err.message + '</li>';"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/post/index.html:32",
+          "evidence": "output.innerHTML = res.data;"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/post/index.html:36",
+          "evidence": "output.innerHTML = err.message;"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/transform-response/index.html:40",
+          "evidence": "document.getElementById('username').innerHTML = res.data.name;"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/transform-response/index.html:41",
+          "evidence": "document.getElementById('created').innerHTML = formatDate(res.data.created_at);"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "examples/transform-response/index.html:42",
+          "evidence": "document.getElementById('updated').innerHTML = formatDate(res.data.updated_at);"
+        }
+      ],
+      "sampleCantTell": [
+        {
+          "code": "ARTEX-EDGE-001",
+          "path": "webpack.config.js",
+          "line": 16,
+          "message": "Source map generation enabled in \"webpack.config.js:16\" without a production/dev guard; confirm .map files are blocked in production."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/abort-controller/index.html",
+          "line": 64,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/abort-controller/index.html:64 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/abort-controller/index.html",
+          "line": 68,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/abort-controller/index.html:68 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/abort-controller/index.html",
+          "line": 70,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/abort-controller/index.html:70 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/abort-controller/index.html",
+          "line": 115,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/abort-controller/index.html:115 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/abort-controller/index.html",
+          "line": 122,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/abort-controller/index.html:122 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/all/index.html",
+          "line": 32,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/all/index.html:32 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/all/index.html",
+          "line": 33,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/all/index.html:33 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/amd/index.html",
+          "line": 34,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/amd/index.html:34 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/get/index.html",
+          "line": 17,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/get/index.html:17 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/get/index.html",
+          "line": 31,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/get/index.html:31 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/post/index.html",
+          "line": 32,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/post/index.html:32 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/post/index.html",
+          "line": 36,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/post/index.html:36 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/transform-response/index.html",
+          "line": 40,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/transform-response/index.html:40 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "examples/transform-response/index.html",
+          "line": 41,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at examples/transform-response/index.html:41 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        }
+      ],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 12,
+        "cantTellCount": 3,
+        "failsCount": 0,
+        "p50Ms": 13.71,
+        "p95Ms": 16.37,
+        "nonHoldsSamples": [
+          {
+            "sha": "adad57f",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.02,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/release-branch.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/release-branch.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "02e99e0",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.44,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/release-branch.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/release-branch.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "5ae5976",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.93,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/zizmor.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/zizmor.yml)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "trpc",
+      "repo": "trpc/trpc",
+      "ecosystem": "TS",
+      "commitSha": "105754b",
+      "cohort": "blind-held-out",
+      "role": "blind-held-out",
+      "verdict": "cant-tell",
+      "verdictLabel": "CAN'T TELL",
+      "scannedFiles": 2052,
+      "durationMs": 393.74,
+      "totalFindings": 3,
+      "failingFindings": 0,
+      "cantTellCount": 2,
+      "ruleBreakdown": {
+        "CWE-78": 1,
+        "CWE-79": 2
+      },
+      "cantTellBreakdown": {
+        "unverified-sink": 2
+      },
+      "sampleFindings": [
+        {
+          "ruleId": "CWE-78",
+          "severity": "high",
+          "cwe": "CWE-78",
+          "category": "appsec",
+          "title": "Potential OS Command Injection sink (Unverified Reachability)",
+          "location": "scripts/preview-urls.ts:19",
+          "evidence": "execSync('git branch --show-current', { encoding: 'utf8' }).trim();"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink (Unverified Reachability)",
+          "location": "www/src/twoslash-hovers.ts:107",
+          "evidence": "popup.innerHTML = popups[Number(index)] ?? '';"
+        },
+        {
+          "ruleId": "CWE-79",
+          "severity": "medium",
+          "cwe": "CWE-79",
+          "category": "appsec",
+          "title": "Unescaped HTML / DOM sink",
+          "location": "www/src/components/doc-body.tsx:233",
+          "evidence": "dangerouslySetInnerHTML={{ __html: part }}"
+        }
+      ],
+      "sampleCantTell": [
+        {
+          "code": "unverified-sink",
+          "path": "scripts/preview-urls.ts",
+          "line": 19,
+          "message": "Unverified CWE-78 sink \"Potential OS Command Injection sink\" in build/tooling CLI script scripts/preview-urls.ts:19 — confirm no untrusted input reaches this sink."
+        },
+        {
+          "code": "unverified-sink",
+          "path": "www/src/twoslash-hovers.ts",
+          "line": 107,
+          "message": "Unverified CWE-79 sink \"Unescaped HTML / DOM sink\" at www/src/twoslash-hovers.ts:107 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        }
+      ],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 15,
+        "cantTellCount": 0,
+        "failsCount": 0,
+        "p50Ms": 12.79,
+        "p95Ms": 20.47,
+        "nonHoldsSamples": []
+      }
+    },
+    {
+      "slug": "click",
+      "repo": "pallets/click",
+      "ecosystem": "Python",
+      "commitSha": "08b803c",
+      "cohort": "blind-held-out",
+      "role": "blind-held-out",
+      "verdict": "cant-tell",
+      "verdictLabel": "CAN'T TELL",
+      "scannedFiles": 177,
+      "durationMs": 53.6,
+      "totalFindings": 1,
+      "failingFindings": 0,
+      "cantTellCount": 1,
+      "ruleBreakdown": {
+        "CWE-94": 1
+      },
+      "cantTellBreakdown": {
+        "unverified-sink": 1
+      },
+      "sampleFindings": [
+        {
+          "ruleId": "CWE-94",
+          "severity": "high",
+          "cwe": "CWE-94",
+          "category": "appsec",
+          "title": "Dynamic code evaluation (eval / Function / vm) (Unverified Reachability)",
+          "location": "examples/completion/README:26",
+          "evidence": "eval (env _COMPLETION_COMPLETE=fish_source completion)"
+        }
+      ],
+      "sampleCantTell": [
+        {
+          "code": "unverified-sink",
+          "path": "examples/completion/README",
+          "line": 26,
+          "message": "Unverified CWE-94 sink \"Dynamic code evaluation (eval / Function / vm)\" at examples/completion/README:26 — no HTTP/URL/CLI ingress detected in file; verify manually."
+        }
+      ],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 13,
+        "cantTellCount": 2,
+        "failsCount": 0,
+        "p50Ms": 12.81,
+        "p95Ms": 31.83,
+        "nonHoldsSamples": [
+          {
+            "sha": "40134e1",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.91,
+            "changedFiles": 3,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/nightly.yaml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/nightly.yaml, .github/workflows/tests.yaml)."
+              }
+            ]
+          },
+          {
+            "sha": "9048ab0",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 10.77,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/publish.yaml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/publish.yaml)."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "requests",
+      "repo": "psf/requests",
+      "ecosystem": "Python",
+      "commitSha": "3c7baaa",
+      "cohort": "blind-held-out",
+      "role": "blind-held-out",
+      "verdict": "holds",
+      "verdictLabel": "HOLDS UP",
+      "scannedFiles": 114,
+      "durationMs": 28.29,
+      "totalFindings": 0,
+      "failingFindings": 0,
+      "cantTellCount": 0,
+      "ruleBreakdown": {},
+      "cantTellBreakdown": {},
+      "sampleFindings": [],
+      "sampleCantTell": [],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 9,
+        "cantTellCount": 6,
+        "failsCount": 0,
+        "p50Ms": 11.38,
+        "p95Ms": 11.98,
+        "nonHoldsSamples": [
+          {
+            "sha": "3c7baaa",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.36,
+            "changedFiles": 2,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/codeql-analysis.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/codeql-analysis.yml, .github/workflows/zizmor.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "611c616",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.47,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/codeql-analysis.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/codeql-analysis.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "5460f46",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 10.77,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/lock-issues.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/lock-issues.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "414f051",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.98,
+            "changedFiles": 5,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/lint.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/lint.yml, .github/workflows/publish.yml, .github/workflows/run-tests.yml (+2 more))."
+              }
+            ]
+          },
+          {
+            "sha": "69f8484",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.62,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/codeql-analysis.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/codeql-analysis.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "4c800e9",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.81,
+            "changedFiles": 4,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/lint.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/lint.yml, .github/workflows/publish.yml, .github/workflows/run-tests.yml (+1 more))."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "fiber",
+      "repo": "gofiber/fiber",
+      "ecosystem": "Go",
+      "commitSha": "0d4d872",
+      "cohort": "blind-held-out",
+      "role": "blind-held-out",
+      "verdict": "holds",
+      "verdictLabel": "HOLDS UP",
+      "scannedFiles": 575,
+      "durationMs": 216.92,
+      "totalFindings": 0,
+      "failingFindings": 0,
+      "cantTellCount": 0,
+      "ruleBreakdown": {},
+      "cantTellBreakdown": {},
+      "sampleFindings": [],
+      "sampleCantTell": [],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 9,
+        "cantTellCount": 6,
+        "failsCount": 0,
+        "p50Ms": 12.79,
+        "p95Ms": 25.08,
+        "nonHoldsSamples": [
+          {
+            "sha": "517ed9a",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 25.08,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": "middleware/static/static.go",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (middleware/static/static.go)."
+              }
+            ]
+          },
+          {
+            "sha": "b188501",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 12.04,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": "docs/middleware/cache.md",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (docs/middleware/cache.md)."
+              }
+            ]
+          },
+          {
+            "sha": "6c20160",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 12.11,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": "middleware/static/static.go",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (middleware/static/static.go)."
+              }
+            ]
+          },
+          {
+            "sha": "b6a55bf",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 22.7,
+            "changedFiles": 11,
+            "failingCount": 0,
+            "cantTellCount": 3,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "guardrail-suppression-added",
+                "path": "binder/mapping.go",
+                "line": 477,
+                "message": "Security suppression comment added at binder/mapping.go:477 (return err //nolint:wrapcheck // a wrap adds no context and costs a formatted message per failed bind); verify justification manually."
+              },
+              {
+                "code": "guardrail-suppression-added",
+                "path": "binder/mapping.go",
+                "line": 1119,
+                "message": "Security suppression comment added at binder/mapping.go:1119 (func (d *bindData) bindAll(aliasTag string, out any, key string, values []string, enableSplitting, supportBracketNotatio); verify justification manually."
+              },
+              {
+                "code": "guardrail-suppression-added",
+                "path": "binder/mapping.go",
+                "line": 1133,
+                "message": "Security suppression comment added at binder/mapping.go:1133 (func (d *bindData) bindValues(aliasTag string, out any, key string, values []string, enableSplitting bool) error { //nol); verify justification manually."
+              }
+            ]
+          },
+          {
+            "sha": "e9b0f49",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.72,
+            "changedFiles": 2,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "guardrail-suppression-added",
+                "path": "internal/sizedstream/sizedstream.go",
+                "line": 157,
+                "message": "Security suppression comment added at internal/sizedstream/sizedstream.go:157 (return b, err //nolint:wrapcheck // the stream's own error, as ReadFrom returns it); verify justification manually."
+              }
+            ]
+          },
+          {
+            "sha": "ca664fc",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.34,
+            "changedFiles": 2,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "guardrail-suppression-added",
+                "path": "internal/sizedstream/sizedstream.go",
+                "line": 153,
+                "message": "Security suppression comment added at internal/sizedstream/sizedstream.go:153 (return b, err //nolint:wrapcheck // the stream's own error, as ReadFrom returns it); verify justification manually."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "axum",
+      "repo": "tokio-rs/axum",
+      "ecosystem": "Rust",
+      "commitSha": "14122ea",
+      "cohort": "blind-held-out",
+      "role": "blind-held-out",
+      "verdict": "holds",
+      "verdictLabel": "HOLDS UP",
+      "scannedFiles": 490,
+      "durationMs": 107.98,
+      "totalFindings": 0,
+      "failingFindings": 0,
+      "cantTellCount": 0,
+      "ruleBreakdown": {},
+      "cantTellBreakdown": {},
+      "sampleFindings": [],
+      "sampleCantTell": [],
+      "prReplay": {
+        "commitsTested": 15,
+        "holdsCount": 10,
+        "cantTellCount": 5,
+        "failsCount": 0,
+        "p50Ms": 12.42,
+        "p95Ms": 15.39,
+        "nonHoldsSamples": [
+          {
+            "sha": "36d38c4",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.61,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/CI.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/CI.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "2449f16",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 15.39,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/release-plz.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/release-plz.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "3ebdbe6",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 13.82,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": "axum/src/middleware/from_fn.rs",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (axum/src/middleware/from_fn.rs)."
+              }
+            ]
+          },
+          {
+            "sha": "edf56ea",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 11.13,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/CI.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/CI.yml)."
+              }
+            ]
+          },
+          {
+            "sha": "d5fc68d",
+            "verdict": "cant-tell",
+            "verdictLabel": "CAN'T TELL",
+            "durationMs": 10.96,
+            "changedFiles": 1,
+            "failingCount": 0,
+            "cantTellCount": 1,
+            "topFindings": [],
+            "topCantTell": [
+              {
+                "code": "sensitive-surface-untested",
+                "path": ".github/workflows/release-plz.yml",
+                "line": null,
+                "message": "Security-sensitive surface modified without any test changes (.github/workflows/release-plz.yml)."
+              }
+            ]
+          }
+        ]
+      }
+    },
     {
       "slug": "express",
       "repo": "expressjs/express",
       "ecosystem": "JS",
       "commitSha": "43fca52",
-      "role": "clean-production",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "holds",
       "verdictLabel": "HOLDS UP",
       "scannedFiles": 215,
-      "durationMs": 34.74,
+      "durationMs": 39.15,
       "totalFindings": 0,
       "failingFindings": 0,
       "cantTellCount": 0,
@@ -51,14 +954,14 @@
         "holdsCount": 13,
         "cantTellCount": 2,
         "failsCount": 0,
-        "p50Ms": 11.07,
-        "p95Ms": 15.53,
+        "p50Ms": 12.74,
+        "p95Ms": 19.32,
         "nonHoldsSamples": [
           {
             "sha": "6389ae5",
             "verdict": "cant-tell",
             "verdictLabel": "CAN'T TELL",
-            "durationMs": 15.53,
+            "durationMs": 18.29,
             "changedFiles": 5,
             "failingCount": 0,
             "cantTellCount": 1,
@@ -76,7 +979,7 @@
             "sha": "2717ae3",
             "verdict": "cant-tell",
             "verdictLabel": "CAN'T TELL",
-            "durationMs": 10.05,
+            "durationMs": 12.66,
             "changedFiles": 2,
             "failingCount": 0,
             "cantTellCount": 1,
@@ -98,11 +1001,12 @@
       "repo": "fastify/fastify",
       "ecosystem": "JS",
       "commitSha": "a94dc37",
-      "role": "clean-production",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "holds",
       "verdictLabel": "HOLDS UP",
       "scannedFiles": 397,
-      "durationMs": 81.69,
+      "durationMs": 89.87,
       "totalFindings": 0,
       "failingFindings": 0,
       "cantTellCount": 0,
@@ -115,14 +1019,14 @@
         "holdsCount": 14,
         "cantTellCount": 1,
         "failsCount": 0,
-        "p50Ms": 11.11,
-        "p95Ms": 24.46,
+        "p50Ms": 13.2,
+        "p95Ms": 25.82,
         "nonHoldsSamples": [
           {
             "sha": "4679723",
             "verdict": "cant-tell",
             "verdictLabel": "CAN'T TELL",
-            "durationMs": 9.87,
+            "durationMs": 11.66,
             "changedFiles": 1,
             "failingCount": 0,
             "cantTellCount": 1,
@@ -144,11 +1048,12 @@
       "repo": "honojs/hono",
       "ecosystem": "TS",
       "commitSha": "717dc17",
-      "role": "clean-production",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "cant-tell",
       "verdictLabel": "CAN'T TELL",
       "scannedFiles": 581,
-      "durationMs": 156,
+      "durationMs": 166.29,
       "totalFindings": 3,
       "failingFindings": 0,
       "cantTellCount": 3,
@@ -213,8 +1118,8 @@
         "holdsCount": 15,
         "cantTellCount": 0,
         "failsCount": 0,
-        "p50Ms": 11.24,
-        "p95Ms": 12.1,
+        "p50Ms": 12.18,
+        "p95Ms": 13.5,
         "nonHoldsSamples": []
       }
     },
@@ -223,11 +1128,12 @@
       "repo": "koajs/koa",
       "ecosystem": "JS",
       "commitSha": "98a19bc",
-      "role": "clean-production",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "holds",
       "verdictLabel": "HOLDS UP",
       "scannedFiles": 124,
-      "durationMs": 25.97,
+      "durationMs": 25.95,
       "totalFindings": 0,
       "failingFindings": 0,
       "cantTellCount": 0,
@@ -240,8 +1146,8 @@
         "holdsCount": 15,
         "cantTellCount": 0,
         "failsCount": 0,
-        "p50Ms": 11.49,
-        "p95Ms": 29.89,
+        "p50Ms": 12.45,
+        "p95Ms": 29.25,
         "nonHoldsSamples": []
       }
     },
@@ -250,11 +1156,12 @@
       "repo": "colinhacks/zod",
       "ecosystem": "TS",
       "commitSha": "d40c329",
-      "role": "clean-production",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "cant-tell",
       "verdictLabel": "CAN'T TELL",
       "scannedFiles": 688,
-      "durationMs": 196.03,
+      "durationMs": 199.97,
       "totalFindings": 1,
       "failingFindings": 0,
       "cantTellCount": 1,
@@ -288,8 +1195,8 @@
         "holdsCount": 15,
         "cantTellCount": 0,
         "failsCount": 0,
-        "p50Ms": 14.74,
-        "p95Ms": 20.64,
+        "p50Ms": 15.83,
+        "p95Ms": 25.75,
         "nonHoldsSamples": []
       }
     },
@@ -298,11 +1205,12 @@
       "repo": "pallets/flask",
       "ecosystem": "Python",
       "commitSha": "49943b5",
-      "role": "clean-production",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "cant-tell",
       "verdictLabel": "CAN'T TELL",
       "scannedFiles": 229,
-      "durationMs": 55.41,
+      "durationMs": 91.61,
       "totalFindings": 1,
       "failingFindings": 0,
       "cantTellCount": 1,
@@ -336,8 +1244,8 @@
         "holdsCount": 15,
         "cantTellCount": 0,
         "failsCount": 0,
-        "p50Ms": 10.93,
-        "p95Ms": 17.15,
+        "p50Ms": 13.35,
+        "p95Ms": 51.16,
         "nonHoldsSamples": []
       }
     },
@@ -346,11 +1254,12 @@
       "repo": "fastapi/fastapi",
       "ecosystem": "Python",
       "commitSha": "05e6df7",
-      "role": "clean-production",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "fails",
       "verdictLabel": "FAILS",
       "scannedFiles": 3078,
-      "durationMs": 446.61,
+      "durationMs": 452.92,
       "totalFindings": 1,
       "failingFindings": 1,
       "cantTellCount": 0,
@@ -375,8 +1284,8 @@
         "holdsCount": 15,
         "cantTellCount": 0,
         "failsCount": 0,
-        "p50Ms": 11.61,
-        "p95Ms": 20.35,
+        "p50Ms": 14.04,
+        "p95Ms": 24.12,
         "nonHoldsSamples": []
       }
     },
@@ -385,11 +1294,12 @@
       "repo": "gin-gonic/gin",
       "ecosystem": "Go",
       "commitSha": "0f09c3a",
-      "role": "clean-production",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "holds",
       "verdictLabel": "HOLDS UP",
       "scannedFiles": 128,
-      "durationMs": 29.06,
+      "durationMs": 30.26,
       "totalFindings": 0,
       "failingFindings": 0,
       "cantTellCount": 0,
@@ -402,14 +1312,14 @@
         "holdsCount": 13,
         "cantTellCount": 2,
         "failsCount": 0,
-        "p50Ms": 10.93,
-        "p95Ms": 13.08,
+        "p50Ms": 13.57,
+        "p95Ms": 15.96,
         "nonHoldsSamples": [
           {
             "sha": "3329b63",
             "verdict": "cant-tell",
             "verdictLabel": "CAN'T TELL",
-            "durationMs": 9.31,
+            "durationMs": 11.72,
             "changedFiles": 2,
             "failingCount": 0,
             "cantTellCount": 1,
@@ -427,7 +1337,7 @@
             "sha": "bc141b4",
             "verdict": "cant-tell",
             "verdictLabel": "CAN'T TELL",
-            "durationMs": 11.92,
+            "durationMs": 13.3,
             "changedFiles": 4,
             "failingCount": 0,
             "cantTellCount": 1,
@@ -448,12 +1358,13 @@
       "slug": "shirudo",
       "repo": "shirudo-dev/shirudo",
       "ecosystem": "eBPF / C / Rust",
-      "commitSha": "5879ce3",
-      "role": "clean-production",
+      "commitSha": "cb8aeaa",
+      "cohort": "calibration",
+      "role": "calibration",
       "verdict": "cant-tell",
       "verdictLabel": "CAN'T TELL",
       "scannedFiles": 1873,
-      "durationMs": 455.33,
+      "durationMs": 540.01,
       "totalFindings": 0,
       "failingFindings": 0,
       "cantTellCount": 21,
@@ -560,17 +1471,17 @@
       ],
       "prReplay": {
         "commitsTested": 15,
-        "holdsCount": 13,
-        "cantTellCount": 2,
+        "holdsCount": 14,
+        "cantTellCount": 1,
         "failsCount": 0,
-        "p50Ms": 10.99,
-        "p95Ms": 13.19,
+        "p50Ms": 12.86,
+        "p95Ms": 16.48,
         "nonHoldsSamples": [
           {
             "sha": "59aaf2b",
             "verdict": "cant-tell",
             "verdictLabel": "CAN'T TELL",
-            "durationMs": 10.99,
+            "durationMs": 14.64,
             "changedFiles": 6,
             "failingCount": 0,
             "cantTellCount": 1,
@@ -581,24 +1492,6 @@
                 "path": "Documentation/security/reporting.rst",
                 "line": null,
                 "message": "Security-sensitive surface modified without any test changes (Documentation/security/reporting.rst, SECURITY.md)."
-              }
-            ]
-          },
-          {
-            "sha": "c1b0c0e",
-            "verdict": "cant-tell",
-            "verdictLabel": "CAN'T TELL",
-            "durationMs": 10.83,
-            "changedFiles": 3,
-            "failingCount": 0,
-            "cantTellCount": 1,
-            "topFindings": [],
-            "topCantTell": [
-              {
-                "code": "sensitive-surface-untested",
-                "path": ".agents/skills/security-audit/SKILL.md",
-                "line": null,
-                "message": "Security-sensitive surface modified without any test changes (.agents/skills/security-audit/SKILL.md, .agents/skills/security-audit/bug-classes.md, .agents/skills/security-audit/claims.md)."
               }
             ]
           }
@@ -709,22 +1602,21 @@
       "repo": "OWASP/NodeGoat",
       "ecosystem": "Node.js",
       "commitSha": "c5cb68a",
+      "cohort": "vulnerable-target",
       "role": "vulnerable-target",
       "verdict": "fails",
       "verdictLabel": "FAILS",
       "scannedFiles": 102,
-      "durationMs": 39.57,
-      "totalFindings": 9,
-      "failingFindings": 7,
+      "durationMs": 34.08,
+      "totalFindings": 5,
+      "failingFindings": 3,
       "cantTellCount": 2,
       "ruleBreakdown": {
-        "CWE-94": 6,
-        "CWE-798": 1,
+        "CWE-94": 3,
         "CWE-79": 2
       },
       "cweBreakdown": {
-        "CWE-94": 6,
-        "CWE-798": 1
+        "CWE-94": 3
       },
       "sampleFindings": [
         {
@@ -755,42 +1647,6 @@
           "evidence": "const roth = eval(req.body.roth);"
         },
         {
-          "ruleId": "CWE-798",
-          "severity": "high",
-          "cwe": "CWE-798",
-          "category": "secrets",
-          "title": "Hardcoded Secret Assignment",
-          "location": "app/views/tutorial/a1.html:220",
-          "evidence": "<pre>SELECT * FROM accounts WHERE username = '$username' AND password = '[REDACTED]'</pre>"
-        },
-        {
-          "ruleId": "CWE-94",
-          "severity": "high",
-          "cwe": "CWE-94",
-          "category": "appsec",
-          "title": "Dynamic code evaluation (eval / Function / vm)",
-          "location": "app/views/tutorial/a1.html:157",
-          "evidence": "var preTax = eval(req.body.preTax);"
-        },
-        {
-          "ruleId": "CWE-94",
-          "severity": "high",
-          "cwe": "CWE-94",
-          "category": "appsec",
-          "title": "Dynamic code evaluation (eval / Function / vm)",
-          "location": "app/views/tutorial/a1.html:158",
-          "evidence": "var afterTax = eval(req.body.afterTax);"
-        },
-        {
-          "ruleId": "CWE-94",
-          "severity": "high",
-          "cwe": "CWE-94",
-          "category": "appsec",
-          "title": "Dynamic code evaluation (eval / Function / vm)",
-          "location": "app/views/tutorial/a1.html:159",
-          "evidence": "var roth = eval(req.body.roth);"
-        },
-        {
           "ruleId": "CWE-79",
           "severity": "medium",
           "cwe": "CWE-79",
@@ -815,11 +1671,12 @@
       "repo": "juice-shop/juice-shop",
       "ecosystem": "Node.js / TS",
       "commitSha": "c9f9922",
+      "cohort": "vulnerable-target",
       "role": "vulnerable-target",
       "verdict": "fails",
       "verdictLabel": "FAILS",
       "scannedFiles": 1196,
-      "durationMs": 570.99,
+      "durationMs": 859.16,
       "totalFindings": 86,
       "failingFindings": 65,
       "cantTellCount": 6,
@@ -986,28 +1843,26 @@
       "repo": "adeyosemanputra/pygoat",
       "ecosystem": "Python / Django",
       "commitSha": "2aa4cc1",
+      "cohort": "vulnerable-target",
       "role": "vulnerable-target",
       "verdict": "fails",
       "verdictLabel": "FAILS",
       "scannedFiles": 451,
-      "durationMs": 94.78,
-      "totalFindings": 70,
-      "failingFindings": 26,
-      "cantTellCount": 24,
+      "durationMs": 133.91,
+      "totalFindings": 57,
+      "failingFindings": 18,
+      "cantTellCount": 19,
       "ruleBreakdown": {
-        "CWE-502": 5,
-        "CWE-798": 13,
+        "CWE-502": 3,
+        "CWE-798": 10,
         "CWE-94": 2,
-        "CWE-78": 6,
         "CWE-522": 3,
-        "CWE-89": 2,
         "CWE-79": 39
       },
       "cweBreakdown": {
-        "CWE-502": 5,
-        "CWE-798": 13,
+        "CWE-502": 3,
+        "CWE-798": 10,
         "CWE-94": 2,
-        "CWE-78": 3,
         "CWE-522": 3
       },
       "sampleFindings": [
@@ -1028,15 +1883,6 @@
           "title": "Unsafe deserialization call",
           "location": "dockerized_labs/insec_des_lab/main.py:40",
           "evidence": "user = pickle.loads(decoded_data)"
-        },
-        {
-          "ruleId": "CWE-502",
-          "severity": "critical",
-          "cwe": "CWE-502",
-          "category": "appsec",
-          "title": "Unsafe deserialization call",
-          "location": "dockerized_labs/insec_des_lab/templates/secure-fix.html:108",
-          "evidence": "<li>Never use pickle.loads() with untrusted data (can execute arbitrary code).</li>"
         },
         {
           "ruleId": "CWE-798",
@@ -1066,15 +1912,6 @@
           "evidence": "admin = pickle.loads("
         },
         {
-          "ruleId": "CWE-502",
-          "severity": "critical",
-          "cwe": "CWE-502",
-          "category": "appsec",
-          "title": "Unsafe deserialization call",
-          "location": "dockerized_labs/software_integrity_lab/templates/secure-fix.html:52",
-          "evidence": "return pickle.loads(base64.b64decode(pickle_data))"
-        },
-        {
           "ruleId": "CWE-798",
           "severity": "high",
           "cwe": "CWE-798",
@@ -1102,15 +1939,6 @@
           "evidence": "output = ImageMath.eval(expression, img=img, r=r, g=g, b=b)"
         },
         {
-          "ruleId": "CWE-78",
-          "severity": "high",
-          "cwe": "CWE-78",
-          "category": "appsec",
-          "title": "Potential OS Command Injection sink (Unverified Reachability)",
-          "location": "dockerized_labs/a9_uckv_lab/templates/lab2.html:54",
-          "evidence": "<code>image.size[0] if True else exec('import os; os.system(\"ls\")')</code></li>"
-        },
-        {
           "ruleId": "CWE-94",
           "severity": "high",
           "cwe": "CWE-94",
@@ -1120,33 +1948,209 @@
           "evidence": "output = eval(expression)"
         },
         {
-          "ruleId": "CWE-78",
+          "ruleId": "CWE-798",
           "severity": "high",
-          "cwe": "CWE-78",
-          "category": "appsec",
-          "title": "Potential OS Command Injection sink",
-          "location": "dockerized_labs/command_injection_lab/templates/index.html:88",
-          "evidence": "<br>Now, if we submit os.system(\"id\"), we get nothing in the output. But if we check the terminal, we will see that the command gets execute"
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "dockerized_labs/crypto_failure_lab/app.py:7",
+          "evidence": "app.secret_key = \"cryp…[REDACTED]…key\""
         },
         {
-          "ruleId": "CWE-78",
+          "ruleId": "CWE-522",
           "severity": "high",
-          "cwe": "CWE-78",
-          "category": "appsec",
-          "title": "Potential OS Command Injection sink",
-          "location": "dockerized_labs/command_injection_lab/templates/index.html:95",
-          "evidence": "<li>Malicious usage: Enter Python code like <code>os.system(\"command\")</code></li>"
+          "cwe": "CWE-522",
+          "category": "secrets",
+          "title": "URL Embedded Password",
+          "location": "dockerized_labs/sde/app.py:9",
+          "evidence": "\"postgresql://admin:[REDACTED]@localhost:5432/sensitive_db\""
         },
         {
-          "ruleId": "CWE-78",
+          "ruleId": "CWE-522",
           "severity": "high",
-          "cwe": "CWE-78",
-          "category": "appsec",
-          "title": "Potential OS Command Injection sink",
-          "location": "dockerized_labs/command_injection_lab/templates/index.html:96",
-          "evidence": "<li>Try <code>os.system(\"id\")</code> or <code>os.system(\"whoami\")</code></li>"
+          "cwe": "CWE-522",
+          "category": "secrets",
+          "title": "URL Embedded Password",
+          "location": "dockerized_labs/sec_misconfig/app.py:12",
+          "evidence": "\"database_url\": \"postgresql://admin:[REDACTED]@localhost:5432/production\","
+        },
+        {
+          "ruleId": "CWE-522",
+          "severity": "high",
+          "cwe": "CWE-522",
+          "category": "secrets",
+          "title": "URL Embedded Password",
+          "location": "dockerized_labs/sec_misconfig/app.py:56",
+          "evidence": "\"DATABASE_URI\": \"postgresql://admin:[REDACTED]@production-db.internal:5432/users\","
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "AWS Access Key ID",
+          "location": "dockerized_labs/sec_misconfig/app.py:58",
+          "evidence": "\"AWS_ACCESS_KEY\": \"AKIA…[REDACTED]…DEF\","
+        },
+        {
+          "ruleId": "CWE-798",
+          "severity": "high",
+          "cwe": "CWE-798",
+          "category": "secrets",
+          "title": "Hardcoded Secret Assignment",
+          "location": "dockerized_labs/sensitive_data_exposure/entrypoint.sh:11",
+          "evidence": "echo \"from django.contrib.auth.models import User; from dataexposure.models import UserData; demo_user = User.objects.filter(username='demo'"
         }
       ]
+    }
+  ],
+  "cveReplays": [
+    {
+      "cve": "CVE-2021-21315",
+      "repo": "sebhildebrandt/systeminformation",
+      "fixSha": "07daa05",
+      "parentSha": "2e92938",
+      "cwe": "CWE-78",
+      "summary": "Command Injection in service lookup",
+      "changedSourceFiles": [
+        "lib/docker.js",
+        "lib/internet.js",
+        "lib/network.js",
+        "lib/processes.js"
+      ],
+      "prePatchDiff": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "changedFiles": 0,
+        "failingCount": 0,
+        "cantTellCount": 0,
+        "topFindings": [],
+        "topCantTell": []
+      },
+      "prePatchFileAudit": {
+        "verdict": "cant-tell",
+        "verdictLabel": "CAN'T TELL",
+        "failingCount": 0,
+        "cantTellCount": 27,
+        "topFindings": []
+      },
+      "postPatchDiff": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "changedFiles": 4,
+        "failingCount": 0,
+        "cantTellCount": 0
+      },
+      "detectedInPrePatch": true
+    },
+    {
+      "cve": "CVE-2022-25912",
+      "repo": "steveukx/git-js",
+      "fixSha": "7746480",
+      "parentSha": "47030d5",
+      "cwe": "CWE-78",
+      "summary": "simple-git ext transport RCE bypass",
+      "changedSourceFiles": [
+        "packages/babel-config/babel.config.js",
+        "packages/test-utils/src/expectations.ts",
+        "simple-git/src/git.js",
+        "simple-git/src/lib/plugins/timout-plugin.ts"
+      ],
+      "prePatchDiff": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "changedFiles": 0,
+        "failingCount": 0,
+        "cantTellCount": 0,
+        "topFindings": [],
+        "topCantTell": []
+      },
+      "prePatchFileAudit": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "failingCount": 0,
+        "cantTellCount": 0,
+        "topFindings": []
+      },
+      "postPatchDiff": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "changedFiles": 19,
+        "failingCount": 0,
+        "cantTellCount": 0
+      },
+      "detectedInPrePatch": false
+    },
+    {
+      "cve": "CVE-2021-23337",
+      "repo": "lodash/lodash",
+      "fixSha": "3469357",
+      "parentSha": "ded9bc6",
+      "cwe": "CWE-94",
+      "summary": "Command / template code injection in _.template",
+      "changedSourceFiles": [
+        "lodash.js"
+      ],
+      "prePatchDiff": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "changedFiles": 0,
+        "failingCount": 0,
+        "cantTellCount": 0,
+        "topFindings": [],
+        "topCantTell": []
+      },
+      "prePatchFileAudit": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "failingCount": 0,
+        "cantTellCount": 0,
+        "topFindings": []
+      },
+      "postPatchDiff": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "changedFiles": 2,
+        "failingCount": 0,
+        "cantTellCount": 0
+      },
+      "detectedInPrePatch": false
+    },
+    {
+      "cve": "CVE-2020-14343",
+      "repo": "yaml/pyyaml",
+      "fixSha": "a001f27",
+      "parentSha": "fe15062",
+      "cwe": "CWE-502",
+      "summary": "PyYAML FullLoader arbitrary code execution",
+      "changedSourceFiles": [
+        "lib/yaml/constructor.py",
+        "lib3/yaml/constructor.py"
+      ],
+      "prePatchDiff": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "changedFiles": 0,
+        "failingCount": 0,
+        "cantTellCount": 0,
+        "topFindings": [],
+        "topCantTell": []
+      },
+      "prePatchFileAudit": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "failingCount": 0,
+        "cantTellCount": 0,
+        "topFindings": []
+      },
+      "postPatchDiff": {
+        "verdict": "holds",
+        "verdictLabel": "HOLDS UP",
+        "changedFiles": 4,
+        "failingCount": 0,
+        "cantTellCount": 0
+      },
+      "detectedInPrePatch": false
     }
   ]
 }

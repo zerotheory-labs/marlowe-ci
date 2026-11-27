@@ -43,7 +43,7 @@ AI coding agents mutate files, run shell commands, and open pull requests in sec
 - **ARTEX Defense & Behavioral Pack (`ARTEX-EDGE-001..003`, `ARTEX-BEHAV-001`):**
   - **Pre-merge Edge & Identity Rules:** Flags unauthenticated Swagger/OpenAPI/GraphQL introspection and public `.js.map` / production sourcemaps (`EDGE-001`), OAuth `state: false` / open redirects / credentialed wildcard CORS / weak reset tokens (`EDGE-002`), and `skipAuth` or unauthenticated `/admin` / `/backup` / `/webhook` routes (`EDGE-003`).
   - **Behavioral Agentic Log Detector (`analyzeLogs`):** Detects machine-speed HTTP recon → OAuth/auth pivots, `400`/`422` payload adaptation bursts, and low-static-ratio enumeration even behind rotated IPs and browser User-Agents (`ARTEX-BEHAV-001`, MITRE `T1595`).
-- **Expanded 40-Scenario Benchmark Suite (`npm run bench`) & 12-Repo + 135-PR Real-World OSS Corpus (`npm run bench:corpus`):** Lifted Shirudo `3/3` → `12/12`, added `7/7` ARTEX Edge Defense (`40/40` `100%` accuracy, `0%` clean FP `0/10`, `19.83ms` p50), and benchmarked across **9 production OSS repos (135 real PR commits replayed via `--mode diff`: `0%` FAILS `0/135`, `11.32ms` p50)** plus **3 intentionally vulnerable targets (`98` failing issues across `8` CWE classes)**.
+- **Expanded 40-Scenario Benchmark Suite (`npm run bench`) & 18-Repo + 225-PR + Real-CVE OSS Corpus (`npm run bench:corpus`):** Lifted Shirudo `3/3` → `12/12`, added `7/7` ARTEX Edge Defense (`40/40` `100%` accuracy, `0%` clean FP `0/10`, `24.1ms` p50), and benchmarked across **6 blind held-out OSS repos (`90` real PRs: `0/90` false `FAILS`, `12.42ms` p50) + 9 calibration repos (`135` real PRs: `0/135` false `FAILS`)**, **3 code-only OWASP targets (`86` failing issues, HTML tutorial prose excluded)**, and **4 real historical CVE fix commits**. Marlowe CI is a fast, zero-dependency **AI-agent & pre-merge guardrail** (pairable with `--scanners auto` for `semgrep`/`gitleaks`/`trivy`), not a full-AST taint analyzer.
 - **SARIF First-Class `ruleId`s + Maintainer Docs:** Preserves explicit `SHIRUDO-*` and `ARTEX-*` rule IDs in SARIF v2.1.0 output and adds [`CLAUDE.md`](./CLAUDE.md).
 
 ---
@@ -68,36 +68,44 @@ Executed offline via [`benchmarks/run-benchmarks.cjs`](./benchmarks/run-benchmar
 - **`FAILS` Precision / Recall / F1:** `100% / 100% / 100%` (`FP = 0`, `FN = 0`)
 - **Clean / Benign False-Positive Rate:** **`0%`** (`0/10`)
 - **`CAN'T TELL` Exact Match:** **`9/9`**
-- **Latency (`p50` / `p95` / `mean`):** **`19.83ms` / `25.11ms` / `20.84ms`**
+- **Latency (`p50` / `p95` / `mean`):** **`24.1ms` / `26.31ms` / `24.56ms`**
 
 | Domain | Passed | Accuracy | p50 | p95 |
 | :--- | :---: | :---: | :---: | :---: |
-| AppSec & Cross-File Reachability | `6/6` | `100%` | `20.93ms` | `33.82ms` |
-| Secrets & Masking | `3/3` | `100%` | `24.59ms` | `28.07ms` |
-| Guardrail Regressions & Precision | `5/5` | `100%` | `20.23ms` | `21.27ms` |
-| Agent Guard (Prompt Injection / Trojan / Rug-Pull) | `5/5` | `100%` | `19.81ms` | `22.4ms` |
-| Shirudo eBPF, Beefile & TPM Attestation | `12/12` | `100%` | `19.71ms` | `20.67ms` |
-| ARTEX Edge Defense (Maps / OAuth / CORS / Admin) | `7/7` | `100%` | `19.59ms` | `21.11ms` |
-| Binaries & Clean Refactors | `2/2` | `100%` | `19.18ms` | `19.72ms` |
+| AppSec & Cross-File Reachability | `6/6` | `100%` | `23.78ms` | `41.04ms` |
+| Secrets & Masking | `3/3` | `100%` | `24.1ms` | `24.28ms` |
+| Guardrail Regressions & Precision | `5/5` | `100%` | `22.91ms` | `23.77ms` |
+| Agent Guard (Prompt Injection / Trojan / Rug-Pull) | `5/5` | `100%` | `24.22ms` | `25.33ms` |
+| Shirudo eBPF, Beefile & TPM Attestation | `12/12` | `100%` | `24.4ms` | `26.31ms` |
+| ARTEX Edge Defense (Maps / OAuth / CORS / Admin) | `7/7` | `100%` | `24.27ms` | `25.5ms` |
+| Binaries & Clean Refactors | `2/2` | `100%` | `22.18ms` | `23.26ms` |
 
-#### Real-World 12-Repo OSS Corpus & 135-PR Replay (`npm run bench:corpus`)
+#### Real-World 18-Repo OSS Corpus, 225-PR Replay & Real CVE Check (`npm run bench:corpus`)
 
-Executed across **9 production OSS repositories** (`JS`, `TS`, `Python`, `Go`, `eBPF / C / Rust` — 15 recent non-merge commits replayed each in `--mode diff --no-osv`, **`128 HOLDS UP / 7 CAN'T TELL / 0 FAILS`**, `0%` PR false-fail rate, `11.32ms` p50 / `18.58ms` p95) plus **3 intentionally vulnerable OWASP targets** (`98` failing issues caught across `8` CWE/rule classes; saved to [`benchmarks/corpus-results.json`](./benchmarks/corpus-results.json)):
+Separated cleanly into **Calibration (9 repos · 135 PRs)**, **Blind Held-Out (6 unseen repos · 90 PRs, raw/untuned)**, **Code-Only OWASP Targets (HTML prose excluded)**, and **4 Verified Historical CVE Fix Replays** ([`benchmarks/corpus-results.json`](./benchmarks/corpus-results.json)):
 
-| Cohort · Repository (Pinned SHA) | Ecosystem | PR Diff Replay (`15` commits) | Full-Repo Failing | Full Verdict / Summary |
+| Cohort · Repository (Pinned SHA) | Ecosystem | PR Diff Replay (`15` commits) | Full-Repo Failing | Full Verdict / Notes |
 | :--- | :--- | :---: | :---: | :--- |
-| Clean · `expressjs/express` (`43fca52`) | JS | `13H / 2CT / 0F` (`11.07ms` p50) | `0` | **`HOLDS UP`** (`215` files, `34.74ms`) |
-| Clean · `fastify/fastify` (`a94dc37`) | JS | `14H / 1CT / 0F` (`11.11ms` p50) | `0` | **`HOLDS UP`** (`397` files, `81.69ms`) |
-| Clean · `honojs/hono` (`717dc17`) | TS | `15H / 0CT / 0F` (`11.24ms` p50) | `0` | **`CAN'T TELL`** (`3` CT: `build/` CLI `execSync` & DOM setter) |
-| Clean · `koajs/koa` (`98a19bc`) | JS | `15H / 0CT / 0F` (`11.49ms` p50) | `0` | **`HOLDS UP`** (`124` files, `25.97ms`) |
-| Clean · `colinhacks/zod` (`d40c329`) | TS | `15H / 0CT / 0F` (`14.74ms` p50) | `0` | **`CAN'T TELL`** (`1` CT: V8 benchmark `eval`) |
-| Clean · `pallets/flask` (`49943b5`) | Python | `15H / 0CT / 0F` (`10.93ms` p50) | `0` | **`CAN'T TELL`** (`1` CT: `src/flask/cli.py` startup `eval`) |
-| Clean · `fastapi/fastapi` (`05e6df7`) | Python | `15H / 0CT / 0F` (`11.61ms` p50) | `1` | `FAILS` (`1` hit in `3,078` files: `fastapi/security/http.py:42` docstring example `Bearer` literal) |
-| Clean · `gin-gonic/gin` (`0f09c3a`) | Go | `13H / 2CT / 0F` (`10.93ms` p50) | `0` | **`HOLDS UP`** (`128` files, `29.06ms`) |
-| Clean · `shirudo-dev/shirudo` (`5879ce3`) | eBPF / C / Rust | `13H / 2CT / 0F` (`10.99ms` p50) | `0` | **`CAN'T TELL`** (`21` CT; `0` failing across `24` direct Shirudo artifacts) |
-| Vuln · `OWASP/NodeGoat` (`c5cb68a`) | Node.js | — | **`7`** | **`FAILS`** (`CWE-94: 6`, `CWE-798: 1`; `39.57ms`) |
-| Vuln · `juice-shop/juice-shop` (`c9f9922`) | Node.js / TS | — | **`65`** | **`FAILS`** (`CWE-798: 26`, `CWE-89: 13`, `CWE-200: 9`, `CWE-502: 6`, `CWE-116: 6`, `CWE-94: 5`) |
-| Vuln · `adeyosemanputra/pygoat` (`2aa4cc1`) | Python / Django | — | **`26`** | **`FAILS`** (`CWE-798: 13`, `CWE-502: 5`, `CWE-78: 3`, `CWE-522: 3`, `CWE-94: 2`) |
+| Blind · `axios/axios` (`71c87d5`) | JS | `12H / 3CT / 0F` (`13.71ms` p50) | `0` | **`CAN'T TELL`** (`514` files; `17` CT incl. `webpack.config.js` sourcemap & demo `.innerHTML`) |
+| Blind · `trpc/trpc` (`105754b`) | TS | `15H / 0CT / 0F` (`12.79ms` p50) | `0` | **`CAN'T TELL`** (`2,052` files; `scripts/preview-urls.ts` CLI + unverified DOM sinks) |
+| Blind · `pallets/click` (`08b803c`) | Python | `13H / 2CT / 0F` (`12.81ms` p50) | `0` | **`CAN'T TELL`** (`177` files; extensionless `examples/completion/README` `eval` note) |
+| Blind · `psf/requests` (`3c7baaa`) | Python | `9H / 6CT / 0F` (`11.38ms` p50) | `0` | **`HOLDS UP`** (`114` files; `6` CT PRs flagged untested `.github/workflows/*.yml` edits) |
+| Blind · `gofiber/fiber` (`0d4d872`) | Go | `9H / 6CT / 0F` (`12.79ms` p50) | `0` | **`HOLDS UP`** (`575` files; `6` CT PRs caught `//nolint:wrapcheck` & untested middleware edits) |
+| Blind · `tokio-rs/axum` (`14122ea`) | Rust | `10H / 5CT / 0F` (`12.42ms` p50) | `0` | **`HOLDS UP`** (`490` files; `5` CT PRs flagged untested CI & `from_fn.rs` middleware edits) |
+| Cal · `expressjs/express` (`43fca52`) | JS | `13H / 2CT / 0F` (`12.74ms` p50) | `0` | **`HOLDS UP`** (`215` files, `39.15ms`) |
+| Cal · `fastify/fastify` (`a94dc37`) | JS | `14H / 1CT / 0F` (`13.2ms` p50) | `0` | **`HOLDS UP`** (`397` files, `89.87ms`) |
+| Cal · `honojs/hono` (`717dc17`) | TS | `15H / 0CT / 0F` (`11.24ms` p50) | `0` | **`CAN'T TELL`** (`3` CT: `build/` CLI `execSync` & DOM setter) |
+| Cal · `koajs/koa` (`98a19bc`) | JS | `15H / 0CT / 0F` (`11.49ms` p50) | `0` | **`HOLDS UP`** (`124` files) |
+| Cal · `colinhacks/zod` (`d40c329`) | TS | `15H / 0CT / 0F` (`14.74ms` p50) | `0` | **`CAN'T TELL`** (`1` CT: V8 benchmark `eval`) |
+| Cal · `pallets/flask` (`49943b5`) | Python | `15H / 0CT / 0F` (`13.35ms` p50) | `0` | **`CAN'T TELL`** (`1` CT: `src/flask/cli.py` startup `eval`) |
+| Cal · `fastapi/fastapi` (`05e6df7`) | Python | `15H / 0CT / 0F` (`14.04ms` p50) | `1` | `FAILS` (`1` residual hit in `3,078` files: `fastapi/security/http.py:42` OpenAPI docstring `Bearer` example) |
+| Cal · `gin-gonic/gin` (`0f09c3a`) | Go | `13H / 2CT / 0F` (`13.57ms` p50) | `0` | **`HOLDS UP`** (`128` files) |
+| Cal · `shirudo-dev/shirudo` (`cb8aeaa`) | eBPF / C / Rust | `14H / 1CT / 0F` (`12.86ms` p50) | `0` | **`CAN'T TELL`** (`21` CT; `0` failing across `24` direct Shirudo artifacts) |
+| Vuln · `OWASP/NodeGoat` (`c5cb68a`) | Node.js | — | **`3`** | **`FAILS`** (`3` `CWE-94` `eval(req.body.*)` in `app/routes/contributions.js`; HTML tutorial prose excluded) |
+| Vuln · `juice-shop/juice-shop` (`c9f9922`) | Node.js / TS | — | **`65`** | **`FAILS`** (`26` `CWE-798`, `13` `CWE-89`, `9` `ARTEX-EDGE-001`, `6` `CWE-502`, `6` `CWE-116`, `5` `CWE-94`) |
+| Vuln · `adeyosemanputra/pygoat` (`2aa4cc1`) | Python / Django | — | **`18`** | **`FAILS`** (`10` `CWE-798`, `3` `CWE-502` `pickle`/`yaml.Loader`, `3` `CWE-522`, `2` `CWE-94`; HTML prose excluded) |
+
+> **Honest Real-CVE Replay (`1 / 4` pre-patch, `0 / 4` in line-diff alone):** Replaying verified pre-patch states for `CVE-2021-21315` (`sebhildebrandt/systeminformation`), `CVE-2022-25912` (`steveukx/git-js`), `CVE-2021-23337` (`lodash/lodash`), and `CVE-2020-14343` (`yaml/pyyaml`) returned `CAN'T TELL` (`27` unverified sink items at file level) for `CVE-2021-21315` and `HOLDS UP` on the other three. Sanitizer/argument/class-hierarchy bypasses require AST dataflow analysis (`--scanners auto` with `semgrep`), reinforcing Marlowe CI's role as a fast pre-merge & agentic guardrail layer rather than a standalone AST SAST replacement.
 
 #### Recorded Live Localhost Purple-Team Run (`npm run bench:artex`)
 

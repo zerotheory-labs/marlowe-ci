@@ -133,10 +133,25 @@ async function auditCodePatterns(root, startDir, { category = '', relativePath, 
     let text;
     try { text = await readText(file); } catch { continue; }
     const lines = text.split('\n');
+    const isHtmlTemplate = /\.(?:html?|ejs|hbs|handlebars|njk|jinja2?|twig)$/i.test(rel);
+    const clientJsRules = new Set(['dynamic-code-exec', 'dom-xss', 'insecure-random', 'permissive-cors']);
+    let inScriptBlock = false;
     for (let i = 0; i < lines.length; i++) {
       const raw = lines[i].replace(/\r$/, ''), trimmed = raw.trim();
+      let lineInScript = false;
+      if (isHtmlTemplate) {
+        const opensScript = /<script(?:\s+(?![^>]*type\s*=\s*['"](?:application\/(?:ld\+)?json|text\/(?:template|html|plain))['"])[^>]*)?>/i.test(raw);
+        const closesScript = /<\/script>/i.test(raw);
+        lineInScript = inScriptBlock || opensScript;
+        if (opensScript && !closesScript) inScriptBlock = true;
+        if (closesScript) inScriptBlock = false;
+      }
       if (!trimmed || trimmed.length > 1000 || trimmed.startsWith('//') || (trimmed.startsWith('#') && !trimmed.startsWith('#!'))) continue;
       for (const rule of activeRules) {
+        if (isHtmlTemplate) {
+          if (!lineInScript && !(rule.id === 'dom-xss' && /\bv-html\s*=/i.test(raw))) continue;
+          if (lineInScript && !clientJsRules.has(rule.id)) continue;
+        }
         if (!rule.regex.test(raw) || (rule.filter && !rule.filter(trimmed))) continue;
         const item = { path: rel, line: i + 1, ruleId: rule.id, category: rule.category, severity: rule.severity, cwe: rule.cwe, title: rule.title, verificationRequired: true, snippet: redactSecrets(trimmed.slice(0, 220)).text };
         if (matches.length >= 160 || (used += JSON.stringify(item).length) > RESULT_BUDGET) { state.truncated = true; break scan; }
