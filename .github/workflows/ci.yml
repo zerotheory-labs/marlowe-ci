@@ -23,7 +23,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install Semgrep for replay integration tests
+        run: pipx install semgrep==1.185.0
+
       - name: Run test suite
+        env:
+          MARLOWE_TEST_REQUIRE_SEMGREP: '1'
         run: npm test
 
       - name: Run Marlowe CI self-check

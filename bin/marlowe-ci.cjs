@@ -65,6 +65,7 @@ Scan options:
   --no-baseline         Ignore .marlowe-baseline.json during this scan
   --no-osv              Skip online OSV.dev advisory queries
   --scanners <list>     none | auto | comma-separated CLIs (gitleaks,semgrep,trivy,osv-scanner)
+  --semgrep-replay <file> Replay a base-committed fixture manifest against --base and HEAD
   --sarif <file>        Write SARIF v2.1.0 report to file
   --markdown            Print GitHub Markdown summary instead of terminal text
   --json                Print structured JSON verdict output
@@ -110,6 +111,10 @@ async function cmdScan(flags) {
   const mode = flags.mode === 'full' ? 'full' : 'diff';
   const scannersRaw = typeof flags.scanners === 'string' ? flags.scanners : 'none';
   const scanners = scannersRaw.split(',').map(s => s.trim()).filter(Boolean);
+  const manifest = flags['semgrep-replay'];
+  if (manifest && (typeof manifest !== 'string' || typeof flags.base !== 'string' || mode !== 'diff' || flags.staged)) {
+    throw new Error('--semgrep-replay requires a manifest path and --base <ref> in a committed diff.');
+  }
 
   const result = await runAudit({
     root,
@@ -119,6 +124,7 @@ async function cmdScan(flags) {
     failOn: typeof flags['fail-on'] === 'string' ? flags['fail-on'] : 'high',
     queryOsv: flags.osv !== false,
     scanners,
+    semgrepReplay: manifest ? { manifest, baseRef: flags.base, headRef: 'HEAD' } : undefined,
     baselinePath: typeof flags.baseline === 'string' ? flags.baseline : '',
     useBaseline: flags.baseline !== false
   });

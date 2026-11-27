@@ -227,6 +227,27 @@ jobs:
           sarif_file: marlowe.sarif
 ```
 
+#### Replay Semgrep coverage on pull requests
+
+On an Action revision that includes replay, set the input `semgrep-replay: .marlowe/replay.json` and install the Semgrep CLI on the runner. Use `fetch-depth: 0` so Git can read both commits named in the pull request event.
+
+Commit the manifest and a harmless fixture to the base branch. For example, a team with a `no-console-log` rule in `.semgrep/rules.yml` can put `console.log("Marlowe replay");` in `.marlowe/fixtures/console.js` and use this manifest in `.marlowe/replay.json`.
+
+```json
+{
+  "config": ".semgrep/rules.yml",
+  "rule": "no-console-log",
+  "fixture": ".marlowe/fixtures/console.js",
+  "target": "services/payments/marlowe-replay.js"
+}
+```
+
+Marlowe places the same fixture bytes at `target` in two temporary Git repositories. Each uses its revision’s checked-in Semgrep YAML or JSON configuration and the ignore files governing that path. The target directory must exist in both revisions. The replay uses local Semgrep rules. Hosted policies and flags set by a separate workflow are outside its scope.
+
+The PR summary shows both commit SHAs, the rule, the fixture path, and each scan’s outcome. A base match that disappears on the PR produces a high-severity `MARLOWE-SEMGREP-REPLAY` finding in the verdict and SARIF. An unavailable scanner, invalid configuration, or missing base match produces `CAN'T TELL`. Set `fail-on-cant-tell: 'true'` to require complete evidence before merging.
+
+To replay locally against the committed `HEAD`, run `marlowe-ci scan --base origin/main --semgrep-replay .marlowe/replay.json`.
+
 #### Live PR Verdict Example
 
 Real sticky comment posted automatically on [`zerotheory-labs/marlowe#1`](https://github.com/zerotheory-labs/marlowe/pull/1):

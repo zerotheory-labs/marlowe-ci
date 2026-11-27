@@ -3,7 +3,7 @@ const path = require('node:path');
 const { version } = require('../package.json');
 const { runAudit } = require('./engine/verdict.cjs');
 const { formatTerminalReport, formatMarkdownSummary } = require('./engine/format.cjs');
-const { runGit } = require('./engine/git-diff.cjs');
+const { runGit, isObjectId } = require('./engine/git-diff.cjs');
 const { resolvePushRange, pushSnapshots } = require('./github-push.cjs');
 
 const COMMENT_MARKER = '<!-- marlowe-ci-verdict -->';
@@ -86,12 +86,11 @@ async function upsertPrComment({ token, repository, prNumber, body, fetchImpl = 
   return res.ok;
 }
 
-async function extractPrNumberFromEvent() {
+async function readPrEvent() {
   const eventPath = process.env.GITHUB_EVENT_PATH;
   if (!eventPath) return null;
   try {
-    const raw = JSON.parse(await fs.readFile(eventPath, 'utf8'));
-    return raw?.pull_request?.number || raw?.number || null;
+    return JSON.parse(await fs.readFile(eventPath, 'utf8'));
   } catch {
     return null;
   }
@@ -109,6 +108,10 @@ async function runAction({ fetchImpl = fetch } = {}) {
   const commentPr = getInput('comment-pr', 'false').toLowerCase() === 'true';
   const token = getInput('github-token', '') || process.env.GITHUB_TOKEN || '';
   const baselineRaw = getInput('baseline-file', '.marlowe-baseline.json');
+  const isPr = process.env.GITHUB_EVENT_NAME === 'pull_request';
+  const manifest = getInput('semgrep-replay');
+  const event = isPr && (manifest || (commentPr && token)) ? await readPrEvent() : null;
+  const pr = event?.pull_request;
 
   let range = {};
   if (mode === 'diff') {
@@ -136,6 +139,11 @@ async function runAction({ fetchImpl = fetch } = {}) {
     failOn,
     queryOsv,
     scanners,
+    semgrepReplay: isPr && manifest ? {
+      manifest,
+      baseRef: isObjectId(pr?.base?.sha) ? pr.base.sha : '',
+      headRef: isObjectId(pr?.head?.sha) ? pr.head.sha : ''
+    } : undefined,
     baselinePath: baselineRaw === '.marlowe-baseline.json' ? '' : baselineRaw,
     useBaseline: baselineRaw !== 'none' && baselineRaw !== 'false'
   });
@@ -159,8 +167,8 @@ async function runAction({ fetchImpl = fetch } = {}) {
     'sarif-file': resolvedSarifPath || sarifFile
   });
 
-  if (commentPr && process.env.GITHUB_EVENT_NAME === 'pull_request' && token) {
-    const prNumber = await extractPrNumberFromEvent();
+  if (commentPr && isPr && token) {
+    const prNumber = pr?.number || event?.number;
     const repo = process.env.GITHUB_REPOSITORY || '';
     if (prNumber && repo) {
       await upsertPrComment({ token, repository: repo, prNumber, body: md, fetchImpl }).catch(err => {
